@@ -2,9 +2,9 @@
 The main program for our maze generator
 """
 
-from re import M
 from typing import Any
 from src.setting import WIDTH, HEIGHT, TITLE
+from utils.utils import get_configuration
 from mlx import Mlx
 
 
@@ -21,17 +21,26 @@ class Maze:
         """
         # we use this to see if the logo can be displayed
         self.show_logo = True
+        self.running = False
+        self.config: None | dict = None
 
     def _init(self):
-        self.mlx = Mlx()
-        self.mlx_ptr = self.mlx.mlx_init()
-        self.mlx_window = self.mlx.mlx_new_window(
+        self.config = get_configuration("config.txt")
+        if self.config:
+            self.running = True
+            self.mlx = Mlx()
+            self.mlx_ptr = self.mlx.mlx_init()
+            self.mlx_window = self.mlx.mlx_new_window(
                 self.mlx_ptr, WIDTH, HEIGHT, TITLE
                 )
 
     def run(self):
         # initializing mlx
         self._init()
+        if not self.running:
+            return
+        # rendering into window
+        self.draw(self.mlx_window)
         # handling event
         self.event_handler(self.mlx_window)
         # looping over
@@ -48,15 +57,25 @@ class Maze:
         self.mlx.mlx_loop_exit(self.mlx_ptr)
 
     def draw_line(self, window: Any) -> None:
-        for i in range(self.ROWS):
-            for j in range(self.COLS):
+        """
+        Drawing line into the window to give the vibe
+        of a grid
+        """
+        if not self.config:
+            return
+        rows = self.config["width"]
+        cols = self.config["height"]
+        width_gap = HEIGHT // cols
+        height_gap = WIDTH // rows
+        for i in range(rows):
+            for j in range(cols):
                 pass
 
-    def draw(self):
+    def draw(self, window: Any):
         """
         Drawing on the window and rendering
         """
-        pass
+        self.draw_line(window)
 
     def update(self):
         """

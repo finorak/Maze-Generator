@@ -2,10 +2,9 @@
 The main program for our maze generator
 """
 
-from src.cell import Cell
 from src.setting import WIDTH, HEIGHT, TITLE
 from mlx import Mlx
-from utils.utils import get_configuration
+
 
 class Maze:
     """
@@ -15,12 +14,29 @@ class Maze:
         """
         Initialisation of our our maze
         """
+        # we use this to see if the logo can be displayed
+        self.show_logo = True
+        # initializing mlx
+        self._init()
+        self.event_handler(self.mlx_window)
+        self.mlx.mlx_loop(self.mlx_ptr)
+
+    def _init(self):
         self.mlx = Mlx()
         self.mlx_ptr = self.mlx.mlx_init()
         self.mlx_window = self.mlx.mlx_new_window(
                 self.mlx_ptr, WIDTH, HEIGHT, TITLE
                 )
-        self.mlx.mlx_loop(self.mlx_ptr)
+
+    def close(self, keycode: int = 33):
+        """
+        Closing the window
+        :param keycode: the keycode we recieve from mlx_hook
+        """
+        # destroying the window
+        self.mlx.mlx_destroy_window(self.mlx_ptr, self.mlx_window)
+        # exiting the mlx_loop
+        self.mlx.mlx_loop_exit(self.mlx_ptr)
 
     def draw(self):
         """
@@ -34,7 +50,9 @@ class Maze:
         """
         pass
 
+    def event_handler(self, window):
+        self.mlx.mlx_hook(window, 33, 0, self.close, None)
+
 
 if __name__ == "__main__":
-    conf = get_configuration("config.txt")
-    print(conf)
+    maze = Maze()

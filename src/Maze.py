@@ -5,9 +5,10 @@ from . import get_configuration
 
 
 class Maze:
-    def __init__(self, mlx: Any):
-        self.cells: list[list[Cell]] | Any = []
+    def __init__(self, mlx: Any, file_name: str):
+        self.cells: list[list[Cell]] = []
         self._ = mlx
+        self.file_name = file_name
         self.cell_width = 40
         self.cell_height = 40
         self.win_width = 500
@@ -22,6 +23,9 @@ class Maze:
             self.mlx_window = self.mlx.mlx_new_window(
                 self.mlx_ptr, WIDTH, HEIGHT, TITLE
                 )
+            conf = self.get_config(self.file_name)
+            if not conf:
+                return False
             self.event_handler(self.mlx_ptr, self.mlx_window)
             self.mlx.mlx_loop(self.mlx_ptr)
             return True
@@ -54,9 +58,8 @@ class Maze:
         self.win_height = self.cols * self.win_height
         return config
 
-    def generate(self, file_name) -> None:
-        config = self.get_config(file_name)
-        if not self._init() or not config:
+    def generate(self) -> None:
+        if not self._init():
             return None
 
     def get_cells(self) -> list[Cell] | Any:
@@ -94,3 +97,8 @@ class Maze:
     def close(self, mlx_ptr: Any) -> None:
         self.mlx.mlx_destroy_window(self.mlx_ptr, self.mlx_window)
         self.mlx.mlx_release(mlx_ptr)
+
+    def draw_cell(self, mlx_ptr: Any, win: Any) -> None:
+        for row in self.cells:
+            for cell in row:
+                cell.draw_cell(win)

@@ -24,6 +24,7 @@ def config_is_valid(config: dict[str, Union[str, int, tuple, bool]]
     if "entry" not in config or "exit" not in config:
         return False
     if not config.get('entry') or not isinstance(config["entry"], tuple):
+        print(config)
         return False
     if not isinstance(config["entry"][0], int) or not \
             isinstance(config["entry"][1], int):
@@ -72,8 +73,7 @@ def get_configuration(file_name: str
                     return None
                 key, value = line
                 pos = value.strip().split(",")
-                if len(pos) == 2 and isinstance(pos[0].strip(), int) and \
-                        isinstance(pos[1].strip(), int):
+                if len(pos) == 2:
                     x = int(pos[0].strip())
                     y = int(pos[1].strip())
                     value = (x, y)
@@ -81,6 +81,7 @@ def get_configuration(file_name: str
         config = parse_config(config)
         if not config_is_valid(config):
             return None
+        print(config)
         return config
     except Exception as e:
         print(e)

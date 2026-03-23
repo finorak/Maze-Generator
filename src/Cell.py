@@ -53,4 +53,4 @@ class Cell:
             self.wall |= NORTH
 
     def draw_cell(self, win: Any) -> None:
-        pass
+        print(self.row, self.col)

@@ -9,10 +9,10 @@ from src.Maze import Maze
 
 class App:
     def __init__(self) -> None:
-        self.maze = Maze(Mlx)
+        self.maze = Maze(Mlx, "config.txt")
 
     def run(self) -> None:
-        self.maze.generate("config.txt")
+        self.maze.generate()
 
 
 if __name__ == "__main__":

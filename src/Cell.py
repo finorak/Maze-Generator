@@ -11,6 +11,7 @@ class Cell:
     """
     def __init__(self, row: int, col: int,
                  width: int, height: int,
+                 win_width: int, win_height: int,
                  defaul_wall: int = 0b0000) -> None:
         """
         :param row: the row of the cell
@@ -20,14 +21,20 @@ class Cell:
         :rtype None
         """
         self.wall = defaul_wall
+        # where to put the cell
         self.row = row
         self.col = col
+        # the width of the cell
         self.width = width
         self.height = height
+        # we use these two attribute to determine where
+        # to draw the cell
+        self.win_width = win_width
+        self.win_height = win_height
         self.visited = False
         self.is_42_cell = False
 
-    def remove_wall(self, wall: str):
+    def remove_wall(self, wall: str) -> None:
         if wall.lower() == "north" or wall.lower() == "n":
             if self.wall & NORTH:
                 self.wall -= NORTH
@@ -41,7 +48,7 @@ class Cell:
             if self.wall & EAST:
                 self.wall -= EAST
 
-    def add_wall(self, wall):
+    def add_wall(self, wall: str) -> None:
         if wall.lower() == "north" or wall.lower() == "n":
             self.wall |= NORTH
 

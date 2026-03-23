@@ -20,11 +20,11 @@ flake:
 	$(FLAKE) --exclude=.venv .
 
 lint: flake
-	$(MYPY)  --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	$(MYPY) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .
 
 lint-strict:
 	$(FLAKE) --exclude=.venv .
-	$(MYPY) . --strict  --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	$(MYPY) --strict  --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .
 
 clean:
 	find . -name "*.pyc" -exec rm -rf {} \;

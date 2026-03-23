@@ -11,8 +11,8 @@ class App:
     def __init__(self) -> None:
         self.maze = Maze(Mlx)
 
-    def run(self):
-        self.maze.generate()
+    def run(self) -> None:
+        self.maze.generate("config.txt")
 
 
 if __name__ == "__main__":

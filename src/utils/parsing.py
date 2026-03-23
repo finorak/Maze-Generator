@@ -5,31 +5,32 @@ might use class later on
 """
 
 
-from typing import Union
+from typing import Mapping, Union
 
 
-def config_is_valid(config: dict[str, str | int | tuple | bool] | None
+def config_is_valid(config: dict[str, Union[str, int, tuple, bool]]
                     ) -> bool:
     """
     This function verify if the config is vaild or not
     """
     if config is None:
         return False
-    if "width" not in config or "height" not in config:
+    if "width" not in config or "height" not in config or not \
+            config.get('width') or not config.get('height'):
         return False
     if not isinstance(config["width"], int) or not \
             isinstance(config["height"], int):
         return False
     if "entry" not in config or "exit" not in config:
         return False
-    if not isinstance(config["entry"], tuple):
+    if not config.get('entry') or not isinstance(config["entry"], tuple):
         return False
     if not isinstance(config["entry"][0], int) or not \
             isinstance(config["entry"][1], int):
         return False
-    if not isinstance(config["exit"], tuple):
+    if not config.get('exit') or not isinstance(config["exit"], tuple):
         return False
-    if not isinstance(config["exit"][0], int) or not \
+    if not isinstance(config['exit'][0], int) or not \
             isinstance(config["exit"][1], int):
         return False
     return True
@@ -40,7 +41,7 @@ def parse_config(config: dict[str, str | tuple]
     """
     Parsing the config we got from get_configuration
     """
-    conf = dict()
+    conf: Mapping = {}
     for key, value in config.items():
         if isinstance(value, str) and value.isdigit():
             conf[key] = int(value)
@@ -58,7 +59,8 @@ def get_configuration(file_name: str
     """
     Getting the configuration file using dict
     """
-    config: dict | None = dict()
+    config: dict | None = {}
+    value: str | tuple[int, int]
     try:
         with open(file_name, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -70,8 +72,11 @@ def get_configuration(file_name: str
                     return None
                 key, value = line
                 pos = value.strip().split(",")
-                if len(pos) == 2:
-                    value = int(pos[0].strip()), int(pos[1].strip())
+                if len(pos) == 2 and isinstance(pos[0].strip(), int) and \
+                        isinstance(pos[1].strip(), int):
+                    x = int(pos[0].strip())
+                    y = int(pos[1].strip())
+                    value = (x, y)
                 config.update({key.lower(): value})
         config = parse_config(config)
         if not config_is_valid(config):

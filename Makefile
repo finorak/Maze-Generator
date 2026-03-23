@@ -1,3 +1,4 @@
+NAME=a_maze_ing.py
 VENV=.venv
 BIN_PATH=./$(VENV)/bin
 PIP=./$(BIN_PATH)/pip
@@ -13,19 +14,25 @@ $(VENV):
 	python3 -m venv $(VENV)
 
 run:
-	$(PYTHON) main.py
+	$(PYTHON) $(NAME)
 
-lint:
-	$(FLAKE) .
+flake:
+	$(FLAKE) --exclude=.venv .
+
+lint: flake
 	$(MYPY)  --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 lint-strict:
-	$(FLAKE) --strict .
-	$(MYPY) --strict  --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
+	$(FLAKE) --exclude=.venv .
+	$(MYPY) . --strict  --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs
 
 clean:
-	rm -rf $(VENV)
-	find . -name "*.pyc" -exec rm -f {} \;
+	find . -name "*.pyc" -exec rm -rf {} \;
 	find . -type d \( -name "__pycache__" -o -name ".mypy_cache" \) -exec rm -rf {} \;
 
-.PHONY: clean
+fclean: clean
+	rm -rf $(VENV)
+
+re: fclean install
+
+.PHONY: clean re fclean install run lint lint-strict flake

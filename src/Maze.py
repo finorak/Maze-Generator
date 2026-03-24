@@ -60,13 +60,11 @@ class Maze:
             return None
         self.win_width = self.rows * self.cell_width
         self.win_height = self.cols * self.cell_height
-        print(self.win_height // self.cols)
         return config
 
     def generate(self) -> None:
         if not self._init():
             return None
-        print(self.cell_width, self.cell_height)
         self.run()
 
     def get_cells(self) -> list[Cell] | Any:
@@ -85,6 +83,7 @@ class Maze:
         return cells
 
     def event_handler(self, mlx_ptr: Any, mlx_window: Any) -> None:
+        self.mlx.mlx_key_hook(mlx_window, self.key_handler, (mlx_ptr, mlx_window))
         self.mlx.mlx_hook(mlx_window, 33, 0, self.close, mlx_ptr)
 
     def close(self, mlx_ptr: Any) -> None:
@@ -99,3 +98,6 @@ class Maze:
             for cell in row:
                 cell.draw_cell(mlx, mlx_ptr, mlx_win,
                                lambda: self.event_handler(mlx_ptr, mlx_win))
+
+    def key_handler(self, keycode: int, args: Any) -> None:
+        pass

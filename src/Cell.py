@@ -3,7 +3,7 @@ Module containing the cell class
 """
 from typing import Any
 from .Image import Image
-from . import NORTH, SOUTH, WEST, EAST, WALL_THICK
+from . import NORTH, SOUTH, WEST, EAST, WALL_THICK, CELL_COLOR, WALL_COLOR
 
 
 class Cell:
@@ -35,8 +35,6 @@ class Cell:
         self.visited = False
         self.is_42_cell = False
         self.image: Any = None
-        self.color = 0xFFFFFFFF
-        self.wall_color = 0x00000000
         self.initiated = False
 
     def _init(self, mlx: Any, mlx_ptr: Any, event_handler: Any) -> None:
@@ -81,14 +79,14 @@ class Cell:
         for j in range(self.height):
             for i in range(self.width):
                 offset = j * self.image.sl + i * byte_per_pixel
-                self.image.data[offset:offset + byte_per_pixel] = self.color.to_bytes(
+                self.image.data[offset:offset + byte_per_pixel] = CELL_COLOR.to_bytes(
                         byte_per_pixel,
                         'little')
         if self.wall & NORTH:
             for j in range(WALL_THICK):
                 for i in range(self.width):
                     offset = j * self.image.sl + i * byte_per_pixel
-                    self.image.data[offset:offset + byte_per_pixel] = self.wall_color.to_bytes(
+                    self.image.data[offset:offset + byte_per_pixel] = WALL_COLOR.to_bytes(
                             byte_per_pixel,
                             'little'
                             )
@@ -96,7 +94,7 @@ class Cell:
             for i in range(self.height):
                 for j in range(WALL_THICK):
                     offset = i * self.image.sl + j * byte_per_pixel
-                    self.image.data[offset:offset + byte_per_pixel] = self.wall_color.to_bytes(
+                    self.image.data[offset:offset + byte_per_pixel] = WALL_COLOR.to_bytes(
                             byte_per_pixel,
                             'little'
                             )
@@ -104,7 +102,7 @@ class Cell:
             for i in range(self.height):
                 for j in range(WALL_THICK):
                     offset = i * self.image.sl + j * byte_per_pixel
-                    self.image.data[offset:offset + byte_per_pixel] = self.wall_color.to_bytes(
+                    self.image.data[offset:offset + byte_per_pixel] = WALL_COLOR.to_bytes(
                             byte_per_pixel,
                             'little'
                             )
@@ -112,7 +110,7 @@ class Cell:
             for i in range(self.height):
                 for j in range(WALL_THICK):
                     offset = i * self.image.sl + j * byte_per_pixel
-                    self.image.data[offset:offset + byte_per_pixel] = self.wall_color.to_bytes(
+                    self.image.data[offset:offset + byte_per_pixel] = WALL_COLOR.to_bytes(
                             byte_per_pixel,
                             'little'
                             )

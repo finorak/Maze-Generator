@@ -2,6 +2,8 @@
 Module containing the cell class
 """
 from typing import Any
+
+from .Image import Image
 from . import NORTH, SOUTH, WEST, EAST
 
 
@@ -33,24 +35,48 @@ class Cell:
         self.win_height = win_height
         self.visited = False
         self.is_42_cell = False
+        self.image: Any = None
+        self.color = 0xFFFFFF00
+        self.initiated = False
 
+    def _init(self, mlx: Any, mlx_ptr: Any) -> None:
+        if self.initiated:
+            return
+        self.initiated = True
+        self.image = Image()
+        self.image.width = self.width
+        self.image.height = self.height
+        self.image.img = mlx.mlx_new_image(mlx_ptr,
+                                           self.image.width,
+                                           self.image.height)
     def remove_wall(self, wall: str) -> None:
-        if wall.lower() == "north" or wall.lower() == "n":
+        wall = wall.lower()
+        if wall == "north" or wall == "n":
             if self.wall & NORTH:
                 self.wall -= NORTH
-        if wall.lower() == "west" or wall.lower() == "w":
+        if wall == "west" or wall == "w":
             if self.wall & WEST:
                 self.wall -= WEST
-        if wall.lower() == "south" or wall.lower() == "s":
+        if wall == "south" or wall == "s":
             if self.wall & SOUTH:
                 self.wall -= SOUTH
-        if wall.lower() == "east" or wall.lower() == "e":
+        if wall == "east" or wall == "e":
             if self.wall & EAST:
                 self.wall -= EAST
 
     def add_wall(self, wall: str) -> None:
-        if wall.lower() == "north" or wall.lower() == "n":
+        wall = wall.lower()
+        if wall == "north" or wall == "n":
             self.wall |= NORTH
 
-    def draw_cell(self, win: Any) -> None:
-        print(self.row, self.col)
+    def draw_cell(self, mlx: Any, mlx_ptr: Any, mlx_win: Any) -> None:
+        self._init(mlx, mlx_ptr)
+        addr = mlx.mlx_get_data_addr(self.image.img)
+        self.image.data, self.image.bpp, self.sl, _ = addr
+        byte_per_pixel = self.image.bpp // 8
+        for j in range(self.height):
+            for i in range(self.width):
+                offset = j * self.image.sl + i * byte_per_pixel
+                self.image.data[offset:offset + 4] = self.color.to_bytes(4, 'little')
+        mlx.mlx_put_image_to_window(mlx_ptr, mlx_win, self.image.img,
+                                    self.row * self.width, self.col * self.height)

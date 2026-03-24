@@ -5,10 +5,10 @@ might use class later on
 """
 
 
-from typing import Mapping, Union
+from typing import Mapping, Union, Any
 
 
-def config_is_valid(config: dict[str, Union[str, int, tuple, bool]]
+def config_is_valid(config: dict[str, Union[str, int, tuple, bool]] | None
                     ) -> bool:
     """
     This function verify if the config is vaild or not
@@ -60,8 +60,9 @@ def get_configuration(file_name: str
     """
     Getting the configuration file using dict
     """
-    config: dict | None = {}
+    config: dict[str, Any] | None = {}
     value: str | tuple[int, int]
+    key: str
     try:
         with open(file_name, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -77,11 +78,10 @@ def get_configuration(file_name: str
                     x = int(pos[0].strip())
                     y = int(pos[1].strip())
                     value = (x, y)
-                config.update({key.lower(): value})
+                config.update({key.strip().lower(): value})
         config = parse_config(config)
         if not config_is_valid(config):
             return None
-        print(config)
         return config
     except Exception as e:
         print(e)

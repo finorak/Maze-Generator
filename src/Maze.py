@@ -82,17 +82,6 @@ class Maze:
                 cells[row].append(cell)
         return cells
 
-    def draw_grid(self) -> None:
-        """
-        Might delete later
-        """
-        width_gap = WIDTH // self.cell_width
-        height_gap = HEIGHT // self.cell_height
-        _ = width_gap, height_gap
-        if not isinstance(self.rows, int) or not \
-                isinstance(self.cols, int):
-            return
-
     def event_handler(self, mlx_ptr: Any, mlx_window: Any) -> None:
         self.mlx.mlx_hook(mlx_window, 33, 0, self.close, mlx_ptr)
 

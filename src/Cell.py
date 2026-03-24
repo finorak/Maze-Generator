@@ -49,6 +49,7 @@ class Cell:
         self.image.img = mlx.mlx_new_image(mlx_ptr,
                                            self.image.width,
                                            self.image.height)
+
     def remove_wall(self, wall: str) -> None:
         wall = wall.lower()
         if wall == "north" or wall == "n":
@@ -72,11 +73,14 @@ class Cell:
     def draw_cell(self, mlx: Any, mlx_ptr: Any, mlx_win: Any) -> None:
         self._init(mlx, mlx_ptr)
         addr = mlx.mlx_get_data_addr(self.image.img)
-        self.image.data, self.image.bpp, self.sl, _ = addr
+        self.image.data, self.image.bpp, self.image.sl, _ = addr
         byte_per_pixel = self.image.bpp // 8
         for j in range(self.height):
             for i in range(self.width):
                 offset = j * self.image.sl + i * byte_per_pixel
-                self.image.data[offset:offset + 4] = self.color.to_bytes(4, 'little')
-        mlx.mlx_put_image_to_window(mlx_ptr, mlx_win, self.image.img,
-                                    self.row * self.width, self.col * self.height)
+                self.image.data[offset:offset + 4] = self.color.to_bytes(
+                        byte_per_pixel,
+                        'little')
+        mlx.mlx_put_image_to_window(
+                mlx_ptr, mlx_win, self.image.img,
+                self.row * self.width, self.col * self.height)

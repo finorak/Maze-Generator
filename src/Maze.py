@@ -9,10 +9,10 @@ class Maze:
         self.cells: list[list[Cell]] | Any = []
         self._: Any = mlx
         self.file_name: str = file_name
-        self.cell_width: int = 40
-        self.cell_height: int = 40
-        self.win_width: int = 500
-        self.win_height: int = 500
+        self.cell_width: int = 20
+        self.cell_height: int = 20
+        self.win_width: int = WIDTH
+        self.win_height: int = HEIGHT
         self.perfect: bool = False
 
     def _init(self) -> bool:
@@ -59,12 +59,14 @@ class Maze:
                 isinstance(self.cols, int):
             return None
         self.win_width = self.rows * self.cell_width
-        self.win_height = self.cols * self.win_height
+        self.win_height = self.cols * self.cell_height
+        print(self.win_height // self.cols)
         return config
 
     def generate(self) -> None:
         if not self._init():
             return None
+        print(self.cell_width, self.cell_height)
         self.run()
 
     def get_cells(self) -> list[Cell] | Any:
@@ -72,14 +74,14 @@ class Maze:
         if not isinstance(self.rows, int) or not \
                 isinstance(self.cols, int):
             return None
-        for row in range(self.rows):
+        for col in range(self.cols):
             cells.append([])
-            for col in range(self.cols):
-                cell = Cell(row, col,
+            for row in range(self.rows):
+                cell = Cell(col, row,
                             self.cell_width, self.cell_height,
                             self.win_width, self.win_height
                             )
-                cells[row].append(cell)
+                cells[col].append(cell)
         return cells
 
     def event_handler(self, mlx_ptr: Any, mlx_window: Any) -> None:

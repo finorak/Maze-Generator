@@ -120,29 +120,6 @@ class Cell:
                 mlx_ptr, mlx_win, self.image.img,
                 self.height * self.col, self.row * self.width)
 
-        """
-        if self.wall & WEST:  # LEFT
-            for i in range(self.width):
-                offset = i * byte_per_pixel
-                self.wall_img.data[offset:offset + byte_per_pixel] = self.wall_color
-            mlx.mlx_put_image_to_window(
-                    mlx_ptr, mlx_win, self.wall_img.img,
-                    self.row * self.width, self.col * self.height)
-        if self.wall & SOUTH:  # DOWN
-            for i in range(self.width):
-                offset = i * byte_per_pixel
-                self.wall_img.data[offset:offset + byte_per_pixel] = self.wall_color
-            mlx.mlx_put_image_to_window(
-                    mlx_ptr, mlx_win, self.wall_img.img,
-                    self.row * self.width, self.col * self.height)
-        if self.wall & EAST:  # RIGHT
-            for i in range(self.width):
-                offset = i * byte_per_pixel
-                self.wall_img.data[offset:offset + byte_per_pixel] = self.wall_color
-            mlx.mlx_put_image_to_window(
-                    mlx_ptr, mlx_win, self.wall_img.img,
-                    self.row * self.width, self.col * self.height)"""
-
     def _init_wall(self, mlx: Any, mlx_ptr: Any) -> None:
         if self.wall_initiated:
             return None

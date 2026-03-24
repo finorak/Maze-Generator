@@ -95,4 +95,5 @@ class Maze:
         mlx_win = args[2]
         for row in self.cells:
             for cell in row:
-                cell.draw_cell(mlx, mlx_ptr, mlx_win)
+                cell.draw_cell(mlx, mlx_ptr, mlx_win,
+                               lambda: self.event_handler(mlx_ptr, mlx_win))

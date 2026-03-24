@@ -2,9 +2,8 @@
 Module containing the cell class
 """
 from typing import Any
-
 from .Image import Image
-from . import NORTH, SOUTH, WEST, EAST
+from . import NORTH, SOUTH, WEST, EAST, WALL_THICK
 
 
 class Cell:
@@ -14,7 +13,7 @@ class Cell:
     def __init__(self, row: int, col: int,
                  width: int, height: int,
                  win_width: int, win_height: int,
-                 defaul_wall: int = 0b0000) -> None:
+                 defaul_wall: int = 0b1111) -> None:
         """
         :param row: the row of the cell
         :type row: int
@@ -36,12 +35,15 @@ class Cell:
         self.visited = False
         self.is_42_cell = False
         self.image: Any = None
-        self.color = 0xFFFFFF00
+        self.color = 0xFFFFFFFF
+        self.wall_color = 0x00000000
         self.initiated = False
 
-    def _init(self, mlx: Any, mlx_ptr: Any) -> None:
+    def _init(self, mlx: Any, mlx_ptr: Any, event_handler: Any) -> None:
         if self.initiated:
-            return
+            return None
+        self.wall_initiated = False
+        self.event_handler = event_handler
         self.initiated = True
         self.image = Image()
         self.image.width = self.width
@@ -70,17 +72,80 @@ class Cell:
         if wall == "north" or wall == "n":
             self.wall |= NORTH
 
-    def draw_cell(self, mlx: Any, mlx_ptr: Any, mlx_win: Any) -> None:
-        self._init(mlx, mlx_ptr)
+    def draw_cell(self, mlx: Any, mlx_ptr: Any,
+                  mlx_win: Any, event_handler: Any) -> None:
+        self._init(mlx, mlx_ptr, event_handler)
         addr = mlx.mlx_get_data_addr(self.image.img)
         self.image.data, self.image.bpp, self.image.sl, _ = addr
         byte_per_pixel = self.image.bpp // 8
         for j in range(self.height):
             for i in range(self.width):
                 offset = j * self.image.sl + i * byte_per_pixel
-                self.image.data[offset:offset + 4] = self.color.to_bytes(
+                self.image.data[offset:offset + byte_per_pixel] = self.color.to_bytes(
                         byte_per_pixel,
                         'little')
+        if self.wall & NORTH:
+            for j in range(WALL_THICK):
+                for i in range(self.width):
+                    offset = j * self.image.sl + i * byte_per_pixel
+                    self.image.data[offset:offset + byte_per_pixel] = self.wall_color.to_bytes(
+                            byte_per_pixel,
+                            'little'
+                            )
+        if self.wall & EAST:
+            for i in range(self.height):
+                for j in range(WALL_THICK):
+                    offset = i * self.image.sl + j * byte_per_pixel
+                    self.image.data[offset:offset + byte_per_pixel] = self.wall_color.to_bytes(
+                            byte_per_pixel,
+                            'little'
+                            )
+        if self.wall & WEST:
+            for i in range(self.height):
+                for j in range(WALL_THICK):
+                    offset = i * self.image.sl + j * byte_per_pixel
+                    self.image.data[offset:offset + byte_per_pixel] = self.wall_color.to_bytes(
+                            byte_per_pixel,
+                            'little'
+                            )
+        if self.wall & SOUTH:
+            for i in range(self.height):
+                for j in range(WALL_THICK):
+                    offset = i * self.image.sl + j * byte_per_pixel
+                    self.image.data[offset:offset + byte_per_pixel] = self.wall_color.to_bytes(
+                            byte_per_pixel,
+                            'little'
+                            )
         mlx.mlx_put_image_to_window(
                 mlx_ptr, mlx_win, self.image.img,
-                self.row * self.width, self.col * self.height)
+                self.height * self.col, self.row * self.width)
+
+        """
+        if self.wall & WEST:  # LEFT
+            for i in range(self.width):
+                offset = i * byte_per_pixel
+                self.wall_img.data[offset:offset + byte_per_pixel] = self.wall_color
+            mlx.mlx_put_image_to_window(
+                    mlx_ptr, mlx_win, self.wall_img.img,
+                    self.row * self.width, self.col * self.height)
+        if self.wall & SOUTH:  # DOWN
+            for i in range(self.width):
+                offset = i * byte_per_pixel
+                self.wall_img.data[offset:offset + byte_per_pixel] = self.wall_color
+            mlx.mlx_put_image_to_window(
+                    mlx_ptr, mlx_win, self.wall_img.img,
+                    self.row * self.width, self.col * self.height)
+        if self.wall & EAST:  # RIGHT
+            for i in range(self.width):
+                offset = i * byte_per_pixel
+                self.wall_img.data[offset:offset + byte_per_pixel] = self.wall_color
+            mlx.mlx_put_image_to_window(
+                    mlx_ptr, mlx_win, self.wall_img.img,
+                    self.row * self.width, self.col * self.height)"""
+
+    def _init_wall(self, mlx: Any, mlx_ptr: Any) -> None:
+        if self.wall_initiated:
+            return None
+        self.wall_initiated = True
+        self.wall_img = Image()
+        self.wall_img.img = mlx.mlx_new_image(mlx_ptr, 5, 5)

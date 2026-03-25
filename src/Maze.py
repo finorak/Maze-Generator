@@ -66,10 +66,12 @@ class Maze:
         self.data[x][y].wall_closed = False
         neighbors = self.find_neighbor_closed((x, y))
 
-        while len(neighbors) != 0:
-            wall1, wall2, new_x, new_y = random.choice(neighbors)
-            self.data[x][y].remove_wall(wall1)
-            self.data[new_x][new_y].remove_wall(wall2)
+        # while len(neighbors) != 0:
+        neighbor = random.choice(neighbors)
+        wall1, wall2, new_x, new_y = neighbor
+        self.data[x][y].remove_wall(wall1)
+        self.data[new_x][new_y].remove_wall(wall2)
+        self.generate_perfect_mage(new_x, new_y)
 
     def generate_non_perfect_mage(self):
         pass

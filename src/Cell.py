@@ -12,6 +12,7 @@ class Cell:
         self.wall = 0b1111
         self.is_42_cell = False
         self.is_visited = False
+        self.wall_closed = True
         self.size = size
         self.image: Any = Image()
 

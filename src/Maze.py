@@ -1,11 +1,10 @@
 from typing import Any
-from src.setting import BLOCK_42_COLOR, CELL_COLOR, VISITED_COLOR
+from src.setting import BLOCK_42_COLOR, CELL_COLOR, ENTRY_COLOR, EXIT_COLOR, VISITED_COLOR
 from src.utils.color_genertor import rgb
 from .Cell import Cell
 from . import DIRECTIONS
 from random import choice, shuffle
 import random
-import time
 
 class Maze:
     def __init__(self, parent: Any):
@@ -28,27 +27,28 @@ class Maze:
         self.make_42_block()
 
     def make_42_block(self):
+        color = BLOCK_42_COLOR
         def set_four(x: int, y: int) -> None:
             for i in range(3):
                 self.data[x][y + i].is_42_cell = True
-                self.data[x][y + i].color = BLOCK_42_COLOR
+                self.data[x][y + i].color = color
                 self.data[x + 2][y + 2 + i].is_42_cell = True
-                self.data[x + 2][y + 2 + i].color = BLOCK_42_COLOR
+                self.data[x + 2][y + 2 + i].color = color
             self.data[x + 1][y + 2].is_42_cell = True
-            self.data[x + 1][y + 2].color = BLOCK_42_COLOR
+            self.data[x + 1][y + 2].color = color
 
         def set_two(x: int, y: int) -> None:
             for i in range(3):
                 self.data[x + i][y].is_42_cell = True
-                self.data[x + i][y].color = BLOCK_42_COLOR
+                self.data[x + i][y].color = color
                 self.data[x + i][y + 2].is_42_cell = True
-                self.data[x + i][y + 2].color = BLOCK_42_COLOR
+                self.data[x + i][y + 2].color = color
                 self.data[x + i][y + 4].is_42_cell = True
-                self.data[x + i][y + 4].color = BLOCK_42_COLOR
+                self.data[x + i][y + 4].color = color
             self.data[x + 2][y + 1].is_42_cell = True
-            self.data[x + 2][y + 1].color = BLOCK_42_COLOR
+            self.data[x + 2][y + 1].color = color
             self.data[x][y + 3].is_42_cell = True
-            self.data[x][y + 3].color = BLOCK_42_COLOR
+            self.data[x][y + 3].color = color
 
         set_four(self.cols//2 - 3, self.rows//2 - 2)
         set_two(self.cols//2 + 1, self.rows//2 - 2)
@@ -76,7 +76,6 @@ class Maze:
         if self.perfect:
             self.generate_perfect_maze()
         else:
-            print("solve")
             self.generate_non_perfect_maze(self.entry_pos)
 
     def generate_perfect_maze(self, x = 0, y = 0):
@@ -97,8 +96,18 @@ class Maze:
                                   ) -> None:
         x, y = start_pos
         cell = self.data[x][y]
-        neghtboors = self.find_neighbor_closed((0, 0))
-        wall1, wall2, x, y = neghtboors[0]
-        cell.remove_wall(wall1)
-        self.data[x][y].remove_wall(wall2)
-        self.parent.draw_maze()
+        cell.is_visited = True
+        cell.color = VISITED_COLOR
+        self.parent.draw_cell(cell)
+        neightboors = self.find_neighbor_closed((x, y))
+        shuffle(neightboors)
+        for neightboor in neightboors:
+            wall1, wall2, new_x, new_y = neightboor
+            if not self.data[new_x][new_y].is_visited and not \
+                    self.data[new_x][new_y].is_42_cell:
+                cell.remove_wall(wall1)
+                self.data[new_x][new_y].remove_wall(wall2)
+                self.parent.draw_cell(self.data[new_x][new_y])
+                self.generate_non_perfect_maze((new_x, new_y))
+                self.data[new_x][new_y].color = CELL_COLOR
+                self.parent.draw_cell(self.data[new_x][new_y])

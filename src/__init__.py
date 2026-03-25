@@ -9,6 +9,6 @@ from .Image import Image
 __all__ = ["WIDTH", "HEIGHT", "TITLE", "Cell",
            "NORTH", "EAST", "SOUTH", "WEST",
            "WALL_THICK", "WALL_COLOR", "CELL_COLOR",
-           "DIRECTIONS",
-           "get_configuration", "Image", "rgb", "rgba"
+           "DIRECTIONS", "get_configuration",
+           "Image", "rgb", "rgba"
            ]

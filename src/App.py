@@ -82,6 +82,8 @@ class App:
     def on_key_maze(self, key: Any, _param: Any) -> None:
         if key in (65307, ord('q')):
             self.mlx.mlx_loop_exit(self.ptr)
+        elif key == ord('s'):
+            self.maze.generete()
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:
@@ -103,12 +105,8 @@ class App:
         byte_per_pixel = cell.image.bpp // 8
         for j in range(cell.size):
             for i in range(cell.size):
-                if cell.is_42_cell:
-                    color = BLOCK_42_COLOR
-                else:
-                    color = CELL_COLOR
                 offset = j * cell.image.sl + i * byte_per_pixel
-                cell.image.data[offset:offset + byte_per_pixel] = color.to_bytes(
+                cell.image.data[offset:offset + byte_per_pixel] = cell.color.to_bytes(
                         byte_per_pixel,
                         'little')
 

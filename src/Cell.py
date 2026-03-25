@@ -2,13 +2,20 @@
 Module containing the cell class
 """
 from typing import Any, Self
+
+from src.setting import CELL_COLOR
 from .Image import Image
 from . import NORTH, SOUTH, WEST, EAST
 
 class Cell:
-    def __init__(self, row: int, col: int, size: int = 40) -> None:
+    def __init__(self, row: int, col: int,
+                 rows: int, cols: int, size: int = 40,
+                 color: int = CELL_COLOR) -> None:
         self.row = row
         self.col = col
+        self.rows = row
+        self.cols = cols
+        self.color = color
         self.wall = 0b1111
         self.is_42_cell = False
         self.is_visited = False
@@ -32,14 +39,14 @@ class Cell:
             if self.wall & EAST:
                 self.wall -= EAST
 
-    def get_neightboor(self, cells: list[list[Self]],
-                       rows: int, cols: int) -> None:
+    def get_neightboor(self, cells: list[list[Self]]) -> list[Self]:
         self.neightboors = []
-        if self.row < rows - 1:
+        if self.row < self.rows - 1 and not cells[self.row + 1][self.col].is_42_cell:
             self.neightboors.append(cells[self.row + 1][self.col])
-        elif self.row > 0:
+        if self.row > 0 and not cells[self.row - 1][self.col].is_42_cell:
             self.neightboors.append(cells[self.row - 1][self.col])
-        elif self.col < cols - 1:
+        if self.col < self.cols - 1 and not cells[self.row][self.col + 1].is_42_cell:
             self.neightboors.append(cells[self.row][self.col + 1])
-        elif self.col > 0:
+        if self.col > 0 and not cells[self.row][self.col - 1].is_42_cell:
             self.neightboors.append(cells[self.row][self.col - 1])
+        return self.neightboors

@@ -10,12 +10,15 @@ class Maze:
         self.cols = 0
         self.perfect = True
 
-    def init_data(self):
+    def init_data(self, rows: int, cols: int) -> None:
+        self.rows = rows
+        self.cols = cols
         self.data = [
             [
                 Cell(i, j) for j in range(self.cols)
             ] for i in range(self.rows)
         ]
+
 # class Maze:
 #     def __init__(self, mlx: Any, file_name: str):
 #         self.cells: list[list[Cell]] | Any = []

@@ -4,11 +4,12 @@ from .Cell import Cell
 from . import get_configuration
 
 class Maze:
-    def __init__(self):
+    def __init__(self, parent: Any):
         self.data: list[list[Cell]] | None = None
         self.rows = 0
         self.cols = 0
-        self.perfect = True
+        self.parent = parent
+        self.perfect = parent.config.get("perferct")
 
     def init_data(self, rows: int, cols: int) -> None:
         self.rows = rows

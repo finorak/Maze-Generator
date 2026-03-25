@@ -5,7 +5,6 @@ from .setting import HEIGHT, WIDTH, TITLE, rgb, NORTH, SOUTH, WEST, EAST, WALL_T
 from .Image import Image
 from .Cell import Cell
 import random
-
 class App:
     def __init__(self, config: Any) -> None:
         # self.maze = Maze(Mlx, "config.txt")
@@ -15,8 +14,8 @@ class App:
         self.main_win: Any = None
         self.maze_win: Any = None
         self.error_win: Any = None
-        self.maze: Maze = Maze()
         self.config = config
+        self.maze: Maze = Maze(self)
         self.counter = 0
         # self.image = Image()
         self.maze.init_data(config.get("height"), config.get("width"))

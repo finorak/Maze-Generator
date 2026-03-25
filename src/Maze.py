@@ -37,7 +37,20 @@ class Maze:
 
         set_four(self.cols//2 - 3, self.rows//2 - 2)
         set_two(self.cols//2 + 1, self.rows//2 - 2)
+    
+
+    def generete(self):
+        if self.perfect:
+            self.generate_perfect_mage()
+        else:
+            self.generate_non_perfect_mage()
+
+    def generate_perfect_mage(self):
         pass
+
+    def generate_non_perfect_mage(self):
+        pass
+
 
 # class Maze:
 #     def __init__(self, mlx: Any, file_name: str):

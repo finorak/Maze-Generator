@@ -1,10 +1,12 @@
 from .Maze import Maze
 from mlx import Mlx
 from typing import Any
-from .setting import HEIGHT, WIDTH, TITLE, rgb, NORTH, SOUTH, WEST, EAST, WALL_THICK, WALL_COLOR, CELL_COLOR, BLOCK_42_COLOR
-from .Image import Image
+from .setting import (HEIGHT, WIDTH, TITLE, NORTH, SOUTH,
+                      WEST, EAST, WALL_THICK, WALL_COLOR,
+                      CELL_COLOR, BLOCK_42_COLOR)
 from .Cell import Cell
-import random
+
+
 class App:
     def __init__(self, config: Any) -> None:
         # self.maze = Maze(Mlx, "config.txt")
@@ -82,41 +84,20 @@ class App:
             self.mlx.mlx_loop_exit(self.ptr)
 
     def switch_to_maze(self) -> None:
-        # self.maze.init_data(self.config["width"], self.config["height"])
-
         if self.main_win is not None:
             self.mlx.mlx_destroy_window(self.ptr, self.main_win)
             self.main_win = None
 
         self.maze_win = self.mlx.mlx_new_window(
-            self.ptr, WIDTH, HEIGHT, "Maze"
+            self.ptr, WIDTH, HEIGHT, TITLE
         )
         self.draw_maze()
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
 
         self.start = True
-    
-    def draw_backgroud(self, color):
-        self.init_image()
-        # color = 0xFFFFFFFF
-        addr = self.mlx.mlx_get_data_addr(self.image.img)
-        self.image.data, self.image.bpp, self.image.sl, _ = addr
-        byte_per_pixel = self.image.bpp // 8
-        for j in range(HEIGHT):
-            for i in range(WIDTH):
-                offset = j * self.image.sl + i * byte_per_pixel
-                self.image.data[offset:offset + byte_per_pixel] = color.to_bytes(
-                        byte_per_pixel,
-                        'little')
-        self.mlx.mlx_put_image_to_window(
-            self.ptr, self.maze_win, self.image.img,
-            0,0
-        )
 
     def draw_cell(self, cell: Cell):
-        # color = rgb(random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
-        # print(hex(color))
         addr = self.mlx.mlx_get_data_addr(cell.image.img)
         cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
         byte_per_pixel = cell.image.bpp // 8
@@ -173,4 +154,3 @@ class App:
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell)
-    #----------------------maze win---------------------------#

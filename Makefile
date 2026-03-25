@@ -12,6 +12,7 @@ install: $(VENV)
 
 $(VENV):
 	python3 -m venv $(VENV)
+	source venv/Scripts/activate
 
 run:
 	$(PYTHON) $(NAME)
@@ -22,8 +23,7 @@ flake:
 lint: flake
 	$(MYPY) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .
 
-lint-strict:
-	$(FLAKE) --exclude=.venv .
+lint-strict: flake
 	$(MYPY) --strict  --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .
 
 clean:

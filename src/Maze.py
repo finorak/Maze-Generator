@@ -4,8 +4,8 @@ from src.utils.color_genertor import rgb
 from .Cell import Cell
 from . import DIRECTIONS
 from random import choice, shuffle
-
 import random
+import time
 
 class Maze:
     def __init__(self, parent: Any):
@@ -14,6 +14,8 @@ class Maze:
         self.cols = 0
         self.parent = parent
         self.perfect = parent.config.get("perferct")
+        self.entry_pos = self.parent.config.get('entry')
+        self.end_pos = self.parent.config.get('exit')
 
     def init_data(self, rows: int, cols: int) -> None:
         self.rows = rows
@@ -64,22 +66,20 @@ class Maze:
             neighbors.append(("w", "e", x - 1, y))
         if (y + 1 < self.rows and (self.data[x][y + 1].wall_closed \
                 and not self.data[x][y + 1].is_42_cell)):
-            neighbors.append(("n", "s", x, y + 1))
+            neighbors.append(("s", "n", x, y + 1))
         if (y - 1 >= 0 and (self.data[x][y - 1].wall_closed and not \
                 self.data[x][y - 1].is_42_cell)):
-            neighbors.append(("s", "n", x, y - 1))
+            neighbors.append(("n", "s", x, y - 1))
         return neighbors
 
     def generete(self):
-        self.entry_pos = self.parent.config.get('entry')
-        self.end_pos = self.parent.config.get('exit')
         if self.perfect:
-            self.generate_perfect_mage()
+            self.generate_perfect_maze()
         else:
             print("solve")
             self.generate_non_perfect_maze(self.entry_pos)
 
-    def generate_perfect_mage(self, x = 0, y = 0):
+    def generate_perfect_maze(self, x = 0, y = 0):
         self.data[x][y].wall_closed = False
         neighbors = self.find_neighbor_closed((x, y))
 
@@ -89,10 +89,16 @@ class Maze:
         self.parent.draw_cell(self.data[x][y])
         self.data[new_x][new_y].remove_wall(wall2)
         self.parent.draw_cell(self.data[new_x][new_y])
-        self.generate_perfect_mage(new_x, new_y)
+        self.generate_perfect_maze(new_x, new_y)
+        
 
     def generate_non_perfect_maze(self,
                                   start_pos: tuple[int, int]
                                   ) -> None:
-        self.data[0][0].color = VISITED_COLOR
-        self.parent.draw_cell(self.data[0][0])
+        x, y = start_pos
+        cell = self.data[x][y]
+        neghtboors = self.find_neighbor_closed((0, 0))
+        wall1, wall2, x, y = neghtboors[0]
+        cell.remove_wall(wall1)
+        self.data[x][y].remove_wall(wall2)
+        self.parent.draw_maze()

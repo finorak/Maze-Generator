@@ -40,12 +40,12 @@ class Cell:
 
     def get_neightboor(self, cells: list[list[Self]]) -> list[Self]:
         self.neightboors = []
-        if self.row < self.rows - 1:
+        if self.row < self.rows - 1 and not cells[self.row + 1][self.col].is_42_cell:
             self.neightboors.append(cells[self.row + 1][self.col])
-        if self.row > 0:
+        if self.row > 0 and not cells[self.row - 1][self.col]:
             self.neightboors.append(cells[self.row - 1][self.col])
-        if self.col < self.cols - 1:
+        if self.col < self.cols - 1 and not cells[self.row][self.col + 1].is_42_cell:
             self.neightboors.append(cells[self.row][self.col + 1])
-        if self.col > 0:
+        if self.col > 0 and not cells[self.row][self.col - 1]:
             self.neightboors.append(cells[self.row][self.col - 1])
         return self.neightboors

@@ -92,7 +92,7 @@ class App:
         if key in (65307, ord('q')):
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord('s'):
-            self.maze.generete()
+            self.maze.generate_perfect_maze(*self.maze.entry_pos)
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:

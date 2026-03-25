@@ -149,6 +149,7 @@ class App:
 
     def draw_maze(self):
         self.init_image()
+        # self.maze.generate_perfect_mage()
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell)

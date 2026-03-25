@@ -41,30 +41,17 @@ class Maze:
         set_four(self.cols//2 - 3, self.rows//2 - 2)
         set_two(self.cols//2 + 1, self.rows//2 - 2)
 
-    def find_neighbor_closed(self, cell_coord: tuple[int, int]) -> list[tuple[int, int]]:
-        neighbors: list[tuple[int, int]] = []
+    def find_neighbor_closed(self, cell_coord: tuple[int, int]) -> list[tuple[str, str, int, int]]:
+        neighbors: list[tuple[str, str, int, int]] = []
         x, y = cell_coord
         if (x + 1 < self.cols and self.data[x + 1][y].wall_closed):
-            neighbors.append(("right", x + 1, y))
+            neighbors.append(("east", "west", x + 1, y))
         if (x - 1 >= 0 and self.data[x - 1][y].wall_closed):
-            neighbors.append(("left", x - 1, y))
+            neighbors.append(("west", "east", x - 1, y))
         if (y + 1 < self.rows and self.data[x][y + 1].wall_closed):
-            neighbors.append(("up", x, y + 1))
+            neighbors.append(("north", "south", x, y + 1))
         if (y - 1 >= 0 and self.data[x][y - 1].wall_closed):
-            neighbors.append(("down", x, y - 1))
-        return neighbors
-
-    def find_neighbor_closed(self, cell_coord: tuple[int, int]) -> list[tuple[int, int]]:
-        neighbors: list[tuple[int, int]] = []
-        x, y = cell_coord
-        if (x + 1 < self.cols and self.data[x + 1][y].wall_closed):
-            neighbors.append(("right", x + 1, y))
-        if (x - 1 >= 0 and self.data[x - 1][y].wall_closed):
-            neighbors.append(("left", x - 1, y))
-        if (y + 1 < self.rows and self.data[x][y + 1].wall_closed):
-            neighbors.append(("up", x, y + 1))
-        if (y - 1 >= 0 and self.data[x][y - 1].wall_closed):
-            neighbors.append(("down", x, y - 1))
+            neighbors.append(("south", "north", x, y - 1))
         return neighbors
 
     def generete(self):
@@ -80,9 +67,9 @@ class Maze:
         neighbors = self.find_neighbor_closed((x, y))
 
         while len(neighbors) != 0:
-            direction, new_x, new_y = random.choice(neighbors)
-            
-
+            wall1, wall2, new_x, new_y = random.choice(neighbors)
+            self.data[x][y].remove_wall(wall1)
+            self.data[new_x][new_y].remove_wall(wall2)
 
     def generate_non_perfect_mage(self):
         pass

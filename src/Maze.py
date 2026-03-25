@@ -19,6 +19,25 @@ class Maze:
                 Cell(i, j) for j in range(self.rows)
             ] for i in range(self.cols)
         ]
+        self.make_42_block()
+
+    def make_42_block(self):
+        def set_four(x: int, y: int) -> None:
+            for i in range(3):
+                self.data[x][y + i].is_42_cell = True
+                self.data[x + 2][y + 2 + i].is_42_cell = True
+            self.data[x + 1][y + 2].is_42_cell = True
+        def set_two(x: int, y: int) -> None:
+            for i in range(3):
+                self.data[x + i][y].is_42_cell = True
+                self.data[x + i][y + 2].is_42_cell = True
+                self.data[x + i][y + 4].is_42_cell = True
+            self.data[x + 2][y + 1].is_42_cell = True
+            self.data[x][y + 3].is_42_cell = True
+
+        set_four(self.cols//2 - 3, self.rows//2 - 2)
+        set_two(self.cols//2 + 1, self.rows//2 - 2)
+        pass
 
 # class Maze:
 #     def __init__(self, mlx: Any, file_name: str):

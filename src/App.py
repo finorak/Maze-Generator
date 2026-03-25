@@ -1,7 +1,7 @@
 from .Maze import Maze
 from mlx import Mlx
 from typing import Any
-from . import HEIGHT, WIDTH, TITLE, rgb, NORTH, SOUTH, WEST, EAST, WALL_THICK, WALL_COLOR, CELL_COLOR
+from .setting import HEIGHT, WIDTH, TITLE, rgb, NORTH, SOUTH, WEST, EAST, WALL_THICK, WALL_COLOR, CELL_COLOR, BLOCK_42_COLOR
 from .Image import Image
 from .Cell import Cell
 import random
@@ -124,19 +124,15 @@ class App:
         byte_per_pixel = cell.image.bpp // 8
         for j in range(cell.size):
             for i in range(cell.size):
+                if cell.is_42_cell:
+                    color = BLOCK_42_COLOR
+                else:
+                    color = CELL_COLOR
                 offset = j * cell.image.sl + i * byte_per_pixel
-                cell.image.data[offset:offset + byte_per_pixel] = CELL_COLOR.to_bytes(
+                cell.image.data[offset:offset + byte_per_pixel] = color.to_bytes(
                         byte_per_pixel,
                         'little')
 
-        if cell.col == (self.config["height"] // 2) or cell.row == (self.config["width"] // 2):
-            for j in range(cell.size):
-                for i in range(cell.size):
-                    offset = j * cell.image.sl + i * byte_per_pixel
-                    cell.image.data[offset:offset + byte_per_pixel] = rgb(255,255,0).to_bytes(
-                            byte_per_pixel,
-                            'little')
-        
         if cell.wall & NORTH:
             for j in range(WALL_THICK):
                 for i in range(cell.size):

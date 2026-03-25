@@ -92,7 +92,6 @@ class App:
         self.maze_win = self.mlx.mlx_new_window(
             self.ptr, WIDTH, HEIGHT, "Maze"
         )
-        # self.draw_backgroud(rgb(255, 100, 100))
         self.draw_maze()
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)

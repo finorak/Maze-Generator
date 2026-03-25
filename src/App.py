@@ -1,3 +1,4 @@
+from src.Image import Image
 from .Maze import Maze
 from mlx import Mlx
 from typing import Any
@@ -37,30 +38,16 @@ class App:
     def update(self, _param: Any):
         pass
 
-    def clear_image(self, cell: Cell) -> None:
-        addr = self.mlx.mlx_get_data_addr(cell.image.img)
-        cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
-        byte_per_pixel = cell.image.bpp // 8
-        for j in range(cell.size):
-            for i in range(cell.size):
-                offset = j * cell.image.sl + i * byte_per_pixel
-                cell.image.data[offset:offset + byte_per_pixel] = CLEAR_COLOR.to_bytes(
-                        byte_per_pixel,
-                        'little')
-
     def run(self):
         self.run_main()
-        
         self.mlx.mlx_loop_hook(self.ptr, self.update, None)
         self.mlx.mlx_loop(self.ptr)
-        
         if self.main_win is not None:
             self.mlx.mlx_destroy_window(self.ptr, self.main_win)
         if self.maze_win is not None:
             self.mlx.mlx_destroy_window(self.ptr, self.maze_win)
         if self.error_win is not None:
             self.mlx.mlx_destroy_window(self.ptr, self.error_win)
-        
         self.mlx.mlx_release(self.ptr)
 
     #----------------------main win---------------------------#
@@ -69,7 +56,7 @@ class App:
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == 32:
             self.switch_to_maze()
-            
+
     def run_main(self) -> None:
         self.main_win = self.mlx.mlx_new_window(
             self.ptr, WIDTH, HEIGHT, TITLE
@@ -89,10 +76,16 @@ class App:
 
     #----------------------maze win---------------------------#
     def on_key_maze(self, key: Any, _param: Any) -> None:
+        print(key)
         if key in (65307, ord('q')):
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord('s'):
             self.maze.generete()
+        elif key == ord('c'):
+            self.reinitialise()
+
+    def reinitialise(self):
+        pass
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:
@@ -109,8 +102,6 @@ class App:
         self.start = True
 
     def draw_cell(self, cell: Cell):
-        self.clear_image(cell)
-
         addr = self.mlx.mlx_get_data_addr(cell.image.img)
         cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
         byte_per_pixel = cell.image.bpp // 8

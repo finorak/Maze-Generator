@@ -1,11 +1,11 @@
 from typing import Any, Union
 from src.setting import HEIGHT, WIDTH, TITLE
-from . import Cell
+from .Cell import Cell
 from . import get_configuration
 
 class Maze:
     def __init__(self):
-        self.data: Any = None
+        self.data: list[list[Cell]] | None = None
         self.rows = 0
         self.cols = 0
         self.perfect = True
@@ -13,10 +13,11 @@ class Maze:
     def init_data(self, rows: int, cols: int) -> None:
         self.rows = rows
         self.cols = cols
+        # self.cell_width = min(WIDTH // self.rows, HEIGHT // self.cols)
         self.data = [
             [
-                Cell(i, j) for j in range(self.cols)
-            ] for i in range(self.rows)
+                Cell(i, j) for j in range(self.rows)
+            ] for i in range(self.cols)
         ]
 
 # class Maze:

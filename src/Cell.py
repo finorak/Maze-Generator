@@ -6,12 +6,14 @@ from .Image import Image
 from . import NORTH, SOUTH, WEST, EAST, WALL_THICK, CELL_COLOR, WALL_COLOR
 
 class Cell:
-    def __init__(self, row: int, col: int) -> None:
+    def __init__(self, row: int, col: int, size: int = 40) -> None:
         self.row = row
         self.col = col
         self.wall = 0b1111
         self.is_42_cell = False
         self.is_visited = False
+        self.size = size
+        self.image: Any = Image()
 
     def remove_wall(self, wall: str) -> None:
         wall = wall.lower()
@@ -27,6 +29,8 @@ class Cell:
         if wall == "east" or wall == "e":
             if self.wall & EAST:
                 self.wall -= EAST
+    
+
 
 
 # class Cell:

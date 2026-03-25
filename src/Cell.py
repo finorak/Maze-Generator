@@ -2,7 +2,6 @@
 Module containing the cell class
 """
 from typing import Any, Self
-
 from src.setting import CELL_COLOR
 from .Image import Image
 from . import NORTH, SOUTH, WEST, EAST
@@ -41,12 +40,12 @@ class Cell:
 
     def get_neightboor(self, cells: list[list[Self]]) -> list[Self]:
         self.neightboors = []
-        if self.row < self.rows - 1 and not cells[self.row + 1][self.col].is_42_cell:
+        if self.row < self.rows - 1:
             self.neightboors.append(cells[self.row + 1][self.col])
-        if self.row > 0 and not cells[self.row - 1][self.col].is_42_cell:
+        if self.row > 0:
             self.neightboors.append(cells[self.row - 1][self.col])
-        if self.col < self.cols - 1 and not cells[self.row][self.col + 1].is_42_cell:
+        if self.col < self.cols - 1:
             self.neightboors.append(cells[self.row][self.col + 1])
-        if self.col > 0 and not cells[self.row][self.col - 1].is_42_cell:
+        if self.col > 0:
             self.neightboors.append(cells[self.row][self.col - 1])
         return self.neightboors

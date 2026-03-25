@@ -1,9 +1,8 @@
 from .Maze import Maze
 from mlx import Mlx
 from typing import Any
-from .setting import (HEIGHT, WIDTH, TITLE, NORTH, SOUTH,
-                      WEST, EAST, WALL_THICK, WALL_COLOR,
-                      CELL_COLOR, BLOCK_42_COLOR)
+from .setting import (CLEAR_COLOR, HEIGHT, WIDTH, TITLE, NORTH, SOUTH,
+                      WEST, EAST, WALL_THICK, WALL_COLOR)
 from .Cell import Cell
 
 
@@ -19,7 +18,6 @@ class App:
         self.config = config
         self.maze: Maze = Maze(self)
         self.counter = 0
-        # self.image = Image()
         self.maze.init_data(config.get("height"), config.get("width"))
 
     def init_image(self):
@@ -38,6 +36,17 @@ class App:
 
     def update(self, _param: Any):
         pass
+
+    def clear_image(self, cell: Cell) -> None:
+        addr = self.mlx.mlx_get_data_addr(cell.image.img)
+        cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
+        byte_per_pixel = cell.image.bpp // 8
+        for j in range(cell.size):
+            for i in range(cell.size):
+                offset = j * cell.image.sl + i * byte_per_pixel
+                cell.image.data[offset:offset + byte_per_pixel] = CLEAR_COLOR.to_bytes(
+                        byte_per_pixel,
+                        'little')
 
     def run(self):
         self.run_main()
@@ -100,6 +109,8 @@ class App:
         self.start = True
 
     def draw_cell(self, cell: Cell):
+        self.clear_image(cell)
+
         addr = self.mlx.mlx_get_data_addr(cell.image.img)
         cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
         byte_per_pixel = cell.image.bpp // 8
@@ -149,7 +160,6 @@ class App:
 
     def draw_maze(self):
         self.init_image()
-        # self.maze.generate_perfect_mage()
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell)

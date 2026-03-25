@@ -85,4 +85,7 @@ class App:
     
     def draw_cell(self, cell: Cell):
         pass
+
+    def draw_maze(self):
+        pass
     #----------------------maze win---------------------------#

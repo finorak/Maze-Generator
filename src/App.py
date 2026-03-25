@@ -1,7 +1,7 @@
 from . import Maze
 from mlx import Mlx
 from typing import Any
-from . import HEIGHT, WIDTH, TITLE
+from . import HEIGHT, WIDTH, TITLE, rgb
 from . import Cell
 from . import Image
 
@@ -14,7 +14,7 @@ class App:
         self.main_win: Any = None
         self.maze_win: Any = None
         self.error_win: Any = None
-        self.maze: Maze = Maze()
+        # self.maze: Maze = Maze()
         self.config = config
         self.image = Image()
 
@@ -43,7 +43,7 @@ class App:
     def on_key_main(self, key: Any, _param: Any) -> None:
         if key in (65307, ord('q')):
             self.mlx.mlx_loop_exit(self.ptr)
-        else:
+        elif key == 32:
             self.switch_to_maze()
             
     def run_main(self) -> None:
@@ -56,7 +56,7 @@ class App:
             WIDTH // 2 - 200,
             HEIGHT // 2,
             0xFFFFFF,
-            "Appuyez sur une touche pour commencer..."
+            "Appuyez sur espace pour commencer..."
         )
 
         self.mlx.mlx_key_hook(self.main_win, self.on_key_main, None)
@@ -69,7 +69,7 @@ class App:
             self.mlx.mlx_loop_exit(self.ptr)
 
     def switch_to_maze(self) -> None:
-        self.maze.init_data(self.config["width"], self.config["height"])
+        # self.maze.init_data(self.config["width"], self.config["height"])
 
         if self.main_win is not None:
             self.mlx.mlx_destroy_window(self.ptr, self.main_win)
@@ -78,14 +78,32 @@ class App:
         self.maze_win = self.mlx.mlx_new_window(
             self.ptr, WIDTH, HEIGHT, "Maze"
         )
+        # self.draw_backgroud(rgb(255, 100, 100))
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
 
         self.start = True
     
-    def draw_cell(self, cell: Cell):
-        pass
+    def draw_backgroud(self, color):
+        self.image.img = self.mlx.mlx_new_image(
+            self.ptr,
+            self.image.width,
+            self.image.height
+        )
+        addr = self.mlx.mlx_get_data_addr(self.image.img)
+        self.image.data, self.image.bpp, self.image.sl, _ = addr
+        byte_per_pixel = self.image.bpp // 8
+        for j in range(HEIGHT):
+            for i in range(WIDTH):
+                offset = j * self.image.sl + i * byte_per_pixel
+                self.image.data[offset:offset + byte_per_pixel] = color.to_bytes(
+                        byte_per_pixel,
+                        'little')
+        self.mlx.mlx_put_image_to_window(
+            self.ptr, self.maze_win, self.image.img,
+            0,0
+        )
 
-    def draw_maze(self):
-        pass
+    # def draw_maze(self):
+    #     pass
     #----------------------maze win---------------------------#

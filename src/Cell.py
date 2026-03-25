@@ -28,6 +28,7 @@ class Cell:
             if self.wall & EAST:
                 self.wall -= EAST
 
+
 # class Cell:
 #     """
 #     The cell class

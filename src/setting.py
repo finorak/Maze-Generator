@@ -10,3 +10,10 @@ WALL_THICK = 2
 CELL_COLOR = 0xFFFFFFFF
 WALL_COLOR = 0xFF000000
 VISITED_COLOR = 0xFFEEFE6B
+
+def rgb(r, g, b):
+    return 255 << 24 | r << 16 | g << 8 | b
+
+def rgba(r, g, b, a):
+    o = int(a * 255)
+    return o << 24 | r << 16 | g << 8 | b

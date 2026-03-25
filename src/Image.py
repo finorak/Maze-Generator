@@ -10,3 +10,4 @@ class Image:
         self.bpp = 0
         self.sl = 0
         self.ioformat = 0
+        self.is_init = False

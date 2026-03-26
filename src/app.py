@@ -1,10 +1,11 @@
-from src.Image import Image
-from .Maze import Maze
+from .maze import Maze
 from mlx import Mlx
 from typing import Any
-from .setting import (CLEAR_COLOR, HEIGHT, WIDTH, TITLE, NORTH, SOUTH,
-                      WEST, EAST, WALL_THICK, WALL_COLOR)
-from .Cell import Cell
+from .setting import (HEIGHT, STRING_HEIGHT_PADDDING,
+                      STRING_WIDTH_PADDING, WIDTH,
+                      TITLE, NORTH, SOUTH, WEST,
+                      EAST, WALL_THICK, WALL_COLOR)
+from .cell import Cell
 
 
 class App:
@@ -22,13 +23,13 @@ class App:
 
     def init_image(self):
         if self.maze.data and self.maze.data[0][0].image.img is None:
-            for i in range(len(self.maze.data)):
-                for j in range(len(self.maze.data[i])):
-                    if self.maze.data[i][j].image.img is None:
-                        self.maze.data[i][j].image.img = self.mlx.mlx_new_image(
+            for row in self.maze.data:
+                for cell in row:
+                    if cell.image.img is None:
+                        cell.image.img = self.mlx.mlx_new_image(
                             self.ptr,
-                            self.maze.data[i][j].size,
-                            self.maze.data[i][j].size
+                            cell.size,
+                            cell.size
                         )
 
     def on_close(self, _param: Any) -> None:
@@ -60,13 +61,12 @@ class App:
         self.main_win = self.mlx.mlx_new_window(
             self.ptr, WIDTH, HEIGHT, TITLE
         )
-
         self.mlx.mlx_string_put(
             self.ptr, self.main_win,
-            WIDTH // 2 - 200,
-            HEIGHT // 2,
-            0xFFFFFF,
-            "Appuyez sur espace pour commencer..."
+            WIDTH // 2 - STRING_WIDTH_PADDING,
+            STRING_HEIGHT_PADDDING,
+            0xFFFFFFFF,
+            "Choose options:"
         )
 
         self.mlx.mlx_key_hook(self.main_win, self.on_key_main, None)

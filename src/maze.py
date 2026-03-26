@@ -1,8 +1,8 @@
-from typing import Any, Optional
+from typing import Any
 from src.setting import (
         BLOCK_42_COLOR, CELL_COLOR, CELL_STARTING_COLOR,
         ENTRY_COLOR, EXIT_COLOR, TRAVERSING_COLOR, VISITED_COLOR)
-from .Cell import Cell
+from .cell import Cell
 from random import choice, shuffle
 import random
 
@@ -61,8 +61,8 @@ class Maze:
                              ) -> list[tuple[str, str, int, int]]:
         neighbors: list[tuple[str, str, int, int]] = []
         x, y = cell_coord
-        if (x + 1 < self.cols and (self.data[x + 1][y].wall_closed \
-                and not self.data[x + 1][y].is_42_cell)):
+        if x + 1 < self.cols and (self.data[x + 1][y].wall_closed \
+                and not self.data[x + 1][y].is_42_cell):
             neighbors.append(("e", "w", x + 1, y))
         if (x - 1 >= 0 and (self.data[x - 1][y].wall_closed and not \
                 self.data[x - 1][y].is_42_cell)):
@@ -76,35 +76,9 @@ class Maze:
         return neighbors
 
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
-        def generate_maze(start_pos: tuple[int, int],
-                          probability: float = 0) -> None:
-            self.parent.event_handler()
-            start_x, start_y = start_pos
-            cell = self.data[start_x][start_y]
-            cell.is_visited = True
-            cell.color = VISITED_COLOR
-            self.parent.draw_cell(cell)
-            neightboors = self.find_neighbor_closed((start_x, start_y))
-            shuffle(neightboors)
-            for neightboor in neightboors:
-                wall1, wall2, new_x, new_y = neightboor
-                if not self.data[new_x][new_y].is_visited and not \
-                    self.data[new_x][new_y].is_42_cell:
-                    cell.remove_wall(wall1)
-                    self.data[new_x][new_y].color = TRAVERSING_COLOR
-                    self.data[new_x][new_y].remove_wall(wall2)
-                    if (value := random.random()) <= probability:
-                        print(value)
-                        wall_1, wall_2, x, y = choice(neightboors)
-                        cell.remove_wall(wall_1)
-                        c = self.data[x][y]
-                        c.remove_wall(wall_2)
-                    self.parent.draw_maze()
-                    generate_maze((new_x, new_y))
-                    self.data[new_x][new_y].color = CELL_COLOR
-                    self.parent.draw_maze()
 
-        generate_maze(start_pos, (int(self.perfect) * 30) / 100)
+        # generating the maze
+        self.generate_maze(start_pos, (int(self.perfect) * 30) / 100)
         """
         COLORING ENTRY AND END POINT
         """
@@ -116,3 +90,33 @@ class Maze:
         end_cell = self.data[end_x][end_y]
         end_cell.color = EXIT_COLOR
         self.parent.draw_cell(end_cell)
+
+    def generate_maze(self, start_pos: tuple[int, int],
+                        probability: float = 0) -> None:
+        self.parent.event_handler()
+        start_x, start_y = start_pos
+        cell = self.data[start_x][start_y]
+        cell.is_visited = True
+        cell.wall_closed = False
+        cell.color = VISITED_COLOR
+        neightboors = self.find_neighbor_closed((start_x, start_y))
+        shuffle(neightboors)
+        for neightboor in neightboors:
+            wall1, wall2, new_x, new_y = neightboor
+            if self.data[new_x][new_y].is_visited:
+                continue
+            cell.remove_wall(wall1)
+            self.data[new_x][new_y].color = TRAVERSING_COLOR
+            self.data[new_x][new_y].remove_wall(wall2)
+            self.parent.draw_maze()
+            self.generate_maze((new_x, new_y))
+            self.data[new_x][new_y].color = CELL_COLOR
+            if random.random() < probability:
+                curr_n = self.find_neighbor_closed((new_x, new_y))
+                print(curr_n)
+                shuffle(curr_n)
+                wall_1, wall_2, x, y = choice(curr_n)
+                self.data[new_x][new_y].remove_wall(wall_1)
+                c = self.data[x][y]
+                c.remove_wall(wall_2)
+        self.parent.draw_maze()

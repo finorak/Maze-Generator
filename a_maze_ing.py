@@ -3,7 +3,7 @@ The main program for our maze generator
 """
 
 import sys
-from src.App import App
+from src.app import App
 from src.utils import get_configuration
 
 if __name__ == "__main__":

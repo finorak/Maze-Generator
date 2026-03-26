@@ -22,7 +22,7 @@ class App:
         self.counter = 0
         self.maze.init_data(config.get("height"), config.get("width"))
         self.solver: Solver = Solver(self.maze.data, self.maze.entry_pos, self.maze.end_pos, self)
-        self.last_draw: int = 0
+        self.last_draw: float = 0
 
     def init_image(self):
         if self.maze.data and self.maze.data[0][0].image.img is None:
@@ -90,7 +90,10 @@ class App:
         elif key == ord('s'):
             if not self.maze.is_generate:
                 self.maze.start_generate()
-            self.solver.start_solve()
+                #self.solver.solve()
+                self.solver.dfs_solver(self.solver.entry)
+            else:
+                self.solver.dfs_solver(self.solver.entry)
         elif key == ord('r'):
             self.reinitialise()
 

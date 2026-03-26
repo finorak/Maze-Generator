@@ -1,9 +1,7 @@
 from src.setting import WEST
 from ..cell import Cell
 from typing import Any
-from ..setting import NORTH, SOUTH, VISITED_COLOR, WEST, EAST,CELL_COLOR, DISPLAY_INTERVAL
-from ..setting import NORTH, PATH_FOUND_COLOR, SOUTH, TRAVERSING_COLOR, VISITED_COLOR, WEST, EAST
-from ..setting import NORTH, SOUTH, WEST, EAST, CELL_COLOR
+from ..setting import CLEAR_COLOR, NORTH, PATH_FOUND_COLOR, SOUTH, VISITED_COLOR, EAST,CELL_COLOR, DISPLAY_INTERVAL
 from collections import deque
 from ..utils.color_genertor import rgb
 from threading import Thread
@@ -44,22 +42,21 @@ class Solver:
             curr_x, curr_y = curr_pos
             curr_cell = self.data[curr_x][curr_y]
             curr_cell.is_visited = True
-            curr_cell.color = VISITED_COLOR
+            curr_cell.color = PATH_FOUND_COLOR
             self.app.draw_maze()
             directions = deque(self.find_directions(curr_cell))
             for direction in directions:
                 _, new_x, new_y = direction
                 if self.dfs_solver((new_x, new_y)):
                     self.path.append((new_x, new_y))
-                    self.data[new_x][new_y].color = CELL_COLOR
+                    curr_cell.color = CLEAR_COLOR
                     self.app.draw_maze()
                     self.found_path = True
                     return True
-                self.data[new_x][new_y].color = CELL_COLOR
+                self.data[new_x][new_y].color = PATH_FOUND_COLOR
                 self.app.draw_maze()
             self.app.draw_maze()
             return False
-
         solve_maze(curr_pos)
         self.is_generate = True
 
@@ -119,10 +116,10 @@ class Solver:
         # self.app.draw_maze()
         self.is_generate = True
 
-    def start_solve(self):
+    def start_solve(self, target: Any, args: Any):
         if self.solver_threading is not None and self.solver_threading.is_alive():
             print("solve in progress...")
             return
-        self.solver_threading = Thread(target=self.solve, args=())
+        self.solver_threading = Thread(target=target, args=args)
         self.solver_threading.daemon = True
         self.solver_threading.start()

@@ -58,8 +58,8 @@ class Maze:
             self.data[x][y + 3].is_42_cell = True
             self.data[x][y + 3].color = color
 
-        set_four(self.width//2 - 3, self.height//2 - 2)
-        set_two(self.width//2 + 1, self.height//2 - 2)
+        set_four(self.width // 2 - 3, self.height // 2 - 2)
+        set_two(self.width // 2 + 1, self.height // 2 - 2)
 
     def find_neighbor_closed(self,
                              cell_coord: tuple[int, int]

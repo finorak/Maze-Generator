@@ -1,5 +1,9 @@
 # TODO:
 
+## Important:
+- - Gerena ny threading fa lasa otran misy tsy mety vo alefa aminazy ilay
+function msolve
+
 - Calculation of the size of the cell (not done yet)
 - Maze Generation (finished)
 - Maze solving

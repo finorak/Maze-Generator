@@ -1,7 +1,8 @@
 """
 Module containing the cell class
 """
-from typing import Any, Self
+from typing import Any
+from typing_extensions import Self
 from .Image import Image
 from . import NORTH, SOUTH, WEST, EAST
 

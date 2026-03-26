@@ -1,10 +1,12 @@
 from typing import Any
 from src.setting import (
         BLOCK_42_COLOR, CELL_COLOR, CELL_STARTING_COLOR,
-        ENTRY_COLOR, EXIT_COLOR, TRAVERSING_COLOR, VISITED_COLOR)
+        ENTRY_COLOR, EXIT_COLOR, TRAVERSING_COLOR, VISITED_COLOR, DISPLAY_INTERVAL)
 from .cell import Cell
 from random import choice, shuffle
 import random
+from threading import Thread
+from time import sleep
 
 class Maze:
     def __init__(self, parent: Any):
@@ -16,6 +18,7 @@ class Maze:
         self.entry_pos = self.parent.config.get('entry')
         self.end_pos = self.parent.config.get('exit')
         self.is_generate = False
+        self.generation_thread: Any = None
 
     def init_data(self, height: int, width: int) -> None:
         self.height = height
@@ -77,6 +80,14 @@ class Maze:
             neighbors.append(("n", "s", x, y - 1))
         return neighbors
 
+    def start_generate(self, start_pos: tuple[int, int] = (0, 0)) -> None:
+        if self.generation_thread is not None and self.generation_thread.is_alive():
+            print("generate")
+            return
+        self.generation_thread = Thread(target=self.generete, args=(start_pos,))
+        self.generation_thread.daemon = True
+        self.generation_thread.start()
+
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
 
         # generating the maze
@@ -110,7 +121,8 @@ class Maze:
             cell.remove_wall(wall1)
             self.data[new_x][new_y].color = TRAVERSING_COLOR
             self.data[new_x][new_y].remove_wall(wall2)
-            self.parent.draw_maze()
+            # self.parent.draw_maze()
+            sleep(DISPLAY_INTERVAL)
             self.generate_maze((new_x, new_y))
             self.data[new_x][new_y].color = CELL_COLOR
             if random.random() < probability:
@@ -120,4 +132,5 @@ class Maze:
                 self.data[new_x][new_y].remove_wall(wall_1)
                 c = self.data[x][y]
                 c.remove_wall(wall_2)
-        self.parent.draw_maze()
+        sleep(DISPLAY_INTERVAL)
+        # self.parent.draw_maze()

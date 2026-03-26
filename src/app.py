@@ -4,10 +4,10 @@ from typing import Any
 from .setting import (HEIGHT, STRING_HEIGHT_PADDDING,
                       STRING_WIDTH_PADDING, WIDTH,
                       TITLE, NORTH, SOUTH, WEST,
-                      EAST, WALL_THICK, WALL_COLOR)
+                      EAST, WALL_THICK, WALL_COLOR, DISPLAY_INTERVAL)
 from .cell import Cell
 from .engine.solver import Solver
-
+from time import time
 
 class App:
     def __init__(self, config: Any) -> None:
@@ -22,6 +22,7 @@ class App:
         self.counter = 0
         self.maze.init_data(config.get("height"), config.get("width"))
         self.solver: Solver = Solver(self.maze.data, self.maze.entry_pos, self.maze.end_pos, self)
+        self.last_draw: int = 0
 
     def init_image(self):
         if self.maze.data and self.maze.data[0][0].image.img is None:
@@ -38,7 +39,11 @@ class App:
         self.mlx.mlx_loop_exit(self.ptr)
 
     def update(self, _param: Any):
-        pass
+        if self.start:
+            now = time()
+            if now - self.last_draw >= DISPLAY_INTERVAL:
+                self.draw_maze()
+                self.last_draw = now
 
     def run(self):
         self.run_main()
@@ -80,11 +85,11 @@ class App:
         if key in (65307, ord('q')):
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord('g'):
-            self.maze.generete()
+            self.maze.start_generate()
             self.solver.data = self.maze.data
         elif key == ord('s'):
             if not self.maze.is_generate:
-                self.maze.generete()
+                self.maze.start_generate()
             self.solver.solve()
         elif key == ord('r'):
             self.reinitialise()
@@ -92,7 +97,7 @@ class App:
     def reinitialise(self):
         self.maze.init_data(self.config.get("height"), self.config.get("width"))
         self.solver.data = self.maze.data
-        self.maze.generete()
+        self.maze.start_generate()
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:

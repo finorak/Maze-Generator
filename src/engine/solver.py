@@ -1,3 +1,4 @@
+from src.setting import WEST
 from ..cell import Cell
 
 class Solver:

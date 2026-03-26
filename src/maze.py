@@ -62,20 +62,17 @@ class Maze:
                              ) -> list[tuple[str, str, int, int]]:
         neighbors: list[tuple[str, str, int, int]] = []
         x, y = cell_coord
-        if (x + 1 < self.cols and (self.data[x + 1][y].wall_closed
-                                  or not self.data[x + 1][y].is_visited)
-            and not self.data[x + 1][y].is_42_cell):
+        if (x + 1 < self.cols and self.data[x + 1][y].wall_closed
+               and not self.data[x + 1][y].is_42_cell):
             neighbors.append(("e", "w", x + 1, y))
-        if (x - 1 >= 0 and (self.data[x - 1][y].wall_closed
-                            or not self.data[x - 1][y].is_visited)
-            and not self.data[x - 1][y].is_42_cell):
+        if (x - 1 >= 0 and self.data[x - 1][y].wall_closed
+                and not self.data[x - 1][y].is_42_cell):
             neighbors.append(("w", "e", x - 1, y))
         if (y + 1 < self.rows and (self.data[x][y + 1].wall_closed 
                                    or not self.data[x][y + 1].is_visited) 
             and not self.data[x][y + 1].is_42_cell):
             neighbors.append(("s", "n", x, y + 1))
-        if (y - 1 >= 0 and (self.data[x][y - 1].wall_closed
-                            or not self.data[x][y - 1].is_visited)
+        if (y - 1 >= 0 and self.data[x][y - 1].wall_closed
                             and not self.data[x][y - 1].is_42_cell):
             neighbors.append(("n", "s", x, y - 1))
         return neighbors
@@ -117,7 +114,6 @@ class Maze:
             self.data[new_x][new_y].color = CELL_COLOR
             if random.random() < probability:
                 curr_n = self.find_neighbor_closed((new_x, new_y))
-                print(curr_n)
                 shuffle(curr_n)
                 wall_1, wall_2, x, y = choice(curr_n)
                 self.data[new_x][new_y].remove_wall(wall_1)

@@ -85,14 +85,21 @@ class App:
         elif key == ord('s'):
             if not self.maze.is_generate:
                 self.maze.generete()
+<<<<<<< HEAD
                 self.maze.is_generate = True
             else:
                 self.solver.dfs_solver(self.maze.entry_pos)
         elif key == ord('c'):
+=======
+            self.solver.solve()
+        elif key == ord('r'):
+>>>>>>> 0ad77e34690f93b6b71e591e264bd05088d61fcf
             self.reinitialise()
 
     def reinitialise(self):
-        pass
+        self.maze.init_data(self.config.get("height"), self.config.get("width"))
+        self.solver.data = self.maze.data
+        self.maze.generete()
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:

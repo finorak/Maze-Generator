@@ -1,15 +1,31 @@
 from src.setting import WEST
 from ..cell import Cell
+from typing import Any
+from ..setting import NORTH, SOUTH, VISITED_COLOR, WEST, EAST
+from collections import deque
+from ..utils.color_genertor import rgb
 
 class Solver:
     def __init__(
         self, data: list[list[Cell]], 
-        ENTRY: tuple[int, int], EXIT: tuple[int, int]
+        ENTRY: tuple[int, int], EXIT: tuple[int, int],
+        app: Any
     ) -> None:
-        self.data = data
+        self._data = data
         self.entry = ENTRY
         self.exit = EXIT
         self.path: list[tuple[int, int]] = []
+        self.app = app
+        self.is_generate = False
+
+    @property
+    def data(self):
+        return self._data
+    
+    @data.setter
+    def data(self, data: list[list[Cell]]):
+        self.is_generate = False
+        self._data = data
 
     def dfs_solver(self, curr_pos: tuple[int, int]) -> bool:
         if curr_pos == self.exit:
@@ -18,10 +34,55 @@ class Solver:
         curr_x, curr_y = curr_pos
         curr_cell = self.data[curr_x][curr_y]
         curr_cell.is_visited = True
-        negightboors = self.get_neightboor(curr_cell)
-        for negightboor in negightboors:
-            x, y = negightboor.row, negightboor.col
-            if self.dfs_solver((x, y)):
-                self.path.append((x, y))
+        curr_cell.color = VISITED_COLOR
+        self.app.draw_maze()
+        directions = deque(self.find_directions(curr_cell))
+        for direction in directions:
+            _, new_x, new_y = direction
+            if self.dfs_solver((new_x, new_y)):
+                self.path.append((new_x, new_y))
                 return True
         return False
+
+    def find_directions(
+        self, cell: Cell
+    ) -> list[tuple[tuple[int, int], int, int]]:
+        directions: list[tuple[tuple[int, int], int, int]] = []
+        if cell.wall & NORTH == 0 and not self._data[cell.row][cell.col - 1].is_visited:
+            directions.append(((cell.row, cell.col), cell.row, cell.col - 1))
+        if cell.wall & EAST == 0 and not self._data[cell.row + 1][cell.col].is_visited:
+            directions.append(((cell.row, cell.col), cell.row + 1, cell.col))
+        if cell.wall & SOUTH == 0 and not self._data[cell.row][cell.col + 1].is_visited:
+            directions.append(((cell.row, cell.col), cell.row, cell.col + 1))
+        if cell.wall & WEST == 0 and not self._data[cell.row - 1][cell.col].is_visited:
+            directions.append(((cell.row, cell.col), cell.row - 1, cell.col))
+        return directions
+
+    def solve(self) -> None:
+        if self.is_generate:
+            return
+        self.path = []
+        x, y = self.entry
+        self._data[x][y].is_visited = True
+        directions = deque(self.find_directions(self._data[x][y]))
+        while directions:
+            direction = directions.popleft()
+            parent, new_x, new_y = direction
+            self._data[new_x][new_y].is_visited = True
+            self._data[new_x][new_y].parent = parent
+            if (new_x, new_y) == self.exit:
+                break
+            self._data[new_x][new_y].color = rgb(214, 106, 151)
+            self.app.draw_maze()
+            directions.extend(self.find_directions(self._data[new_x][new_y]))
+        
+        x, y = self.exit
+        while True:
+            x_parent, y_parent = self._data[x][y].parent
+            if (x_parent, y_parent) == self.entry:
+                break
+            self.path.append((x_parent, y_parent))
+            self._data[x_parent][y_parent].color = rgb(106, 214, 205)
+            self.app.draw_maze()
+            x, y = self._data[x][y].parent
+        self.is_generate = True

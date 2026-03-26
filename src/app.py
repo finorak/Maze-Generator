@@ -6,6 +6,7 @@ from .setting import (HEIGHT, STRING_HEIGHT_PADDDING,
                       TITLE, NORTH, SOUTH, WEST,
                       EAST, WALL_THICK, WALL_COLOR)
 from .cell import Cell
+from .engine.solver import Solver
 
 
 class App:
@@ -20,6 +21,7 @@ class App:
         self.maze: Maze = Maze(self)
         self.counter = 0
         self.maze.init_data(config.get("height"), config.get("width"))
+        self.solver: Solver = Solver(self.maze.data, self.maze.entry_pos, self.maze.end_pos, self)
 
     def init_image(self):
         if self.maze.data and self.maze.data[0][0].image.img is None:
@@ -77,12 +79,17 @@ class App:
     def on_key_maze(self, key: Any, _param: Any) -> None:
         if key in (65307, ord('q')):
             self.mlx.mlx_loop_exit(self.ptr)
-        elif key == ord('s'):
+        elif key == ord('g'):
             self.maze.generete()
+            self.solver.data = self.maze.data
+        elif key == ord('s'):
+            if not self.maze.is_generate:
+                self.maze.generete()
+                self.maze.is_generate = True
+            else:
+                self.solver.dfs_solver(self.maze.entry_pos)
         elif key == ord('c'):
             self.reinitialise()
-        elif key == ord('j'):
-            self.maze.solve()
 
     def reinitialise(self):
         pass
@@ -96,6 +103,7 @@ class App:
             self.ptr, WIDTH, HEIGHT, TITLE
         )
         self.draw_maze()
+        self.draw_maze()
         self.event_handler()
 
         self.start = True
@@ -105,8 +113,8 @@ class App:
         Setting the position of entry and exit
         """
         row = x // self.maze.cols
-        col = y // self.maze.rows
-        print(button, (row, self.maze.cols), (col, self.maze.rows))
+        col = y // self.maze.height
+        print(button, (row, self.maze.cols), (col, self.maze.height))
 
     def event_handler(self):
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)

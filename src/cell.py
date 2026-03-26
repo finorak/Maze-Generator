@@ -1,9 +1,7 @@
 """
 Module containing the cell class
 """
-from random import seed
 from typing import Any
-from typing_extensions import Self
 from src.setting import CELL_COLOR
 from .image import Image
 from . import NORTH, SOUTH, WEST, EAST
@@ -14,7 +12,7 @@ class Cell:
                  color: int = CELL_COLOR) -> None:
         self.row = row
         self.col = col
-        self.rows = row
+        self.rows = rows
         self.cols = cols
         self.color = color
         self.wall = 0b1111
@@ -23,6 +21,7 @@ class Cell:
         self.wall_closed = True
         self.size = size
         self.image: Any = Image()
+        self.parent: tuple[int, int] | Any = None
 
     def remove_wall(self, wall: str) -> None:
         wall = wall.lower()
@@ -38,20 +37,3 @@ class Cell:
         if wall == "east" or wall == "e":
             if self.wall & EAST:
                 self.wall -= EAST
-
-    def get_neightboors(self, cells: list[list[Self]]) -> list[Self]:
-        neighbors: list[Self] = []
-        x, y = self.row, self.col
-        if (x + 1 < self.cols and not cells[x + 1][y].is_visited \
-                and not cells[x + 1][y].is_42_cell):
-            neighbors.append(cells[x + 1][y])
-        if (x - 1 >= 0 and not cells[x - 1][y].is_visited \
-                and not cells[x - 1][y].is_42_cell):
-            neighbors.append(cells[x - 1][y])
-        if (y <= self.rows - 1 and not cells[x][y + 1].is_visited \
-                                    and not cells[x][y + 1].is_42_cell):
-            neighbors.append(cells[x][y + 1])
-        if (y - 1 >= 0 and not cells[x][y - 1].is_visited \
-            and not cells[x][y - 1].is_42_cell):
-            neighbors.append(cells[x][y - 1])
-        return neighbors

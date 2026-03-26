@@ -83,6 +83,8 @@ class App:
             self.maze.generete()
             self.solver.data = self.maze.data
         elif key == ord('s'):
+            if not self.maze.is_generate:
+                self.maze.generete()
             self.solver.solve()
         elif key == ord('c'):
             self.reinitialise()

@@ -6,7 +6,6 @@ from .cell import Cell
 from random import choice, shuffle
 import random
 
-
 class Maze:
     def __init__(self, parent: Any):
         self.data: list[list[Cell]] | Any = None
@@ -16,6 +15,7 @@ class Maze:
         self.perfect = parent.config.get("perfect")
         self.entry_pos = self.parent.config.get('entry')
         self.end_pos = self.parent.config.get('exit')
+        self.is_generate = False
 
     def init_data(self, height: int, width: int) -> None:
         self.height = height
@@ -92,6 +92,7 @@ class Maze:
         end_cell = self.data[end_x][end_y]
         end_cell.color = EXIT_COLOR
         self.parent.draw_cell(end_cell)
+        self.is_generate = True
 
     def generate_maze(self, start_pos: tuple[int, int],
                         probability: float = 0) -> None:

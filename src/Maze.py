@@ -1,13 +1,10 @@
-from os import PRIO_PGRP
-from typing import Any
-from src.setting import BLOCK_42_COLOR, CELL_COLOR, ENTRY_COLOR, EXIT_COLOR, VISITED_COLOR
-from src.utils.color_genertor import rgb
+from typing import Any, Optional
+from src.setting import (
+        BLOCK_42_COLOR, CELL_COLOR, CELL_STARTING_COLOR,
+        ENTRY_COLOR, EXIT_COLOR, TRAVERSING_COLOR, VISITED_COLOR)
 from .Cell import Cell
-from . import DIRECTIONS
 from random import choice, shuffle
 import random
-import time
-from multiprocessing import Process
 
 
 class Maze:
@@ -16,7 +13,7 @@ class Maze:
         self.rows = 0
         self.cols = 0
         self.parent = parent
-        self.perfect = parent.config.get("perferct")
+        self.perfect = parent.config.get("perfect")
         self.entry_pos = self.parent.config.get('entry')
         self.end_pos = self.parent.config.get('exit')
 
@@ -25,7 +22,9 @@ class Maze:
         self.cols = cols
         self.data = [
             [
-                Cell(i, j, self.cols, self.rows) for j in range(self.rows)
+                Cell(row=i, col=j, cols=self.cols, rows=self.rows,
+                     color=CELL_STARTING_COLOR
+                     ) for j in range(self.rows)
             ] for i in range(self.cols)
         ]
         self.make_42_block()
@@ -76,36 +75,7 @@ class Maze:
             neighbors.append(("n", "s", x, y - 1))
         return neighbors
 
-    def generete(self):
-        if self.perfect:
-            self.generate_perfect_maze()
-        else:
-            self.generate_non_perfect_maze(self.entry_pos)
-        entry_x, entry_y = self.entry_pos
-        entry_cell = self.data[entry_x][entry_y]
-        entry_cell.color = ENTRY_COLOR
-        self.parent.draw_cell(entry_cell)
-        end_x, end_y = self.end_pos
-        end_cell = self.data[end_x][end_y]
-        end_cell.color = EXIT_COLOR
-        self.parent.draw_cell(end_cell)
-
-    def generate_perfect_maze(self, x = 0, y = 0):
-        self.data[x][y].wall_closed = False
-        neighbors = self.find_neighbor_closed((x, y))
-
-        neighbor = random.choice(neighbors)
-        wall1, wall2, new_x, new_y = neighbor
-        self.data[x][y].remove_wall(wall1)
-        self.parent.draw_cell(self.data[x][y])
-        self.data[new_x][new_y].remove_wall(wall2)
-        self.parent.draw_cell(self.data[new_x][new_y])
-        self.generate_perfect_maze(new_x, new_y)
-        
-
-    def generate_non_perfect_maze(self,
-                                  start_pos: tuple[int, int]
-                                  ) -> None:
+    def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
         def generate_maze(start_pos: tuple[int, int],
                           probability: float = 0) -> None:
             self.parent.event_handler()
@@ -121,9 +91,10 @@ class Maze:
                 if not self.data[new_x][new_y].is_visited and not \
                     self.data[new_x][new_y].is_42_cell:
                     cell.remove_wall(wall1)
+                    self.data[new_x][new_y].color = TRAVERSING_COLOR
                     self.data[new_x][new_y].remove_wall(wall2)
-                    if random.random() < probability:
-                        print("removing")
+                    if (value := random.random()) <= probability:
+                        print(value)
                         wall_1, wall_2, x, y = choice(neightboors)
                         cell.remove_wall(wall_1)
                         c = self.data[x][y]
@@ -132,4 +103,16 @@ class Maze:
                     generate_maze((new_x, new_y))
                     self.data[new_x][new_y].color = CELL_COLOR
                     self.parent.draw_maze()
-        generate_maze(start_pos, 0.2)
+
+        generate_maze(start_pos, (int(self.perfect) * 30) / 100)
+        """
+        COLORING ENTRY AND END POINT
+        """
+        entry_x, entry_y = self.entry_pos
+        entry_cell = self.data[entry_x][entry_y]
+        entry_cell.color = ENTRY_COLOR
+        self.parent.draw_cell(entry_cell)
+        end_x, end_y = self.end_pos
+        end_cell = self.data[end_x][end_y]
+        end_cell.color = EXIT_COLOR
+        self.parent.draw_cell(end_cell)

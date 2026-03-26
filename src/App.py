@@ -9,7 +9,6 @@ from .Cell import Cell
 
 class App:
     def __init__(self, config: Any) -> None:
-        # self.maze = Maze(Mlx, "config.txt")
         self.mlx = Mlx()
         self.ptr = self.mlx.mlx_init()
         self.start = False
@@ -22,7 +21,7 @@ class App:
         self.maze.init_data(config.get("height"), config.get("width"))
 
     def init_image(self):
-        if self.maze.data[0][0].image.img is None:
+        if self.maze.data and self.maze.data[0][0].image.img is None:
             for i in range(len(self.maze.data)):
                 for j in range(len(self.maze.data[i])):
                     if self.maze.data[i][j].image.img is None:
@@ -123,7 +122,7 @@ class App:
         if cell.wall & EAST:
             for j in range(cell.size):
                 for i in range(WALL_THICK):
-                    offset = j * cell.image.sl + (cell.size - i - 1) * byte_per_pixel
+                    offset = j * cell.image.sl + (cell.size - 1) * byte_per_pixel
                     cell.image.data[offset:offset + byte_per_pixel] = WALL_COLOR.to_bytes(
                             byte_per_pixel,
                             'little'
@@ -139,7 +138,7 @@ class App:
         if cell.wall & SOUTH:
             for j in range(WALL_THICK):
                 for i in range(cell.size):
-                    offset = (cell.size - j - 1) * cell.image.sl + (i) * byte_per_pixel
+                    offset = (cell.size - 1) * cell.image.sl + (i) * byte_per_pixel
                     cell.image.data[offset:offset + byte_per_pixel] = WALL_COLOR.to_bytes(
                             byte_per_pixel,
                             'little'

@@ -5,6 +5,7 @@ from .Cell import Cell
 from . import DIRECTIONS
 from random import choice, shuffle
 import random
+import time
 
 class Maze:
     def __init__(self, parent: Any):
@@ -77,6 +78,14 @@ class Maze:
             self.generate_perfect_maze()
         else:
             self.generate_non_perfect_maze(self.entry_pos)
+        entry_x, entry_y = self.entry_pos
+        entry_cell = self.data[entry_x][entry_y]
+        entry_cell.color = ENTRY_COLOR
+        self.parent.draw_cell(entry_cell)
+        end_x, end_y = self.end_pos
+        end_cell = self.data[end_x][end_y]
+        end_cell.color = EXIT_COLOR
+        self.parent.draw_cell(end_cell)
 
     def generate_perfect_maze(self, x = 0, y = 0):
         self.data[x][y].wall_closed = False
@@ -94,20 +103,25 @@ class Maze:
     def generate_non_perfect_maze(self,
                                   start_pos: tuple[int, int]
                                   ) -> None:
-        x, y = start_pos
-        cell = self.data[x][y]
-        cell.is_visited = True
-        cell.color = VISITED_COLOR
-        self.parent.draw_cell(cell)
-        neightboors = self.find_neighbor_closed((x, y))
-        shuffle(neightboors)
-        for neightboor in neightboors:
-            wall1, wall2, new_x, new_y = neightboor
-            if not self.data[new_x][new_y].is_visited and not \
+        def generate_maze(start_pos: tuple[int, int],
+                          probability: float = 0) -> None:
+            x, y = start_pos
+            cell = self.data[x][y]
+            cell.is_visited = True
+            cell.color = VISITED_COLOR
+            self.parent.draw_cell(cell)
+            neightboors = self.find_neighbor_closed((x, y))
+            shuffle(neightboors)
+            for neightboor in neightboors:
+                wall1, wall2, new_x, new_y = neightboor
+                if not self.data[new_x][new_y].is_visited and not \
                     self.data[new_x][new_y].is_42_cell:
-                cell.remove_wall(wall1)
-                self.data[new_x][new_y].remove_wall(wall2)
-                self.parent.draw_cell(self.data[new_x][new_y])
-                self.generate_non_perfect_maze((new_x, new_y))
-                self.data[new_x][new_y].color = CELL_COLOR
-                self.parent.draw_cell(self.data[new_x][new_y])
+                    cell.remove_wall(wall1)
+                    self.data[new_x][new_y].remove_wall(wall2)
+                    #self.parent.draw_cell(self.data[new_x][new_y])
+                    self.parent.draw_maze()
+                    generate_maze((new_x, new_y))
+                    self.data[new_x][new_y].color = CELL_COLOR
+                    self.parent.draw_cell(self.data[new_x][new_y])
+                    #self.parent.draw_maze()
+        generate_maze(start_pos, 0.1)

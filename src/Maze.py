@@ -109,12 +109,12 @@ class Maze:
         def generate_maze(start_pos: tuple[int, int],
                           probability: float = 0) -> None:
             self.parent.event_handler()
-            x, y = start_pos
-            cell = self.data[x][y]
+            start_x, start_y = start_pos
+            cell = self.data[start_x][start_y]
             cell.is_visited = True
             cell.color = VISITED_COLOR
             self.parent.draw_cell(cell)
-            neightboors = self.find_neighbor_closed((x, y))
+            neightboors = self.find_neighbor_closed((start_x, start_y))
             shuffle(neightboors)
             for neightboor in neightboors:
                 wall1, wall2, new_x, new_y = neightboor
@@ -122,8 +122,14 @@ class Maze:
                     self.data[new_x][new_y].is_42_cell:
                     cell.remove_wall(wall1)
                     self.data[new_x][new_y].remove_wall(wall2)
+                    if random.random() < probability:
+                        print("removing")
+                        wall_1, wall_2, x, y = choice(neightboors)
+                        cell.remove_wall(wall_1)
+                        c = self.data[x][y]
+                        c.remove_wall(wall_2)
                     self.parent.draw_maze()
                     generate_maze((new_x, new_y))
                     self.data[new_x][new_y].color = CELL_COLOR
                     self.parent.draw_maze()
-        generate_maze(start_pos, 0.1)
+        generate_maze(start_pos, 0.2)

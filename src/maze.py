@@ -99,16 +99,13 @@ class Maze:
         entry_x, entry_y = self.entry_pos
         entry_cell = self.data[entry_x][entry_y]
         entry_cell.color = ENTRY_COLOR
-        self.parent.draw_cell(entry_cell)
         end_x, end_y = self.end_pos
         end_cell = self.data[end_x][end_y]
         end_cell.color = EXIT_COLOR
-        self.parent.draw_cell(end_cell)
         self.is_generate = False
 
     def generate_maze(self, start_pos: tuple[int, int],
                         probability: float = 0) -> None:
-        # self.parent.event_handler()
         start_x, start_y = start_pos
         cell = self.data[start_x][start_y]
         cell.wall_closed = False
@@ -122,7 +119,6 @@ class Maze:
             cell.remove_wall(wall1)
             self.data[new_x][new_y].color = TRAVERSING_COLOR
             self.data[new_x][new_y].remove_wall(wall2)
-            # self.parent.draw_maze()
             sleep(DISPLAY_INTERVAL)
             self.generate_maze((new_x, new_y))
             self.data[new_x][new_y].color = CELL_COLOR
@@ -134,4 +130,3 @@ class Maze:
                 c = self.data[x][y]
                 c.remove_wall(wall_2)
         sleep(DISPLAY_INTERVAL)
-        # self.parent.draw_maze()

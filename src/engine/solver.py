@@ -1,11 +1,7 @@
 from src.setting import WEST
 from ..cell import Cell
 from typing import Any
-<<<<<<< HEAD
-from ..setting import NORTH, SOUTH, VISITED_COLOR, WEST, EAST
-=======
-from ..setting import NORTH, SOUTH, WEST, EAST, CELL_COLOR
->>>>>>> 0ad77e34690f93b6b71e591e264bd05088d61fcf
+from ..setting import NORTH, SOUTH, VISITED_COLOR, WEST, EAST,CELL_COLOR
 from collections import deque
 from ..utils.color_genertor import rgb
 
@@ -100,9 +96,3 @@ class Solver:
             self._data[x][y].color = rgb(106, 214, 205)
         self.app.draw_maze()
         self.is_generate = True
-<<<<<<< HEAD
-=======
-
-        
-        
->>>>>>> 0ad77e34690f93b6b71e591e264bd05088d61fcf

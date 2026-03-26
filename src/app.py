@@ -92,7 +92,6 @@ class App:
                 self.maze.start_generate()
             self.solver.solve()
         elif key == ord('r'):
->>>>>>> 0ad77e34690f93b6b71e591e264bd05088d61fcf
             self.reinitialise()
 
     def reinitialise(self):

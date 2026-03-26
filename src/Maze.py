@@ -1,3 +1,4 @@
+from os import PRIO_PGRP
 from typing import Any
 from src.setting import BLOCK_42_COLOR, CELL_COLOR, ENTRY_COLOR, EXIT_COLOR, VISITED_COLOR
 from src.utils.color_genertor import rgb
@@ -6,6 +7,8 @@ from . import DIRECTIONS
 from random import choice, shuffle
 import random
 import time
+from multiprocessing import Process
+
 
 class Maze:
     def __init__(self, parent: Any):
@@ -105,6 +108,7 @@ class Maze:
                                   ) -> None:
         def generate_maze(start_pos: tuple[int, int],
                           probability: float = 0) -> None:
+            self.parent.event_handler()
             x, y = start_pos
             cell = self.data[x][y]
             cell.is_visited = True
@@ -118,10 +122,8 @@ class Maze:
                     self.data[new_x][new_y].is_42_cell:
                     cell.remove_wall(wall1)
                     self.data[new_x][new_y].remove_wall(wall2)
-                    #self.parent.draw_cell(self.data[new_x][new_y])
                     self.parent.draw_maze()
                     generate_maze((new_x, new_y))
                     self.data[new_x][new_y].color = CELL_COLOR
-                    self.parent.draw_cell(self.data[new_x][new_y])
-                    #self.parent.draw_maze()
+                    self.parent.draw_maze()
         generate_maze(start_pos, 0.1)

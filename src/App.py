@@ -75,7 +75,6 @@ class App:
 
     #----------------------maze win---------------------------#
     def on_key_maze(self, key: Any, _param: Any) -> None:
-        print(key)
         if key in (65307, ord('q')):
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord('s'):
@@ -95,10 +94,22 @@ class App:
             self.ptr, WIDTH, HEIGHT, TITLE
         )
         self.draw_maze()
-        self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
-        self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
+        self.event_handler()
 
         self.start = True
+
+    def mouse_handler(self, button: Any, x: int, y: int, _param: Any) -> None:
+        """
+        Setting the position of entry and exit
+        """
+        row = x // self.maze.cols
+        col = y // self.maze.rows
+        print(button, (row, self.maze.cols), (col, self.maze.rows))
+
+    def event_handler(self):
+        self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
+        self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
+        self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
 
     def draw_cell(self, cell: Cell):
         addr = self.mlx.mlx_get_data_addr(cell.image.img)

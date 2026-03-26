@@ -12,7 +12,6 @@ install: $(VENV)
 
 $(VENV):
 	python3 -m venv $(VENV)
-	source venv/Scripts/activate
 
 run:
 	$(PYTHON) $(NAME)

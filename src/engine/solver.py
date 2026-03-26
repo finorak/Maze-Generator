@@ -7,12 +7,14 @@ from ..utils.color_genertor import rgb
 class Solver:
     def __init__(
         self, data: list[list[Cell]], 
-        ENTRY: tuple[int, int], EXIT: tuple[int, int]
+        ENTRY: tuple[int, int], EXIT: tuple[int, int],
+        app: Any
     ) -> None:
         self.data = data
         self.entry = ENTRY
         self.exit = EXIT
         self.path: list[tuple[int, int]] = []
+        self.app = app
 
     def dfs_solver(self, param) -> None:
         pass
@@ -31,7 +33,7 @@ class Solver:
             directions.append(((cell.row, cell.col), cell.row - 1, cell.col))
         return directions
 
-    def solver(self, app: Any) -> None:
+    def solve(self) -> None:
         x, y = self.entry
         self.data[x][y].is_visited = True
         directions = deque(self.find_directions(self.data[x][y]))
@@ -43,8 +45,19 @@ class Solver:
             if (new_x, new_y) == self.exit:
                 break
             self.data[new_x][new_y].color = rgb(214, 106, 151)
-            app.draw_maze()
+            self.app.draw_maze()
             directions.extend(self.find_directions(self.data[new_x][new_y]))
         
+        x, y = self.exit
+        while True:
+            x_parent, y_parent = self.data[x][y].parent
+            if (x_parent, y_parent) == self.entry:
+                break
+            self.path.append((x_parent, y_parent))
+            self.data[x_parent][y_parent].color = rgb(106, 214, 205)
+            self.app.draw_maze()
+            x, y = self.data[x][y].parent
+        
+            
         
         

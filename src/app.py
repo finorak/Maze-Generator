@@ -21,6 +21,7 @@ class App:
         self.maze: Maze = Maze(self)
         self.counter = 0
         self.maze.init_data(config.get("height"), config.get("width"))
+        self.solver: Solver = Solver(self.maze.data, self.maze.entry_pos, self.maze.end_pos, self)
 
     def init_image(self):
         if self.maze.data and self.maze.data[0][0].image.img is None:
@@ -78,12 +79,11 @@ class App:
     def on_key_maze(self, key: Any, _param: Any) -> None:
         if key in (65307, ord('q')):
             self.mlx.mlx_loop_exit(self.ptr)
-        elif key == ord('s'):
+        elif key == ord('g'):
             self.maze.generete()
-            self.draw_maze()
-            s = Solver(self.maze.data, self.maze.entry_pos, self.maze.end_pos)
-            # print(s.entry)
-            s.solver(self)
+            self.solver.data = self.maze.data
+        elif key == ord('s'):
+            self.solver.solve()
         elif key == ord('c'):
             self.reinitialise()
 

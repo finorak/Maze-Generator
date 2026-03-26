@@ -109,7 +109,7 @@ class Maze:
             cell.remove_wall(wall1)
             self.data[new_x][new_y].color = TRAVERSING_COLOR
             self.data[new_x][new_y].remove_wall(wall2)
-            # self.parent.draw_maze()
+            self.parent.draw_maze()
             self.generate_maze((new_x, new_y))
             self.data[new_x][new_y].color = CELL_COLOR
             if random.random() < probability:
@@ -119,4 +119,4 @@ class Maze:
                 self.data[new_x][new_y].remove_wall(wall_1)
                 c = self.data[x][y]
                 c.remove_wall(wall_2)
-        # self.parent.draw_maze()
+        self.parent.draw_maze()

@@ -1,9 +1,9 @@
-from .cell import Cell
+from ..cell import Cell
 
 
 class Solver:
     def __init__(self, data: list[list[Cell]]) -> None:
         self.data = data
 
-    def solve(self) -> None:
+    def dfs_solver(self, param) -> None:
         pass

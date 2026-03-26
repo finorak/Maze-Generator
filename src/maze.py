@@ -83,7 +83,7 @@ class Maze:
 
     def start_generate(self, start_pos: tuple[int, int] = (0, 0)) -> None:
         if self.generation_thread is not None and self.generation_thread.is_alive():
-            print("generate")
+            print("generate in progress...")
             return
         self.generation_thread = Thread(target=self.generete, args=(start_pos,))
         self.generation_thread.daemon = True

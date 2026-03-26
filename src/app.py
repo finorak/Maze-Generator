@@ -90,7 +90,7 @@ class App:
         elif key == ord('s'):
             if not self.maze.is_generate:
                 self.maze.start_generate()
-            self.solver.solve()
+            self.solver.start_solve()
         elif key == ord('r'):
             self.reinitialise()
 

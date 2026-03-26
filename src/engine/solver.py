@@ -1,11 +1,13 @@
 from src.setting import WEST
 from ..cell import Cell
 from typing import Any
+from ..setting import NORTH, SOUTH, VISITED_COLOR, WEST, EAST,CELL_COLOR, DISPLAY_INTERVAL
 from ..setting import NORTH, PATH_FOUND_COLOR, SOUTH, TRAVERSING_COLOR, VISITED_COLOR, WEST, EAST
 from ..setting import NORTH, SOUTH, WEST, EAST, CELL_COLOR
 from collections import deque
 from ..utils.color_genertor import rgb
-from src import cell
+from threading import Thread
+from time import sleep
 
 class Solver:
     def __init__(
@@ -20,6 +22,7 @@ class Solver:
         self.app = app
         self.is_generate = False
         self.found_path = False
+        self.solver_threading: Any = None
 
     @property
     def data(self):
@@ -91,7 +94,8 @@ class Solver:
                 break
             self._data[new_x][new_y].color = rgb(214, 106, 151)
             all_path.append((new_x, new_y))
-            self.app.draw_maze()
+            sleep(DISPLAY_INTERVAL)
+            # self.app.draw_maze()
             directions.extend(self.find_directions(self._data[new_x][new_y]))
         
         x, y = self.exit
@@ -101,7 +105,8 @@ class Solver:
                 break
             self.path.append((x_parent, y_parent))
             self._data[x_parent][y_parent].color = rgb(106, 214, 205)
-            self.app.draw_maze()
+            sleep(DISPLAY_INTERVAL)
+            # self.app.draw_maze()
             x, y = self._data[x][y].parent
         self.path.reverse()
         for p in all_path:
@@ -110,5 +115,14 @@ class Solver:
         for p in self.path:
             x, y = p
             self._data[x][y].color = rgb(106, 214, 205)
-        self.app.draw_maze()
+        sleep(DISPLAY_INTERVAL)
+        # self.app.draw_maze()
         self.is_generate = True
+
+    def start_solve(self):
+        if self.solver_threading is not None and self.solver_threading.is_alive():
+            print("solve in progress...")
+            return
+        self.solver_threading = Thread(target=self.solve, args=())
+        self.solver_threading.daemon = True
+        self.solver_threading.start()

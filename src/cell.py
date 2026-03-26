@@ -1,9 +1,7 @@
 """
 Module containing the cell class
 """
-from random import seed
 from typing import Any
-from typing_extensions import Self
 from src.setting import CELL_COLOR
 from .image import Image
 from . import NORTH, SOUTH, WEST, EAST
@@ -23,7 +21,7 @@ class Cell:
         self.wall_closed = True
         self.size = size
         self.image: Any = Image()
-        self.parent: tuple[int, int] | None = None
+        self.parent: tuple[int, int] | Any = None
 
     def remove_wall(self, wall: str) -> None:
         wall = wall.lower()
@@ -39,15 +37,3 @@ class Cell:
         if wall == "east" or wall == "e":
             if self.wall & EAST:
                 self.wall -= EAST
-
-    def get_neightboors(self, cells: list[list[Self]]) -> list[Self]:
-        neightboor: list[Self] = []
-        if self.row <= self.rows - 1 and not cells[self.row + 1][self.col].is_visited:
-            neightboor.append(cells[self.row + 1][self.col])
-        if self.col <= self.cols - 1 and not cells[self.row][self.col + 1].is_visited:
-            neightboor.append(cells[self.row][self.col + 1])
-        if self.row >= 1 and not cells[self.row - 1][self.col].is_visited:
-            neightboor.append(cells[self.row - 1][self.col])
-        if self.col >= self.cols - 1 and not cells[self.row][self.col - 1].is_visited:
-            neightboor.append(cells[self.row][self.col - 1])
-        return neightboor

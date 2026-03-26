@@ -1,6 +1,11 @@
+from src.setting import WEST
 from ..cell import Cell
 from typing import Any
+<<<<<<< HEAD
+from ..setting import NORTH, SOUTH, VISITED_COLOR, WEST, EAST
+=======
 from ..setting import NORTH, SOUTH, WEST, EAST, CELL_COLOR
+>>>>>>> 0ad77e34690f93b6b71e591e264bd05088d61fcf
 from collections import deque
 from ..utils.color_genertor import rgb
 
@@ -26,20 +31,34 @@ class Solver:
         self.is_generate = False
         self._data = data
 
-    def dfs_solver(self, param) -> None:
-        pass
+    def dfs_solver(self, curr_pos: tuple[int, int]) -> bool:
+        if curr_pos == self.exit:
+            self.path.append(curr_pos)
+            return True
+        curr_x, curr_y = curr_pos
+        curr_cell = self.data[curr_x][curr_y]
+        curr_cell.is_visited = True
+        curr_cell.color = VISITED_COLOR
+        self.app.draw_maze()
+        directions = deque(self.find_directions(curr_cell))
+        for direction in directions:
+            _, new_x, new_y = direction
+            if self.dfs_solver((new_x, new_y)):
+                self.path.append((new_x, new_y))
+                return True
+        return False
 
     def find_directions(
         self, cell: Cell
-    ) -> list[tuple[int, int]]:
+    ) -> list[tuple[tuple[int, int], int, int]]:
         directions: list[tuple[tuple[int, int], int, int]] = []
-        if cell.wall & NORTH == 0 and self._data[cell.row][cell.col - 1].is_visited == False:
+        if cell.wall & NORTH == 0 and not self._data[cell.row][cell.col - 1].is_visited:
             directions.append(((cell.row, cell.col), cell.row, cell.col - 1))
-        if cell.wall & EAST == 0 and self._data[cell.row + 1][cell.col].is_visited == False:
+        if cell.wall & EAST == 0 and not self._data[cell.row + 1][cell.col].is_visited:
             directions.append(((cell.row, cell.col), cell.row + 1, cell.col))
-        if cell.wall & SOUTH == 0 and self._data[cell.row][cell.col + 1].is_visited == False:
+        if cell.wall & SOUTH == 0 and not self._data[cell.row][cell.col + 1].is_visited:
             directions.append(((cell.row, cell.col), cell.row, cell.col + 1))
-        if cell.wall & WEST == 0 and self._data[cell.row - 1][cell.col].is_visited == False:
+        if cell.wall & WEST == 0 and not self._data[cell.row - 1][cell.col].is_visited:
             directions.append(((cell.row, cell.col), cell.row - 1, cell.col))
         return directions
 
@@ -81,6 +100,9 @@ class Solver:
             self._data[x][y].color = rgb(106, 214, 205)
         self.app.draw_maze()
         self.is_generate = True
+<<<<<<< HEAD
+=======
 
         
         
+>>>>>>> 0ad77e34690f93b6b71e591e264bd05088d61fcf

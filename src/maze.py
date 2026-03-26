@@ -1,4 +1,5 @@
 from typing import Any
+from src.engine.solver import Solver
 from src.setting import (
         BLOCK_42_COLOR, CELL_COLOR, CELL_STARTING_COLOR,
         ENTRY_COLOR, EXIT_COLOR, TRAVERSING_COLOR, VISITED_COLOR, DISPLAY_INTERVAL)
@@ -103,7 +104,7 @@ class Maze:
         end_cell = self.data[end_x][end_y]
         end_cell.color = EXIT_COLOR
         self.parent.draw_cell(end_cell)
-        self.is_generate = True
+        self.is_generate = False
 
     def generate_maze(self, start_pos: tuple[int, int],
                         probability: float = 0) -> None:

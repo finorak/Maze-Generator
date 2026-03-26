@@ -1,4 +1,4 @@
-from typing import Any, dataclass_transform
+from typing import Any
 from src.setting import (
         BLOCK_42_COLOR, CELL_COLOR, CELL_STARTING_COLOR,
         ENTRY_COLOR, EXIT_COLOR, TRAVERSING_COLOR, VISITED_COLOR)
@@ -98,17 +98,16 @@ class Maze:
 
     def generate_maze(self, start_pos: tuple[int, int],
                         probability: float = 0) -> None:
-        self.parent.event_handler()
+        # self.parent.event_handler()
         start_x, start_y = start_pos
         cell = self.data[start_x][start_y]
-        cell.is_visited = True
         cell.wall_closed = False
         cell.color = VISITED_COLOR
         neightboors = self.find_neighbor_closed((start_x, start_y))
         shuffle(neightboors)
         for neightboor in neightboors:
             wall1, wall2, new_x, new_y = neightboor
-            if self.data[new_x][new_y].is_visited:
+            if not self.data[new_x][new_y].wall_closed:
                 continue
             cell.remove_wall(wall1)
             self.data[new_x][new_y].color = TRAVERSING_COLOR

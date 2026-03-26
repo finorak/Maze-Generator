@@ -1,7 +1,7 @@
 """
 Module containing the cell class
 """
-from typing import Any, Self
+from typing import Any
 from src.setting import CELL_COLOR
 from .image import Image
 from . import NORTH, SOUTH, WEST, EAST

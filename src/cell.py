@@ -14,7 +14,7 @@ class Cell:
                  color: int = CELL_COLOR) -> None:
         self.row = row
         self.col = col
-        self.rows = row
+        self.rows = rows
         self.cols = cols
         self.color = color
         self.wall = 0b1111
@@ -23,6 +23,7 @@ class Cell:
         self.wall_closed = True
         self.size = size
         self.image: Any = Image()
+        self.parent: tuple[int, int] | None = None
 
     def remove_wall(self, wall: str) -> None:
         wall = wall.lower()

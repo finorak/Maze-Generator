@@ -6,6 +6,7 @@ from .setting import (HEIGHT, STRING_HEIGHT_PADDDING,
                       TITLE, NORTH, SOUTH, WEST,
                       EAST, WALL_THICK, WALL_COLOR)
 from .cell import Cell
+from .engine.solver import Solver
 
 
 class App:
@@ -79,6 +80,10 @@ class App:
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord('s'):
             self.maze.generete()
+            self.draw_maze()
+            s = Solver(self.maze.data, self.maze.entry_pos, self.maze.end_pos)
+            # print(s.entry)
+            s.solver(self)
         elif key == ord('c'):
             self.reinitialise()
 
@@ -94,6 +99,7 @@ class App:
             self.ptr, WIDTH, HEIGHT, TITLE
         )
         self.draw_maze()
+        self.draw_maze()
         self.event_handler()
 
         self.start = True
@@ -103,8 +109,8 @@ class App:
         Setting the position of entry and exit
         """
         row = x // self.maze.cols
-        col = y // self.maze.rows
-        print(button, (row, self.maze.cols), (col, self.maze.rows))
+        col = y // self.maze.height
+        print(button, (row, self.maze.cols), (col, self.maze.height))
 
     def event_handler(self):
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)

@@ -10,22 +10,22 @@ import random
 class Maze:
     def __init__(self, parent: Any):
         self.data: list[list[Cell]] | Any = None
-        self.rows = 0
-        self.cols = 0
+        self.height = 0
+        self.width = 0
         self.parent = parent
         self.perfect = parent.config.get("perfect")
         self.entry_pos = self.parent.config.get('entry')
         self.end_pos = self.parent.config.get('exit')
 
-    def init_data(self, rows: int, cols: int) -> None:
-        self.rows = rows
-        self.cols = cols
+    def init_data(self, height: int, width: int) -> None:
+        self.height = height
+        self.width = width
         self.data = [
             [
-                Cell(row=i, col=j, cols=self.cols, rows=self.rows,
+                Cell(row=i, col=j, cols=self.width, rows=self.height,
                      color=CELL_STARTING_COLOR
-                     ) for j in range(self.rows)
-            ] for i in range(self.cols)
+                     ) for j in range(self.height)
+            ] for i in range(self.width)
         ]
         self.make_42_block()
 
@@ -54,21 +54,21 @@ class Maze:
             self.data[x][y + 3].is_42_cell = True
             self.data[x][y + 3].color = color
 
-        set_four(self.cols//2 - 3, self.rows//2 - 2)
-        set_two(self.cols//2 + 1, self.rows//2 - 2)
+        set_four(self.width//2 - 3, self.height//2 - 2)
+        set_two(self.width//2 + 1, self.height//2 - 2)
 
     def find_neighbor_closed(self,
                              cell_coord: tuple[int, int]
                              ) -> list[tuple[str, str, int, int]]:
         neighbors: list[tuple[str, str, int, int]] = []
         x, y = cell_coord
-        if (x + 1 < self.cols and self.data[x + 1][y].wall_closed
+        if (x + 1 < self.width and self.data[x + 1][y].wall_closed
                and not self.data[x + 1][y].is_42_cell):
             neighbors.append(("e", "w", x + 1, y))
         if (x - 1 >= 0 and self.data[x - 1][y].wall_closed
                 and not self.data[x - 1][y].is_42_cell):
             neighbors.append(("w", "e", x - 1, y))
-        if (y + 1 < self.rows and (self.data[x][y + 1].wall_closed 
+        if (y + 1 < self.height and (self.data[x][y + 1].wall_closed 
                                    or not self.data[x][y + 1].is_visited) 
             and not self.data[x][y + 1].is_42_cell):
             neighbors.append(("s", "n", x, y + 1))
@@ -109,7 +109,7 @@ class Maze:
             cell.remove_wall(wall1)
             self.data[new_x][new_y].color = TRAVERSING_COLOR
             self.data[new_x][new_y].remove_wall(wall2)
-            self.parent.draw_maze()
+            # self.parent.draw_maze()
             self.generate_maze((new_x, new_y))
             self.data[new_x][new_y].color = CELL_COLOR
             if random.random() < probability:
@@ -119,4 +119,4 @@ class Maze:
                 self.data[new_x][new_y].remove_wall(wall_1)
                 c = self.data[x][y]
                 c.remove_wall(wall_2)
-        self.parent.draw_maze()
+        # self.parent.draw_maze()

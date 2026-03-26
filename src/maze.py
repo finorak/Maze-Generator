@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, dataclass_transform
 from src.setting import (
         BLOCK_42_COLOR, CELL_COLOR, CELL_STARTING_COLOR,
         ENTRY_COLOR, EXIT_COLOR, TRAVERSING_COLOR, VISITED_COLOR)
@@ -29,8 +29,9 @@ class Maze:
         ]
         self.make_42_block()
 
-    def make_42_block(self):
+    def make_42_block(self) -> None:
         color = BLOCK_42_COLOR
+
         def set_four(x: int, y: int) -> None:
             for i in range(3):
                 self.data[x][y + i].is_42_cell = True
@@ -61,17 +62,21 @@ class Maze:
                              ) -> list[tuple[str, str, int, int]]:
         neighbors: list[tuple[str, str, int, int]] = []
         x, y = cell_coord
-        if x + 1 < self.cols and (self.data[x + 1][y].wall_closed \
-                and not self.data[x + 1][y].is_42_cell):
+        if (x + 1 < self.cols and (self.data[x + 1][y].wall_closed
+                                  or not self.data[x + 1][y].is_visited)
+            and not self.data[x + 1][y].is_42_cell):
             neighbors.append(("e", "w", x + 1, y))
-        if (x - 1 >= 0 and (self.data[x - 1][y].wall_closed and not \
-                self.data[x - 1][y].is_42_cell)):
+        if (x - 1 >= 0 and (self.data[x - 1][y].wall_closed
+                            or not self.data[x - 1][y].is_visited)
+            and not self.data[x - 1][y].is_42_cell):
             neighbors.append(("w", "e", x - 1, y))
-        if (y + 1 < self.rows and (self.data[x][y + 1].wall_closed \
-                and not self.data[x][y + 1].is_42_cell)):
+        if (y + 1 < self.rows and (self.data[x][y + 1].wall_closed 
+                                   or not self.data[x][y + 1].is_visited) 
+            and not self.data[x][y + 1].is_42_cell):
             neighbors.append(("s", "n", x, y + 1))
-        if (y - 1 >= 0 and (self.data[x][y - 1].wall_closed and not \
-                self.data[x][y - 1].is_42_cell)):
+        if (y - 1 >= 0 and (self.data[x][y - 1].wall_closed
+                            or not self.data[x][y - 1].is_visited)
+                            and not self.data[x][y - 1].is_42_cell):
             neighbors.append(("n", "s", x, y - 1))
         return neighbors
 

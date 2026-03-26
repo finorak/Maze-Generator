@@ -11,7 +11,8 @@ install: $(VENV)
 	$(PIP) install -r requirements.txt
 
 $(VENV):
-	python3 -m venv $(VENV)
+	python3 -m virtualenv $(VENV)
+# 	source venv/Scripts/activate
 
 run:
 	$(PYTHON) $(NAME)

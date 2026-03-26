@@ -85,15 +85,12 @@ class App:
         elif key == ord('s'):
             if not self.maze.is_generate:
                 self.maze.generete()
-<<<<<<< HEAD
-                self.maze.is_generate = True
+                self.solver.dfs_solver(self.maze.entry_pos)
             else:
                 self.solver.dfs_solver(self.maze.entry_pos)
         elif key == ord('c'):
-=======
             self.solver.solve()
         elif key == ord('r'):
->>>>>>> 0ad77e34690f93b6b71e591e264bd05088d61fcf
             self.reinitialise()
 
     def reinitialise(self):
@@ -119,9 +116,9 @@ class App:
         """
         Setting the position of entry and exit
         """
-        row = x // self.maze.cols
+        row = x // self.maze.width
         col = y // self.maze.height
-        print(button, (row, self.maze.cols), (col, self.maze.height))
+        print(button, (row, self.maze.width), (col, self.maze.height))
 
     def event_handler(self):
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)

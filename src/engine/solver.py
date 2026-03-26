@@ -1,6 +1,6 @@
 from ..cell import Cell
 from typing import Any
-from ..setting import NORTH, SOUTH, WEST, EAST
+from ..setting import NORTH, SOUTH, WEST, EAST, CELL_COLOR
 from collections import deque
 from ..utils.color_genertor import rgb
 
@@ -47,6 +47,7 @@ class Solver:
         if self.is_generate:
             return
         self.path = []
+        all_path: list[tuple[int, int]] = []
         x, y = self.entry
         self._data[x][y].is_visited = True
         directions = deque(self.find_directions(self._data[x][y]))
@@ -58,6 +59,7 @@ class Solver:
             if (new_x, new_y) == self.exit:
                 break
             self._data[new_x][new_y].color = rgb(214, 106, 151)
+            all_path.append((new_x, new_y))
             self.app.draw_maze()
             directions.extend(self.find_directions(self._data[new_x][new_y]))
         
@@ -70,7 +72,15 @@ class Solver:
             self._data[x_parent][y_parent].color = rgb(106, 214, 205)
             self.app.draw_maze()
             x, y = self._data[x][y].parent
+        self.path.reverse()
+        for p in all_path:
+            x, y = p
+            self._data[x][y].color = CELL_COLOR
+        for p in self.path:
+            x, y = p
+            self._data[x][y].color = rgb(106, 214, 205)
+        self.app.draw_maze()
         self.is_generate = True
-            
+
         
         

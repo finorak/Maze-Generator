@@ -86,11 +86,13 @@ class App:
             if not self.maze.is_generate:
                 self.maze.generete()
             self.solver.solve()
-        elif key == ord('c'):
+        elif key == ord('r'):
             self.reinitialise()
 
     def reinitialise(self):
-        pass
+        self.maze.init_data(self.config.get("height"), self.config.get("width"))
+        self.solver.data = self.maze.data
+        self.maze.generete()
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:

@@ -39,13 +39,18 @@ class Cell:
                 self.wall -= EAST
 
     def get_neightboors(self, cells: list[list[Self]]) -> list[Self]:
-        neightboor: list[Self] = []
-        if self.row <= self.rows - 1 and not cells[self.row + 1][self.col].is_visited:
-            neightboor.append(cells[self.row + 1][self.col])
-        if self.col <= self.cols - 1 and not cells[self.row][self.col + 1].is_visited:
-            neightboor.append(cells[self.row][self.col + 1])
-        if self.row >= 1 and not cells[self.row - 1][self.col].is_visited:
-            neightboor.append(cells[self.row - 1][self.col])
-        if self.col >= self.cols - 1 and not cells[self.row][self.col - 1].is_visited:
-            neightboor.append(cells[self.row][self.col - 1])
-        return neightboor
+        neighbors: list[Self] = []
+        x, y = self.row, self.col
+        if (x + 1 < self.cols and not cells[x + 1][y].is_visited \
+                and not cells[x + 1][y].is_42_cell):
+            neighbors.append(cells[x + 1][y])
+        if (x - 1 >= 0 and not cells[x - 1][y].is_visited \
+                and not cells[x - 1][y].is_42_cell):
+            neighbors.append(cells[x - 1][y])
+        if (y <= self.rows - 1 and not cells[x][y + 1].is_visited \
+                                    and not cells[x][y + 1].is_42_cell):
+            neighbors.append(cells[x][y + 1])
+        if (y - 1 >= 0 and not cells[x][y - 1].is_visited \
+            and not cells[x][y - 1].is_42_cell):
+            neighbors.append(cells[x][y - 1])
+        return neighbors

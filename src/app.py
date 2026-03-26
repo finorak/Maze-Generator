@@ -81,6 +81,8 @@ class App:
             self.maze.generete()
         elif key == ord('c'):
             self.reinitialise()
+        elif key == ord('j'):
+            self.maze.solve()
 
     def reinitialise(self):
         pass

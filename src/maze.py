@@ -96,7 +96,7 @@ class Maze:
 
     def generate_maze(self, start_pos: tuple[int, int],
                         probability: float = 0) -> None:
-        self.parent.event_handler()
+        # self.parent.event_handler()
         start_x, start_y = start_pos
         cell = self.data[start_x][start_y]
         cell.wall_closed = False

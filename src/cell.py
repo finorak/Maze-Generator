@@ -2,7 +2,8 @@
 Module containing the cell class
 """
 from random import seed
-from typing import Any, Self
+from typing import Any
+from typing_extensions import Self
 from src.setting import CELL_COLOR
 from .image import Image
 from . import NORTH, SOUTH, WEST, EAST

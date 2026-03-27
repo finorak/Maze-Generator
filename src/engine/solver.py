@@ -1,17 +1,27 @@
-from src.setting import WEST
 from ..cell import Cell
 from typing import Any
-from ..setting import NORTH, SOUTH, VISITED_COLOR, WEST, EAST,CELL_COLOR, DISPLAY_INTERVAL
+from ..setting import (
+    NORTH,
+    SOUTH,
+    VISITED_COLOR,
+    WEST,
+    EAST,
+    CELL_COLOR,
+    DISPLAY_INTERVAL,
+)
 from collections import deque
 from ..utils.color_genertor import rgb
 from threading import Thread
 from time import sleep
 
+
 class Solver:
     def __init__(
-        self, data: list[list[Cell]], 
-        ENTRY: tuple[int, int], EXIT: tuple[int, int],
-        app: Any
+        self,
+        data: list[list[Cell]],
+        ENTRY: tuple[int, int],
+        EXIT: tuple[int, int],
+        app: Any,
     ) -> None:
         self._data = data
         self.entry = ENTRY
@@ -24,7 +34,7 @@ class Solver:
     @property
     def data(self):
         return self._data
-    
+
     @data.setter
     def data(self, data: list[list[Cell]]):
         self.is_generate = False
@@ -47,9 +57,7 @@ class Solver:
                 return True
         return False
 
-    def find_directions(
-        self, cell: Cell
-    ) -> list[tuple[tuple[int, int], int, int]]:
+    def find_directions(self, cell: Cell) -> list[tuple[tuple[int, int], int, int]]:
         directions: list[tuple[tuple[int, int], int, int]] = []
         if cell.wall & NORTH == 0 and not self._data[cell.row][cell.col - 1].is_visited:
             directions.append(((cell.row, cell.col), cell.row, cell.col - 1))
@@ -81,7 +89,7 @@ class Solver:
             sleep(DISPLAY_INTERVAL)
             # self.app.draw_maze()
             directions.extend(self.find_directions(self._data[new_x][new_y]))
-        
+
         x, y = self.exit
         while True:
             x_parent, y_parent = self._data[x][y].parent

@@ -29,6 +29,7 @@ class Solver:
         self.path: list[tuple[int, int]] = []
         self.app = app
         self.is_generate = False
+        self.found_path = False
         self.solver_threading: Any = None
 
     @property
@@ -40,22 +41,35 @@ class Solver:
         self.is_generate = False
         self._data = data
 
-    def dfs_solver(self, curr_pos: tuple[int, int]) -> bool:
-        if curr_pos == self.exit:
-            self.path.append(curr_pos)
-            return True
-        curr_x, curr_y = curr_pos
-        curr_cell = self.data[curr_x][curr_y]
-        curr_cell.is_visited = True
-        curr_cell.color = VISITED_COLOR
-        self.app.draw_maze()
-        directions = deque(self.find_directions(curr_cell))
-        for direction in directions:
-            _, new_x, new_y = direction
-            if self.dfs_solver((new_x, new_y)):
-                self.path.append((new_x, new_y))
+    def dfs_solver(self, curr_pos: tuple[int, int]) -> None:
+        def solve_maze(curr_pos: tuple[int, int]):
+            if self.found_path:
                 return True
-        return False
+            if curr_pos == self.exit:
+                self.path.append(curr_pos)
+                self.found_path = True
+                return True
+            curr_x, curr_y = curr_pos
+            curr_cell = self.data[curr_x][curr_y]
+            curr_cell.is_visited = True
+            curr_cell.color = PATH_FOUND_COLOR
+            self.app.draw_maze()
+            directions = deque(self.find_directions(curr_cell))
+            for direction in directions:
+                _, new_x, new_y = direction
+                if self.dfs_solver((new_x, new_y)):
+                    self.path.append((new_x, new_y))
+                    curr_cell.color = CLEAR_COLOR
+                    self.app.draw_maze()
+                    self.found_path = True
+                    return True
+                self.data[new_x][new_y].color = PATH_FOUND_COLOR
+                self.app.draw_maze()
+            self.app.draw_maze()
+            return False
+
+        solve_maze(curr_pos)
+        self.is_generate = True
 
     def find_directions(self, cell: Cell) -> list[tuple[tuple[int, int], int, int]]:
         directions: list[tuple[tuple[int, int], int, int]] = []
@@ -111,10 +125,10 @@ class Solver:
         # self.app.draw_maze()
         self.is_generate = True
 
-    def start_solve(self):
+    def start_solve(self, target: Any, args: Any):
         if self.solver_threading is not None and self.solver_threading.is_alive():
             print("solve in progress...")
             return
-        self.solver_threading = Thread(target=self.solve, args=())
+        self.solver_threading = Thread(target=target, args=args)
         self.solver_threading.daemon = True
         self.solver_threading.start()

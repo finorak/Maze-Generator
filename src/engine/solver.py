@@ -3,7 +3,6 @@ from typing import Any
 from ..setting import (
     NORTH,
     SOUTH,
-    VISITED_COLOR,
     WEST,
     EAST,
     CELL_COLOR,

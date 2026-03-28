@@ -101,7 +101,12 @@ class App:
         elif key == ord("s"):
             if not self.maze.is_generate:
                 self.maze.start_generate()
-                # self.solver.solve()
+                self.solver.start_solve(self.solver.solve, ())
+            else:
+                self.solver.start_solve(self.solver.solve, ())
+        elif key == ord("d"):
+            if not self.maze.is_generate:
+                self.maze.start_generate()
                 self.solver.dfs_solver(self.solver.entry)
             else:
                 self.solver.dfs_solver(self.solver.entry)

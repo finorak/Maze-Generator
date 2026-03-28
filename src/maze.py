@@ -114,8 +114,6 @@ class Maze:
         self.generation_thread.start()
 
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
-
-        # generating the maze
         self.generate_maze(start_pos, (int(self.perfect) * 30) / 100)
         """
         COLORING ENTRY AND END POINT
@@ -126,7 +124,7 @@ class Maze:
         end_x, end_y = self.end_pos
         end_cell = self.data[end_x][end_y]
         end_cell.color = EXIT_COLOR
-        self.is_generate = False
+        self.is_generate = True
 
     def generate_maze(self, start_pos: tuple[int, int], probability: float = 0) -> None:
         start_x, start_y = start_pos

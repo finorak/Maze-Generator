@@ -99,17 +99,16 @@ class App:
             self.maze.start_generate()
             self.solver.data = self.maze.data
         elif key == ord("s"):
-            if not self.maze.is_generate:
-                self.maze.start_generate()
+            if self.maze.is_generate:
                 self.solver.start_solve(self.solver.solve, ())
             else:
-                self.solver.start_solve(self.solver.solve, ())
+                print("maze not generate")
         elif key == ord("d"):
-            if not self.maze.is_generate:
-                self.maze.start_generate()
+            if self.maze.is_generate:
                 self.solver.dfs_solver(self.solver.entry)
             else:
-                self.solver.dfs_solver(self.solver.entry)
+                print("maze not generate")
+
         elif key == ord("r"):
             self.reinitialise()
 

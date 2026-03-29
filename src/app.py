@@ -2,6 +2,7 @@ from .maze import Maze
 from mlx import Mlx
 from typing import Any
 from .setting import (
+    DIRECTIONS,
     HEIGHT,
     STRING_HEIGHT_PADDDING,
     STRING_WIDTH_PADDING,
@@ -29,6 +30,7 @@ class App:
         self.maze_win: Any = None
         self.error_win: Any = None
         self.config = config
+        self.output_file = self.config.get("output_file")
         self.maze: Maze = Maze(self)
         self.counter = 0
         self.maze.init_data(config.get("height"), config.get("width"))
@@ -49,7 +51,7 @@ class App:
     def on_close(self, _param: Any) -> None:
         self.mlx.mlx_loop_exit(self.ptr)
 
-    def update(self, _param: Any):
+    def update(self, _param: Any) -> None:
         if self.start:
             now = time()
             if now - self.last_draw >= DISPLAY_INTERVAL:
@@ -110,13 +112,13 @@ class App:
                 self.solver.dfs_solver(self.solver.entry)
             else:
                 print("maze not generate")
+        elif key == ord('c'):
+                self.put_maze_into_file()
 
         elif key == ord("r"):
             self.reinitialise()
 
     def reinitialise(self):
-        self.maze.init_data(self.config.get("height"),
-                            self.config.get("width"))
         self.solver.data = self.maze.data
         self.maze.start_generate()
 
@@ -127,14 +129,18 @@ class App:
 
         width = self.config.get("width") * 40
         height = self.config.get("height") * 40
-        self.maze_win = self.mlx.mlx_new_window(self.ptr, width, height, TITLE)
+        self.maze_win = self.mlx.mlx_new_window(
+                self.ptr,
+                width, height,
+                TITLE)
         self.draw_maze()
         self.draw_maze()
         self.event_handler()
 
         self.start = True
 
-    def mouse_handler(self, button: Any, x: int, y: int, _param: Any) -> None:
+    def mouse_handler(self, button: Any, x: int,
+                      y: int, _param: Any) -> None:
         """
         Setting the position of entry and exit
         """
@@ -199,3 +205,27 @@ class App:
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell)
+
+    def put_maze_into_file(self):
+        def binary_to_hex(binary_string: int) -> str:
+            return format(binary_string, 'X')
+
+        def writing_path(output_file: Any, path: list[tuple[int, int]]) -> None:
+            for x, y in path:
+                cell = self.maze.data[x][y]
+                print(cell)
+                output_file.write(f"{DIRECTIONS[cell.wall]}")
+            output_file.write("\n")
+
+        with open(self.output_file, mode='w',
+                  encoding='utf-8') as output_file:
+            for row in self.maze.data:
+                for cell in row:
+                    output_file.write(f"{binary_to_hex(cell.wall)}")
+                output_file.write("\n")
+            output_file.write("\n")
+            x, y = self.maze.entry_pos
+            end_x, end_y = self.maze.end_pos
+            output_file.write(f"{x}, {y}\n")
+            output_file.write(f"{end_x}, {end_y}")
+            writing_path(output_file, self.solver.path)

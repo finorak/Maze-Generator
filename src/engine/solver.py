@@ -88,7 +88,6 @@ class Solver:
     def solve(self, animate: bool = True) -> None:
         if self.is_generate:
             return
-        self.path = []
         all_path: list[tuple[int, int]] = []
         x, y = self.entry
         self._data[x][y].is_visited = True

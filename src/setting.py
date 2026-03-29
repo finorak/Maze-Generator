@@ -5,11 +5,16 @@ WIDTH = 840
 HEIGHT = 600
 TITLE = "Mazing Generator and solver"
 # Wall direction
-DIRECTIONS: list[tuple[int, int]] = []
 NORTH = 0b0001
 SOUTH = 0b0100
 WEST = 0b1000
 EAST = 0b0010
+DIRECTIONS: dict[int, str] = {
+        1: "N",
+        2: "S",
+        3: "W",
+        4: "E"
+        }
 WALL_THICK = 2
 CELL_COLOR = rgb(255, 255, 255)
 TRAVERSING_COLOR = rgb(98, 189, 166)

@@ -7,6 +7,7 @@ from ..setting import (
     EAST,
     CELL_COLOR,
     DISPLAY_INTERVAL,
+    PATH_FOUND_COLOR
 )
 from collections import deque
 from ..utils.color_genertor import rgb
@@ -70,16 +71,18 @@ class Solver:
         solve_maze(curr_pos)
         self.is_generate = True
 
-    def find_directions(self, cell: Cell) -> list[tuple[tuple[int, int], int, int]]:
+    def find_directions(self, cell: Cell
+                        ) -> list[tuple[tuple[int, int], int, int]]:
         directions: list[tuple[tuple[int, int], int, int]] = []
-        if cell.wall & NORTH == 0 and not self._data[cell.row][cell.col - 1].is_visited:
-            directions.append(((cell.row, cell.col), cell.row, cell.col - 1))
-        if cell.wall & EAST == 0 and not self._data[cell.row + 1][cell.col].is_visited:
-            directions.append(((cell.row, cell.col), cell.row + 1, cell.col))
-        if cell.wall & SOUTH == 0 and not self._data[cell.row][cell.col + 1].is_visited:
-            directions.append(((cell.row, cell.col), cell.row, cell.col + 1))
-        if cell.wall & WEST == 0 and not self._data[cell.row - 1][cell.col].is_visited:
-            directions.append(((cell.row, cell.col), cell.row - 1, cell.col))
+        x, y = cell.row, cell.col
+        if cell.wall & NORTH == 0 and not self._data[x][y - 1].is_visited:
+            directions.append(((x, y), x, y - 1))
+        if cell.wall & EAST == 0 and not self._data[x + 1][y].is_visited:
+            directions.append(((x, y), x + 1, y))
+        if cell.wall & SOUTH == 0 and not self._data[x][y + 1].is_visited:
+            directions.append(((x, y), x, y + 1))
+        if cell.wall & WEST == 0 and not self._data[x - 1][y].is_visited:
+            directions.append(((x, y), x - 1, y))
         return directions
 
     def solve(self, animate: bool = True) -> None:
@@ -125,7 +128,8 @@ class Solver:
         self.is_generate = True
 
     def start_solve(self, target: Any, args: Any):
-        if self.solver_threading is not None and self.solver_threading.is_alive():
+        if self.solver_threading is not None \
+                and self.solver_threading.is_alive():
             print("solve in progress...")
             return
         self.solver_threading = Thread(target=target, args=args)

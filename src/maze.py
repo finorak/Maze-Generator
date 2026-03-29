@@ -93,7 +93,8 @@ class Maze:
             neighbors.append(("w", "e", x - 1, y))
         if (
             y + 1 < self.height
-            and (self.data[x][y + 1].wall_closed or not self.data[x][y + 1].is_visited)
+            and (self.data[x][y + 1].wall_closed
+                 or not self.data[x][y + 1].is_visited)
             and not self.data[x][y + 1].is_42_cell
         ):
             neighbors.append(("s", "n", x, y + 1))
@@ -106,10 +107,12 @@ class Maze:
         return neighbors
 
     def start_generate(self, start_pos: tuple[int, int] = (0, 0)) -> None:
-        if self.generation_thread is not None and self.generation_thread.is_alive():
+        if self.generation_thread is not None \
+                and self.generation_thread.is_alive():
             print("generate in progress...")
             return
-        self.generation_thread = Thread(target=self.generete, args=(start_pos,))
+        self.generation_thread = Thread(
+                target=self.generete, args=(start_pos,))
         self.generation_thread.daemon = True
         self.generation_thread.start()
 
@@ -126,7 +129,8 @@ class Maze:
         end_cell.color = EXIT_COLOR
         self.is_generate = True
 
-    def generate_maze(self, start_pos: tuple[int, int], probability: float = 0) -> None:
+    def generate_maze(self, start_pos: tuple[int, int],
+                      probability: float = 0) -> None:
         start_x, start_y = start_pos
         cell = self.data[start_x][start_y]
         cell.wall_closed = False

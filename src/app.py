@@ -76,7 +76,9 @@ class App:
             self.switch_to_maze()
 
     def run_main(self) -> None:
-        self.main_win = self.mlx.mlx_new_window(self.ptr, WIDTH, HEIGHT, TITLE)
+        self.main_win = self.mlx.mlx_new_window(
+                self.ptr, WIDTH, HEIGHT, TITLE
+                )
         self.mlx.mlx_string_put(
             self.ptr,
             self.main_win,
@@ -113,7 +115,8 @@ class App:
             self.reinitialise()
 
     def reinitialise(self):
-        self.maze.init_data(self.config.get("height"), self.config.get("width"))
+        self.maze.init_data(self.config.get("height"),
+                            self.config.get("width"))
         self.solver.data = self.maze.data
         self.maze.start_generate()
 
@@ -147,41 +150,41 @@ class App:
     def draw_cell(self, cell: Cell):
         addr = self.mlx.mlx_get_data_addr(cell.image.img)
         cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
-        byte_per_pixel = cell.image.bpp // 8
+        bpp = cell.image.bpp // 8
         for j in range(cell.size):
             for i in range(cell.size):
-                offset = j * cell.image.sl + i * byte_per_pixel
-                cell.image.data[offset : offset + byte_per_pixel] = cell.color.to_bytes(
-                    byte_per_pixel, "little"
+                offset = j * cell.image.sl + i * bpp
+                cell.image.data[offset:offset + bpp] = cell.color.to_bytes(
+                    bpp, "little"
                 )
 
         if cell.wall & NORTH:
             for j in range(WALL_THICK):
                 for i in range(cell.size):
-                    offset = (j) * cell.image.sl + (i) * byte_per_pixel
-                    cell.image.data[offset : offset + byte_per_pixel] = (
-                        WALL_COLOR.to_bytes(byte_per_pixel, "little")
+                    offset = (j) * cell.image.sl + (i) * bpp
+                    cell.image.data[offset:offset + bpp] = (
+                        WALL_COLOR.to_bytes(bpp, "little")
                     )
         if cell.wall & EAST:
             for j in range(cell.size):
                 for i in range(WALL_THICK):
-                    offset = j * cell.image.sl + (cell.size - 1) * byte_per_pixel
-                    cell.image.data[offset : offset + byte_per_pixel] = (
-                        WALL_COLOR.to_bytes(byte_per_pixel, "little")
+                    offset = j * cell.image.sl + (cell.size - 1) * bpp
+                    cell.image.data[offset:offset + bpp] = (
+                        WALL_COLOR.to_bytes(bpp, "little")
                     )
         if cell.wall & WEST:
             for j in range(cell.size):
                 for i in range(WALL_THICK):
-                    offset = j * cell.image.sl + i * byte_per_pixel
-                    cell.image.data[offset : offset + byte_per_pixel] = (
-                        WALL_COLOR.to_bytes(byte_per_pixel, "little")
+                    offset = j * cell.image.sl + i * bpp
+                    cell.image.data[offset:offset + bpp] = (
+                        WALL_COLOR.to_bytes(bpp, "little")
                     )
         if cell.wall & SOUTH:
             for j in range(WALL_THICK):
                 for i in range(cell.size):
-                    offset = (cell.size - 1) * cell.image.sl + (i) * byte_per_pixel
-                    cell.image.data[offset : offset + byte_per_pixel] = (
-                        WALL_COLOR.to_bytes(byte_per_pixel, "little")
+                    offset = (cell.size - 1) * cell.image.sl + (i) * bpp
+                    cell.image.data[offset:offset + bpp] = (
+                        WALL_COLOR.to_bytes(bpp, "little")
                     )
         self.mlx.mlx_put_image_to_window(
             self.ptr,

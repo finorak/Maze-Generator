@@ -2,7 +2,6 @@
 The main program for our maze generator
 """
 
-import sys
 from src.app import App
 from src.utils import get_configuration
 

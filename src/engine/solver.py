@@ -1,17 +1,26 @@
-from src.setting import WEST
 from ..cell import Cell
 from typing import Any
-from ..setting import CLEAR_COLOR, NORTH, PATH_FOUND_COLOR, SOUTH, VISITED_COLOR, EAST,CELL_COLOR, DISPLAY_INTERVAL
+from ..setting import (
+    NORTH,
+    SOUTH,
+    WEST,
+    EAST,
+    CELL_COLOR,
+    DISPLAY_INTERVAL,
+)
 from collections import deque
 from ..utils.color_genertor import rgb
 from threading import Thread
 from time import sleep
 
+
 class Solver:
     def __init__(
-        self, data: list[list[Cell]], 
-        ENTRY: tuple[int, int], EXIT: tuple[int, int],
-        app: Any
+        self,
+        data: list[list[Cell]],
+        ENTRY: tuple[int, int],
+        EXIT: tuple[int, int],
+        app: Any,
     ) -> None:
         self._data = data
         self.entry = ENTRY
@@ -25,7 +34,7 @@ class Solver:
     @property
     def data(self):
         return self._data
-    
+
     @data.setter
     def data(self, data: list[list[Cell]]):
         self.is_generate = False
@@ -57,12 +66,11 @@ class Solver:
                 self.app.draw_maze()
             self.app.draw_maze()
             return False
+
         solve_maze(curr_pos)
         self.is_generate = True
 
-    def find_directions(
-        self, cell: Cell
-    ) -> list[tuple[tuple[int, int], int, int]]:
+    def find_directions(self, cell: Cell) -> list[tuple[tuple[int, int], int, int]]:
         directions: list[tuple[tuple[int, int], int, int]] = []
         if cell.wall & NORTH == 0 and not self._data[cell.row][cell.col - 1].is_visited:
             directions.append(((cell.row, cell.col), cell.row, cell.col - 1))
@@ -74,7 +82,7 @@ class Solver:
             directions.append(((cell.row, cell.col), cell.row - 1, cell.col))
         return directions
 
-    def solve(self) -> None:
+    def solve(self, animate: bool = True) -> None:
         if self.is_generate:
             return
         self.path = []
@@ -91,10 +99,10 @@ class Solver:
                 break
             self._data[new_x][new_y].color = rgb(214, 106, 151)
             all_path.append((new_x, new_y))
-            sleep(DISPLAY_INTERVAL)
-            # self.app.draw_maze()
+            if animate:
+                sleep(DISPLAY_INTERVAL)
             directions.extend(self.find_directions(self._data[new_x][new_y]))
-        
+
         x, y = self.exit
         while True:
             x_parent, y_parent = self._data[x][y].parent
@@ -102,8 +110,8 @@ class Solver:
                 break
             self.path.append((x_parent, y_parent))
             self._data[x_parent][y_parent].color = rgb(106, 214, 205)
-            sleep(DISPLAY_INTERVAL)
-            # self.app.draw_maze()
+            if animate:
+                sleep(DISPLAY_INTERVAL)
             x, y = self._data[x][y].parent
         self.path.reverse()
         for p in all_path:
@@ -112,8 +120,8 @@ class Solver:
         for p in self.path:
             x, y = p
             self._data[x][y].color = rgb(106, 214, 205)
-        sleep(DISPLAY_INTERVAL)
-        # self.app.draw_maze()
+        if animate:
+            sleep(DISPLAY_INTERVAL)
         self.is_generate = True
 
     def start_solve(self, target: Any, args: Any):

@@ -1,13 +1,20 @@
 from typing import Any
-from src.engine.solver import Solver
 from src.setting import (
-        BLOCK_42_COLOR, CELL_COLOR, CELL_STARTING_COLOR,
-        ENTRY_COLOR, EXIT_COLOR, TRAVERSING_COLOR, VISITED_COLOR, DISPLAY_INTERVAL)
+    BLOCK_42_COLOR,
+    CELL_COLOR,
+    CELL_STARTING_COLOR,
+    ENTRY_COLOR,
+    EXIT_COLOR,
+    TRAVERSING_COLOR,
+    VISITED_COLOR,
+    DISPLAY_INTERVAL,
+)
 from .cell import Cell
 from random import choice, shuffle
 import random
 from threading import Thread
 from time import sleep
+
 
 class Maze:
     def __init__(self, parent: Any):
@@ -16,8 +23,8 @@ class Maze:
         self.width = 0
         self.parent = parent
         self.perfect = parent.config.get("perfect")
-        self.entry_pos = self.parent.config.get('entry')
-        self.end_pos = self.parent.config.get('exit')
+        self.entry_pos = self.parent.config.get("entry")
+        self.end_pos = self.parent.config.get("exit")
         self.is_generate = False
         self.generation_thread: Any = None
 
@@ -26,10 +33,16 @@ class Maze:
         self.width = width
         self.data = [
             [
-                Cell(row=i, col=j, cols=self.width, rows=self.height,
-                     color=CELL_STARTING_COLOR
-                     ) for j in range(self.height)
-            ] for i in range(self.width)
+                Cell(
+                    row=i,
+                    col=j,
+                    cols=self.width,
+                    rows=self.height,
+                    color=CELL_STARTING_COLOR,
+                )
+                for j in range(self.height)
+            ]
+            for i in range(self.width)
         ]
         self.make_42_block()
 
@@ -61,23 +74,34 @@ class Maze:
         set_four(self.width // 2 - 3, self.height // 2 - 2)
         set_two(self.width // 2 + 1, self.height // 2 - 2)
 
-    def find_neighbor_closed(self,
-                             cell_coord: tuple[int, int]
-                             ) -> list[tuple[str, str, int, int]]:
+    def find_neighbor_closed(
+        self, cell_coord: tuple[int, int]
+    ) -> list[tuple[str, str, int, int]]:
         neighbors: list[tuple[str, str, int, int]] = []
         x, y = cell_coord
-        if (x + 1 < self.width and self.data[x + 1][y].wall_closed
-               and not self.data[x + 1][y].is_42_cell):
+        if (
+            x + 1 < self.width
+            and self.data[x + 1][y].wall_closed
+            and not self.data[x + 1][y].is_42_cell
+        ):
             neighbors.append(("e", "w", x + 1, y))
-        if (x - 1 >= 0 and self.data[x - 1][y].wall_closed
-                and not self.data[x - 1][y].is_42_cell):
+        if (
+            x - 1 >= 0
+            and self.data[x - 1][y].wall_closed
+            and not self.data[x - 1][y].is_42_cell
+        ):
             neighbors.append(("w", "e", x - 1, y))
-        if (y + 1 < self.height and (self.data[x][y + 1].wall_closed 
-                                   or not self.data[x][y + 1].is_visited) 
-            and not self.data[x][y + 1].is_42_cell):
+        if (
+            y + 1 < self.height
+            and (self.data[x][y + 1].wall_closed or not self.data[x][y + 1].is_visited)
+            and not self.data[x][y + 1].is_42_cell
+        ):
             neighbors.append(("s", "n", x, y + 1))
-        if (y - 1 >= 0 and self.data[x][y - 1].wall_closed
-                            and not self.data[x][y - 1].is_42_cell):
+        if (
+            y - 1 >= 0
+            and self.data[x][y - 1].wall_closed
+            and not self.data[x][y - 1].is_42_cell
+        ):
             neighbors.append(("n", "s", x, y - 1))
         return neighbors
 
@@ -90,8 +114,6 @@ class Maze:
         self.generation_thread.start()
 
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
-
-        # generating the maze
         self.generate_maze(start_pos, (int(self.perfect) * 30) / 100)
         """
         COLORING ENTRY AND END POINT
@@ -102,10 +124,9 @@ class Maze:
         end_x, end_y = self.end_pos
         end_cell = self.data[end_x][end_y]
         end_cell.color = EXIT_COLOR
-        self.is_generate = False
+        self.is_generate = True
 
-    def generate_maze(self, start_pos: tuple[int, int],
-                        probability: float = 0) -> None:
+    def generate_maze(self, start_pos: tuple[int, int], probability: float = 0) -> None:
         start_x, start_y = start_pos
         cell = self.data[start_x][start_y]
         cell.wall_closed = False

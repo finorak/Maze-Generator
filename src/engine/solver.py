@@ -49,11 +49,11 @@ class Solver:
                 _, new_x, new_y = direction
                 if self.dfs_solver((new_x, new_y)):
                     self.path.append((new_x, new_y))
-                    curr_cell.color = CLEAR_COLOR
+                    curr_cell.color = PATH_FOUND_COLOR
                     self.app.draw_maze()
                     self.found_path = True
                     return True
-                self.data[new_x][new_y].color = PATH_FOUND_COLOR
+                self.data[new_x][new_y].color = CELL_COLOR
                 self.app.draw_maze()
             self.app.draw_maze()
             return False

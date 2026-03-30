@@ -92,8 +92,7 @@ class Maze:
             neighbors.append(("w", "e", x - 1, y))
         if (
             y + 1 < self.cols
-            and (self.data[x][y + 1].wall_closed
-                 or not self.data[x][y + 1].is_visited)
+            and (self.data[x][y + 1].wall_closed or not self.data[x][y + 1].is_visited)
             and not self.data[x][y + 1].is_42_cell
         ):
             neighbors.append(("s", "n", x, y + 1))
@@ -105,20 +104,19 @@ class Maze:
             neighbors.append(("n", "s", x, y - 1))
         return neighbors
 
-    def start_generate(self,
-                       start_pos: tuple[int, int] = (0, 0)
-                       ) -> None:
-        if self.generation_thread is not None \
-                and self.generation_thread.is_alive():
+    def start_generate(self, start_pos: tuple[int, int] = (0, 0)) -> None:
+        if self.generation_thread is not None and self.generation_thread.is_alive():
             print("generate in progress...")
             return
-        self.generation_thread = Thread(
-                target=self.generete, args=(start_pos,))
+        self.generation_thread = Thread(target=self.generete, args=(start_pos,))
         self.generation_thread.daemon = True
         self.generation_thread.start()
 
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
-        self.generate_maze(start_pos, (int(self.perfect) * 10) / 100)
+        perfect = not self.perfect
+        self.generate_maze(start_pos)
+        self.break_wall(int(perfect) * 10 / 100)
+        # self.parent.draw_maze()
         """
         COLORING ENTRY AND END POINT
         """
@@ -130,8 +128,7 @@ class Maze:
         end_cell.color = EXIT_COLOR
         self.is_generate = True
 
-    def generate_maze(self, start_pos: tuple[int, int],
-                      probability: float = 0) -> None:
+    def generate_maze(self, start_pos: tuple[int, int]) -> None:
         start_x, start_y = start_pos
         cell = self.data[start_x][start_y]
         cell.wall_closed = False
@@ -141,13 +138,13 @@ class Maze:
         for neightboor in neightboors:
             wall1, wall2, new_x, new_y = neightboor
             if not self.data[new_x][new_y].wall_closed:
-                if random.random() < probability:
-                    curr_n = self.find_neighbor_closed((new_x, new_y))
-                    shuffle(curr_n)
-                    wall_1, wall_2, x, y = choice(curr_n)
-                    self.data[new_x][new_y].remove_wall(wall_1)
-                    c = self.data[x][y]
-                    c.remove_wall(wall_2)
+                # if random.random() < probability:
+                #     curr_n = self.find_neighbor_closed((new_x, new_y))
+                #     shuffle(curr_n)
+                #     wall_1, wall_2, x, y = choice(curr_n)
+                #     self.data[new_x][new_y].remove_wall(wall_1)
+                #     c = self.data[x][y]
+                #     c.remove_wall(wall_2)
                 continue
             cell.remove_wall(wall1)
             self.data[new_x][new_y].color = TRAVERSING_COLOR
@@ -156,3 +153,26 @@ class Maze:
             self.generate_maze((new_x, new_y))
             self.data[new_x][new_y].color = CELL_COLOR
         sleep(DISPLAY_INTERVAL)
+
+    def break_wall(self, probability: float = 0.3) -> None:
+        walls = [("e", "w"), ("w", "e"), ("n", "s"), ("s", "n")]
+        for i in range(len(self.data)):
+            for j in range(len(self.data[i])):
+                x, y = i, j
+                if random.random() < probability:
+                    wall1, wall2 = random.choice(walls)
+                    if wall1 == "s" and y + 1 < self.cols:
+                        self.data[x][y].remove_wall(wall1)
+                        self.data[x][y + 1].remove_wall(wall2)
+                    elif wall1 == "n" and y - 1 > 0:
+                        self.data[x][y].remove_wall(wall1)
+                        self.data[x][y - 1].remove_wall(wall2)
+                    elif wall1 == "w" and x - 1 > 0:
+                        self.data[x][y].remove_wall(wall1)
+                        self.data[x - 1][y].remove_wall(wall2)
+                    elif wall1 == "e" and x < self.rows - 1:
+                        self.data[x][y].remove_wall(wall1)
+                        self.data[x + 1][y].remove_wall(wall2)
+                    print("adf")
+                    sleep(DISPLAY_INTERVAL)
+                    print("q")

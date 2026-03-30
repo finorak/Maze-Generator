@@ -19,8 +19,6 @@ from time import sleep
 class Maze:
     def __init__(self, parent: Any):
         self.data: list[list[Cell]] | Any = None
-        self.height = 0
-        self.width = 0
         self.parent = parent
         self.perfect = parent.config.get("perfect")
         self.entry_pos = self.parent.config.get("entry")
@@ -28,21 +26,21 @@ class Maze:
         self.is_generate = False
         self.generation_thread: Any = None
 
-    def init_data(self, height: int, width: int) -> None:
-        self.height = height
-        self.width = width
+    def init_data(self, cols: int, rows: int) -> None:
+        self.cols = cols
+        self.rows = rows
         self.data = [
             [
                 Cell(
                     row=i,
                     col=j,
-                    cols=self.width,
-                    rows=self.height,
+                    cols=self.rows,
+                    rows=self.cols,
                     color=CELL_STARTING_COLOR,
                 )
-                for j in range(self.height)
+                for j in range(self.cols)
             ]
-            for i in range(self.width)
+            for i in range(self.rows)
         ]
         self.make_42_block()
         self.is_generate = False
@@ -72,8 +70,8 @@ class Maze:
             self.data[x][y + 3].is_42_cell = True
             self.data[x][y + 3].color = color
 
-        set_four(self.width // 2 - 3, self.height // 2 - 2)
-        set_two(self.width // 2 + 1, self.height // 2 - 2)
+        set_four(self.rows // 2 - 3, self.cols // 2 - 2)
+        set_two(self.rows // 2 + 1, self.cols // 2 - 2)
 
     def find_neighbor_closed(
         self, cell_coord: tuple[int, int]
@@ -81,7 +79,7 @@ class Maze:
         neighbors: list[tuple[str, str, int, int]] = []
         x, y = cell_coord
         if (
-            x + 1 < self.width
+            x + 1 < self.rows
             and self.data[x + 1][y].wall_closed
             and not self.data[x + 1][y].is_42_cell
         ):
@@ -93,7 +91,7 @@ class Maze:
         ):
             neighbors.append(("w", "e", x - 1, y))
         if (
-            y + 1 < self.height
+            y + 1 < self.cols
             and (self.data[x][y + 1].wall_closed
                  or not self.data[x][y + 1].is_visited)
             and not self.data[x][y + 1].is_42_cell
@@ -107,7 +105,9 @@ class Maze:
             neighbors.append(("n", "s", x, y - 1))
         return neighbors
 
-    def start_generate(self, start_pos: tuple[int, int] = (0, 0)) -> None:
+    def start_generate(self,
+                       start_pos: tuple[int, int] = (0, 0)
+                       ) -> None:
         if self.generation_thread is not None \
                 and self.generation_thread.is_alive():
             print("generate in progress...")
@@ -118,8 +118,7 @@ class Maze:
         self.generation_thread.start()
 
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
-        perfect = not self.perfect
-        self.generate_maze(start_pos, (int(perfect) * 10) / 100)
+        self.generate_maze(start_pos, (int(self.perfect) * 10) / 100)
         """
         COLORING ENTRY AND END POINT
         """
@@ -142,18 +141,18 @@ class Maze:
         for neightboor in neightboors:
             wall1, wall2, new_x, new_y = neightboor
             if not self.data[new_x][new_y].wall_closed:
+                if random.random() < probability:
+                    curr_n = self.find_neighbor_closed((new_x, new_y))
+                    shuffle(curr_n)
+                    wall_1, wall_2, x, y = choice(curr_n)
+                    self.data[new_x][new_y].remove_wall(wall_1)
+                    c = self.data[x][y]
+                    c.remove_wall(wall_2)
                 continue
             cell.remove_wall(wall1)
             self.data[new_x][new_y].color = TRAVERSING_COLOR
             self.data[new_x][new_y].remove_wall(wall2)
             sleep(DISPLAY_INTERVAL)
-            if random.random() < probability:
-                curr_n = self.find_neighbor_closed((new_x, new_y))
-                shuffle(curr_n)
-                wall_1, wall_2, x, y = choice(curr_n)
-                self.data[new_x][new_y].remove_wall(wall_1)
-                c = self.data[x][y]
-                c.remove_wall(wall_2)
             self.generate_maze((new_x, new_y))
             self.data[new_x][new_y].color = CELL_COLOR
         sleep(DISPLAY_INTERVAL)

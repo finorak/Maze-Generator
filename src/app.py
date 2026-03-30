@@ -101,6 +101,8 @@ class App:
         if key in (65307, ord("q")):
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord("g"):
+            if self.maze.is_generate:
+                return None
             self.maze.start_generate()
             self.solver.data = self.maze.data
         elif key == ord("s"):

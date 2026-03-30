@@ -54,7 +54,7 @@ def parse_config(config: dict[str, Any]
 
 
 def get_configuration(file_name: str
-                      ) -> dict[str, Union[bool, tuple[int]]]:
+                      ) -> dict[str, Union[bool, tuple[int, int]]]:
     """
     Getting the configuration file using dict
     """

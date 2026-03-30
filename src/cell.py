@@ -3,9 +3,8 @@ Module containing the cell class
 """
 
 from typing import Any
-from src.setting import CELL_COLOR
 from .image import Image
-from . import NORTH, SOUTH, WEST, EAST
+from . import NORTH, SOUTH, WEST, EAST, CELL_COLOR
 
 
 class Cell:

@@ -105,7 +105,8 @@ class App:
                 print("maze not generate")
         elif key == ord("d"):
             if self.maze.is_generate:
-                self.solver.dfs_solver(self.solver.entry)
+                # self.solver.dfs_solver(self.solver.entry)
+                self.solver.start_solve(self.solver.dfs_solver, (self.solver.entry,))
             else:
                 print("maze not generate")
 

@@ -7,6 +7,8 @@ from ..setting import (
     EAST,
     CELL_COLOR,
     DISPLAY_INTERVAL,
+    PATH_FOUND_COLOR,
+    CLEAR_COLOR,
 )
 from collections import deque
 from ..utils.color_genertor import rgb
@@ -52,19 +54,23 @@ class Solver:
             curr_cell = self.data[curr_x][curr_y]
             curr_cell.is_visited = True
             curr_cell.color = PATH_FOUND_COLOR
-            self.app.draw_maze()
+            sleep(DISPLAY_INTERVAL)
+            # self.app.draw_maze()
             directions = deque(self.find_directions(curr_cell))
             for direction in directions:
                 _, new_x, new_y = direction
                 if self.dfs_solver((new_x, new_y)):
                     self.path.append((new_x, new_y))
                     curr_cell.color = CLEAR_COLOR
-                    self.app.draw_maze()
+                    sleep(DISPLAY_INTERVAL)
+                    # self.app.draw_maze()
                     self.found_path = True
                     return True
                 self.data[new_x][new_y].color = PATH_FOUND_COLOR
-                self.app.draw_maze()
-            self.app.draw_maze()
+                sleep(DISPLAY_INTERVAL)
+                # self.app.draw_maze()
+            # self.app.draw_maze()
+            sleep(DISPLAY_INTERVAL)
             return False
 
         solve_maze(curr_pos)

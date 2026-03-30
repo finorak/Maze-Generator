@@ -26,7 +26,6 @@ class Maze:
         self.entry_pos = self.parent.config.get("entry")
         self.end_pos = self.parent.config.get("exit")
         self.is_generate = False
-        self.solved = False
         self.generation_thread: Any = None
 
     def init_data(self, height: int, width: int) -> None:
@@ -46,6 +45,7 @@ class Maze:
             for i in range(self.width)
         ]
         self.make_42_block()
+        self.is_generate = False
 
     def make_42_block(self) -> None:
         color = BLOCK_42_COLOR

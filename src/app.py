@@ -32,7 +32,9 @@ class App:
         self.output_file = self.config.get("output_file")
         self.maze: Maze = Maze(self)
         self.counter = 0
-        self.maze.init_data(config.get("height"), config.get("width"))
+        self.rows = config.get("height")
+        self.cols = config.get('width')
+        self.maze.init_data(self.rows, self.cols)
         self.solver: Solver = Solver(
             self.maze.data, self.maze.entry_pos, self.maze.end_pos, self
         )
@@ -121,8 +123,12 @@ class App:
             self.reinitialise()
 
     def reinitialise(self) -> None:
-        self.solver.data = self.maze.data
-        self.maze.start_generate()
+        if not self.maze.is_generate and not\
+                self.solver.found_path:
+                return None
+        self.maze.init_data(self.rows, self.cols)
+        self.solver.found_path = False
+        self.draw_maze()
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:

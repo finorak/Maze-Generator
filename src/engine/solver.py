@@ -55,7 +55,7 @@ class Solver:
             curr_cell = self.data[curr_x][curr_y]
             curr_cell.is_visited = True
             curr_cell.color = PATH_FOUND_COLOR
-            self.app.draw_maze()
+            sleep(DISPLAY_INTERVAL)
             directions = deque(self.find_directions(curr_cell))
             for direction in directions:
                 _, new_x, new_y = direction

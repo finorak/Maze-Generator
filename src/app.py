@@ -29,15 +29,18 @@ class App:
         self.maze_win: Any = None
         self.error_win: Any = None
         self.config = config
+        self.output_file = self.config.get("output_file")
         self.maze: Maze = Maze(self)
         self.counter = 0
-        self.maze.init_data(config.get("height"), config.get("width"))
+        self.rows = config.get("height")
+        self.cols = config.get("width")
+        self.maze.init_data(self.rows, self.cols)
         self.solver: Solver = Solver(
             self.maze.data, self.maze.entry_pos, self.maze.end_pos, self
         )
         self.last_draw: float = 0
 
-    def init_image(self):
+    def init_image(self) -> None:
         if self.maze.data and self.maze.data[0][0].image.img is None:
             for row in self.maze.data:
                 for cell in row:
@@ -49,14 +52,14 @@ class App:
     def on_close(self, _param: Any) -> None:
         self.mlx.mlx_loop_exit(self.ptr)
 
-    def update(self, _param: Any):
+    def update(self, _param: Any) -> None:
         if self.start:
             now = time()
             if now - self.last_draw >= DISPLAY_INTERVAL:
                 self.draw_maze()
                 self.last_draw = now
 
-    def run(self):
+    def run(self) -> None:
         self.run_main()
         self.mlx.mlx_loop_hook(self.ptr, self.update, None)
         self.mlx.mlx_loop(self.ptr)
@@ -93,6 +96,8 @@ class App:
 
     # ----------------------maze win---------------------------#
     def on_key_maze(self, key: Any, _param: Any) -> None:
+        a_star = self.solver.solve
+        dfs = self.solver.dfs_solver
         if key in (65307, ord("q")):
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord("g"):
@@ -100,23 +105,25 @@ class App:
             self.solver.data = self.maze.data
         elif key == ord("s"):
             if self.maze.is_generate:
-                self.solver.start_solve(self.solver.solve, ())
+                self.solver.start_solve(a_star, ())
             else:
                 print("maze not generate")
         elif key == ord("d"):
             if self.maze.is_generate:
-                # self.solver.dfs_solver(self.solver.entry)
-                self.solver.start_solve(self.solver.dfs_solver, (self.solver.entry,))
+                self.solver.start_solve(dfs, (self.solver.entry,))
             else:
                 print("maze not generate")
-
+        elif key == ord("c"):
+            self.put_maze_into_file()
         elif key == ord("r"):
             self.reinitialise()
 
-    def reinitialise(self):
-        self.maze.init_data(self.config.get("height"), self.config.get("width"))
-        self.solver.data = self.maze.data
-        self.maze.start_generate()
+    def reinitialise(self) -> None:
+        if not self.maze.is_generate and not self.solver.found_path:
+            return None
+        self.maze.init_data(self.rows, self.cols)
+        self.solver.found_path = False
+        self.draw_maze()
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:
@@ -140,7 +147,7 @@ class App:
         col = y // self.maze.height
         print(button, (row, self.maze.width), (col, self.maze.height))
 
-    def event_handler(self):
+    def event_handler(self) -> None:
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
@@ -148,41 +155,41 @@ class App:
     def draw_cell(self, cell: Cell):
         addr = self.mlx.mlx_get_data_addr(cell.image.img)
         cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
-        byte_per_pixel = cell.image.bpp // 8
+        bpp = cell.image.bpp // 8
         for j in range(cell.size):
             for i in range(cell.size):
-                offset = j * cell.image.sl + i * byte_per_pixel
-                cell.image.data[offset : offset + byte_per_pixel] = cell.color.to_bytes(
-                    byte_per_pixel, "little"
+                offset = j * cell.image.sl + i * bpp
+                cell.image.data[offset : offset + bpp] = cell.color.to_bytes(
+                    bpp, "little"
                 )
 
         if cell.wall & NORTH:
             for j in range(WALL_THICK):
                 for i in range(cell.size):
-                    offset = (j) * cell.image.sl + (i) * byte_per_pixel
-                    cell.image.data[offset : offset + byte_per_pixel] = (
-                        WALL_COLOR.to_bytes(byte_per_pixel, "little")
+                    offset = (j) * cell.image.sl + (i) * bpp
+                    cell.image.data[offset : offset + bpp] = WALL_COLOR.to_bytes(
+                        bpp, "little"
                     )
         if cell.wall & EAST:
             for j in range(cell.size):
                 for i in range(WALL_THICK):
-                    offset = j * cell.image.sl + (cell.size - 1) * byte_per_pixel
-                    cell.image.data[offset : offset + byte_per_pixel] = (
-                        WALL_COLOR.to_bytes(byte_per_pixel, "little")
+                    offset = j * cell.image.sl + (cell.size - 1) * bpp
+                    cell.image.data[offset : offset + bpp] = WALL_COLOR.to_bytes(
+                        bpp, "little"
                     )
         if cell.wall & WEST:
             for j in range(cell.size):
                 for i in range(WALL_THICK):
-                    offset = j * cell.image.sl + i * byte_per_pixel
-                    cell.image.data[offset : offset + byte_per_pixel] = (
-                        WALL_COLOR.to_bytes(byte_per_pixel, "little")
+                    offset = j * cell.image.sl + i * bpp
+                    cell.image.data[offset : offset + bpp] = WALL_COLOR.to_bytes(
+                        bpp, "little"
                     )
         if cell.wall & SOUTH:
             for j in range(WALL_THICK):
                 for i in range(cell.size):
-                    offset = (cell.size - 1) * cell.image.sl + (i) * byte_per_pixel
-                    cell.image.data[offset : offset + byte_per_pixel] = (
-                        WALL_COLOR.to_bytes(byte_per_pixel, "little")
+                    offset = (cell.size - 1) * cell.image.sl + (i) * bpp
+                    cell.image.data[offset : offset + bpp] = WALL_COLOR.to_bytes(
+                        bpp, "little"
                     )
         self.mlx.mlx_put_image_to_window(
             self.ptr,
@@ -192,8 +199,40 @@ class App:
             cell.col * cell.size,
         )
 
-    def draw_maze(self):
+    def draw_maze(self) -> None:
         self.init_image()
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell)
+
+    def put_maze_into_file(self) -> None:
+        def binary_to_hex(binary_string: int) -> str:
+            return format(binary_string, "X")
+
+        def writing_path(output_file: Any, path: list[tuple[int, int]]) -> None:
+            for x, y in path:
+                cell = self.maze.data[x][y]
+                print(cell.parent)
+                """
+                if cell.wall & NORTH == 0:
+                    output_file.write("N")
+                elif cell.wall & WEST == 0:
+                    output_file.write("W")
+                elif cell.wall & EAST == 0:
+                    output_file.write("E")
+                elif cell.wall & SOUTH == 0:
+                    output_file.write("S")"""
+            output_file.write("\n")
+
+        reversed(self.maze.data)
+        with open(self.output_file, mode="w", encoding="utf-8") as output_file:
+            for row in self.maze.data:
+                for cell in row:
+                    output_file.write(f"{binary_to_hex(cell.wall)}")
+                output_file.write("\n")
+            output_file.write("\n")
+            x, y = self.maze.entry_pos
+            end_x, end_y = self.maze.end_pos
+            output_file.write(f"{x}, {y}\n")
+            output_file.write(f"{end_x}, {end_y}\n")
+            writing_path(output_file, self.solver.path)

@@ -5,7 +5,6 @@ WIDTH = 840
 HEIGHT = 600
 TITLE = "Mazing Generator and solver"
 # Wall direction
-DIRECTIONS: list[tuple[int, int]] = []
 NORTH = 0b0001
 SOUTH = 0b0100
 WEST = 0b1000

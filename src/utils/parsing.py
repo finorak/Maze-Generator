@@ -3,12 +3,10 @@ Utils module
 This module contains the basique utils function we need
 might use class later on
 """
-
-
 from typing import Mapping, Union, Any
 
 
-def config_is_valid(config: dict[str, Union[str, int, tuple, bool]] | None
+def config_is_valid(config: dict[str, Union[str, int, tuple, bool]]
                     ) -> bool:
     """
     This function verify if the config is vaild or not
@@ -37,7 +35,7 @@ def config_is_valid(config: dict[str, Union[str, int, tuple, bool]] | None
     return True
 
 
-def parse_config(config: dict[str, str | tuple]
+def parse_config(config: dict[str, Any]
                  ) -> dict[str, Union[bool, tuple, int]]:
     """
     Parsing the config we got from get_configuration
@@ -56,13 +54,11 @@ def parse_config(config: dict[str, str | tuple]
 
 
 def get_configuration(file_name: str
-                      ) -> dict[str, Union[bool, tuple[int]]] | None:
+                      ) -> dict[str, Union[bool, tuple[int]]]:
     """
     Getting the configuration file using dict
     """
     config: dict[str, Any] | None = {}
-    value: str | tuple[int, int]
-    key: str
     try:
         with open(file_name, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
@@ -71,8 +67,9 @@ def get_configuration(file_name: str
                     continue
                 line = line.strip().split("=")
                 if len(line) != 2:
-                    return None
-                key, value = line
+                    continue
+                key: str = line[0]
+                value: Union[str, tuple[int, int], int, bool] = line[1]
                 pos = value.strip().split(",")
                 if len(pos) == 2:
                     x = int(pos[0].strip())
@@ -81,8 +78,7 @@ def get_configuration(file_name: str
                 config.update({key.strip().lower(): value})
         config = parse_config(config)
         if not config_is_valid(config):
-            return None
+            raise Exception("Config file is not valid")
         return config
-    except Exception as e:
-        print(e)
-        return None
+    except Exception:
+        raise Exception("Config file not provided")

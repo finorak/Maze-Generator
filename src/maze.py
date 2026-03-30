@@ -45,6 +45,7 @@ class Maze:
             for i in range(self.width)
         ]
         self.make_42_block()
+        self.is_generate = False
 
     def make_42_block(self) -> None:
         color = BLOCK_42_COLOR
@@ -93,7 +94,8 @@ class Maze:
             neighbors.append(("w", "e", x - 1, y))
         if (
             y + 1 < self.height
-            and (self.data[x][y + 1].wall_closed or not self.data[x][y + 1].is_visited)
+            and (self.data[x][y + 1].wall_closed
+                 or not self.data[x][y + 1].is_visited)
             and not self.data[x][y + 1].is_42_cell
         ):
             neighbors.append(("s", "n", x, y + 1))
@@ -106,15 +108,18 @@ class Maze:
         return neighbors
 
     def start_generate(self, start_pos: tuple[int, int] = (0, 0)) -> None:
-        if self.generation_thread is not None and self.generation_thread.is_alive():
+        if self.generation_thread is not None \
+                and self.generation_thread.is_alive():
             print("generate in progress...")
             return
-        self.generation_thread = Thread(target=self.generete, args=(start_pos,))
+        self.generation_thread = Thread(
+                target=self.generete, args=(start_pos,))
         self.generation_thread.daemon = True
         self.generation_thread.start()
 
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
-        self.generate_maze(start_pos, (int(self.perfect) * 30) / 100)
+        perfect = not self.perfect
+        self.generate_maze(start_pos, (int(perfect) * 10) / 100)
         """
         COLORING ENTRY AND END POINT
         """
@@ -126,7 +131,8 @@ class Maze:
         end_cell.color = EXIT_COLOR
         self.is_generate = True
 
-    def generate_maze(self, start_pos: tuple[int, int], probability: float = 0) -> None:
+    def generate_maze(self, start_pos: tuple[int, int],
+                      probability: float = 0) -> None:
         start_x, start_y = start_pos
         cell = self.data[start_x][start_y]
         cell.wall_closed = False
@@ -141,8 +147,6 @@ class Maze:
             self.data[new_x][new_y].color = TRAVERSING_COLOR
             self.data[new_x][new_y].remove_wall(wall2)
             sleep(DISPLAY_INTERVAL)
-            self.generate_maze((new_x, new_y))
-            self.data[new_x][new_y].color = CELL_COLOR
             if random.random() < probability:
                 curr_n = self.find_neighbor_closed((new_x, new_y))
                 shuffle(curr_n)
@@ -150,4 +154,6 @@ class Maze:
                 self.data[new_x][new_y].remove_wall(wall_1)
                 c = self.data[x][y]
                 c.remove_wall(wall_2)
+            self.generate_maze((new_x, new_y))
+            self.data[new_x][new_y].color = CELL_COLOR
         sleep(DISPLAY_INTERVAL)

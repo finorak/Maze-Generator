@@ -28,6 +28,7 @@ class Solver:
         self.exit = EXIT
         self.path: list[tuple[int, int]] = []
         self.app = app
+        self.is_generate = False
         self.found_path = False
         self.solver_threading: Any = None
 

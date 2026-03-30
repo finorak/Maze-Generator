@@ -103,6 +103,8 @@ class App:
         if key in (65307, ord("q")):
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord("g"):
+            if self.maze.is_generate:
+                return None
             self.maze.start_generate()
             self.solver.data = self.maze.data
         elif key == ord("s"):
@@ -125,7 +127,7 @@ class App:
     def reinitialise(self) -> None:
         if not self.maze.is_generate and not\
                 self.solver.found_path:
-                return None
+            return None
         self.maze.init_data(self.rows, self.cols)
         self.solver.found_path = False
         self.draw_maze()

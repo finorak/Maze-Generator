@@ -3,6 +3,7 @@
 ## Important:
 - - Gerena ny threading fa lasa otran misy tsy mety vo alefa aminazy ilay
 function msolve
+- - Tsy mahazo atao ny mreinitialiser rehefa msolve fa manjary misy bug
 
 - Calculation of the size of the cell (not done yet)
 - Maze Generation (finished)

@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 NAME=a_maze_ing.py
 VENV=.venv
 BIN_PATH=./$(VENV)/bin
@@ -11,8 +13,7 @@ install: $(VENV)
 	$(PIP) install -r requirements.txt
 
 $(VENV):
-	python3 -m virtualenv $(VENV)
-# 	source venv/Scripts/activate
+	python3 -m venv $(VENV)
 
 run:
 	$(PYTHON) $(NAME)

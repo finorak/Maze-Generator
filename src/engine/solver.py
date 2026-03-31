@@ -30,7 +30,7 @@ class Solver:
         self.app = app
         self.is_generate = False
         self.found_path = False
-        self.solver_threading: Any = None
+        self.solver_threading: Thread | Any = None
 
     @property
     def data(self) -> list[list[Cell]]:
@@ -59,16 +59,19 @@ class Solver:
             sleep(DISPLAY_INTERVAL)
             directions = deque(self.find_directions(curr_cell))
             for direction in directions:
+                if self.found_path or self.solver_threading is None:
+                    return True
                 _, new_x, new_y = direction
                 if self.dfs_solver((new_x, new_y)):
                     self.path.append((new_x, new_y))
                     curr_cell.color = PATH_FOUND_COLOR
                     sleep(DISPLAY_INTERVAL)
+                    self.path.append((new_x, new_y))
                     self.found_path = True
                     return True
-                self.data[new_x][new_y].color = PATH_FOUND_COLOR
-                self.app.draw_maze()
-            self.app.draw_maze()
+                self.data[new_x][new_y].color = CELL_COLOR
+                sleep(DISPLAY_INTERVAL)
+            sleep(DISPLAY_INTERVAL)
             return False
 
         solve_maze(curr_pos)
@@ -128,10 +131,11 @@ class Solver:
             sleep(DISPLAY_INTERVAL)
         self.found_path = True
 
-    def start_solve(self, target: Any, args: Any) -> None:
+    def start_solve(self, target: Any, args: Any) -> Thread | None:
         if self.solver_threading is not None and self.solver_threading.is_alive():
             print("solve in progress...")
             return None
         self.solver_threading = Thread(target=target, args=args)
         self.solver_threading.daemon = True
         self.solver_threading.start()
+        return self.solver_threading

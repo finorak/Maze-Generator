@@ -1,3 +1,4 @@
+from time import time
 from .maze import Maze
 from mlx import Mlx
 from typing import Any
@@ -17,7 +18,6 @@ from .setting import (
 )
 from .cell import Cell
 from .engine.solver import Solver
-from time import time
 
 
 class App:
@@ -125,6 +125,8 @@ class App:
             return None
         self.maze.init_data(self.rows, self.cols)
         self.solver.found_path = False
+        self.solver.solver_threading = None
+        self.solver.path.clear()
         self.draw_maze()
 
     def switch_to_maze(self) -> None:
@@ -145,9 +147,9 @@ class App:
         """
         Setting the position of entry and exit
         """
-        row = x // self.maze.width
-        col = y // self.maze.height
-        print(button, (row, self.maze.width), (col, self.maze.height))
+        row = x // self.maze.rows
+        col = y // self.maze.cols
+        print(button, (row, self.maze.rows), (col, self.maze.cols))
 
     def event_handler(self) -> None:
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)

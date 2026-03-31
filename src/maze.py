@@ -1,3 +1,6 @@
+from threading import Thread
+import random
+from time import sleep
 from typing import Any
 from src.setting import (
     BLOCK_42_COLOR,
@@ -10,10 +13,6 @@ from src.setting import (
     DISPLAY_INTERVAL,
 )
 from .cell import Cell
-from random import choice, shuffle
-import random
-from threading import Thread
-from time import sleep
 
 
 class Maze:
@@ -115,8 +114,7 @@ class Maze:
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
         perfect = not self.perfect
         self.generate_maze(start_pos)
-        self.break_wall(int(perfect) * 10 / 100)
-        # self.parent.draw_maze()
+        self.break_wall(int(perfect) * 30 / 100)
         """
         COLORING ENTRY AND END POINT
         """
@@ -134,17 +132,10 @@ class Maze:
         cell.wall_closed = False
         cell.color = VISITED_COLOR
         neightboors = self.find_neighbor_closed((start_x, start_y))
-        shuffle(neightboors)
+        random.shuffle(neightboors)
         for neightboor in neightboors:
             wall1, wall2, new_x, new_y = neightboor
             if not self.data[new_x][new_y].wall_closed:
-                # if random.random() < probability:
-                #     curr_n = self.find_neighbor_closed((new_x, new_y))
-                #     shuffle(curr_n)
-                #     wall_1, wall_2, x, y = choice(curr_n)
-                #     self.data[new_x][new_y].remove_wall(wall_1)
-                #     c = self.data[x][y]
-                #     c.remove_wall(wall_2)
                 continue
             cell.remove_wall(wall1)
             self.data[new_x][new_y].color = TRAVERSING_COLOR
@@ -163,16 +154,22 @@ class Maze:
                     wall1, wall2 = random.choice(walls)
                     if wall1 == "s" and y + 1 < self.cols:
                         self.data[x][y].remove_wall(wall1)
+                        self.data[x][y].wall_closed = False
                         self.data[x][y + 1].remove_wall(wall2)
-                    elif wall1 == "n" and y - 1 > 0:
+                        self.data[x][y + 1].wall_closed = False
+                    if wall1 == "n" and y - 1 > 0:
                         self.data[x][y].remove_wall(wall1)
+                        self.data[x][y].wall_closed = False
                         self.data[x][y - 1].remove_wall(wall2)
-                    elif wall1 == "w" and x - 1 > 0:
+                        self.data[x][y - 1].wall_closed = False
+                    if wall1 == "w" and x - 1 > 0:
                         self.data[x][y].remove_wall(wall1)
+                        self.data[x][y].wall_closed = False
                         self.data[x - 1][y].remove_wall(wall2)
-                    elif wall1 == "e" and x < self.rows - 1:
+                        self.data[x - 1][y].wall_closed = False
+                    if wall1 == "e" and x < self.rows - 1:
                         self.data[x][y].remove_wall(wall1)
+                        self.data[x][y].wall_closed = False
                         self.data[x + 1][y].remove_wall(wall2)
-                    print("adf")
+                        self.data[x + 1][y].wall_closed = False
                     sleep(DISPLAY_INTERVAL)
-                    print("q")

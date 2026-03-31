@@ -91,8 +91,7 @@ class Maze:
             neighbors.append(("w", "e", x - 1, y))
         if (
             y + 1 < self.cols
-            and (self.data[x][y + 1].wall_closed
-                 or not self.data[x][y + 1].is_visited)
+            and (self.data[x][y + 1].wall_closed or not self.data[x][y + 1].is_visited)
             and not self.data[x][y + 1].is_42_cell
         ):
             neighbors.append(("s", "n", x, y + 1))
@@ -105,20 +104,17 @@ class Maze:
         return neighbors
 
     def start_generate(self, start_pos: tuple[int, int] = (0, 0)) -> None:
-        if self.generation_thread is not None \
-                and self.generation_thread.is_alive():
+        if self.generation_thread is not None and self.generation_thread.is_alive():
             print("generate in progress...")
             return
-        self.generation_thread = Thread(
-                target=self.generete,
-                args=(start_pos,))
+        self.generation_thread = Thread(target=self.generete, args=(start_pos,))
         self.generation_thread.daemon = True
         self.generation_thread.start()
 
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
         perfect = not self.perfect
         self.generate_maze(start_pos)
-        self.break_wall(int(perfect) * 25 / 100)
+        self.break_wall(int(perfect) * 30 / 100)
         """
         COLORING ENTRY AND END POINT
         """

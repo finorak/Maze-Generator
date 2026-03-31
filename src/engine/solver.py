@@ -1,3 +1,4 @@
+from os import sched_setaffinity
 from ..cell import Cell
 from typing import Any
 from ..setting import (
@@ -62,6 +63,8 @@ class Solver:
                 if self.found_path or self.solver_threading is None:
                     return True
                 _, new_x, new_y = direction
+                if self._data[new_x][new_y].is_42_cell:
+                    continue
                 if self.dfs_solver((new_x, new_y)):
                     self.path.append((new_x, new_y))
                     curr_cell.color = PATH_FOUND_COLOR
@@ -77,16 +80,32 @@ class Solver:
         solve_maze(curr_pos)
         self.is_generate = True
 
-    def find_directions(self, cell: Cell) -> list[tuple[tuple[int, int], int, int]]:
+    def find_directions(self,
+                        cell: Cell
+                        ) -> list[tuple[tuple[int, int], int, int]]:
         directions: list[tuple[tuple[int, int], int, int]] = []
+        if cell.is_42_cell:
+            return []
         x, y = cell.row, cell.col
-        if cell.wall & NORTH == 0 and not self._data[x][y - 1].is_visited:
+        if (cell.wall & NORTH == 0
+            and not self._data[x][y - 1].is_visited
+            and not self.data[x][y - 1]
+            ):
             directions.append(((x, y), x, y - 1))
-        if cell.wall & EAST == 0 and not self._data[x + 1][y].is_visited:
+        if (cell.wall & EAST == 0
+            and not self._data[x + 1][y].is_visited
+            and not self.data[x + 1][y].is_42_cell
+            ):
             directions.append(((x, y), x + 1, y))
-        if cell.wall & SOUTH == 0 and not self._data[x][y + 1].is_visited:
+        if (cell.wall & SOUTH == 0
+            and not self._data[x][y + 1].is_visited
+            and not self._data[x][y + 1].is_42_cell
+            ):
             directions.append(((x, y), x, y + 1))
-        if cell.wall & WEST == 0 and not self._data[x - 1][y].is_visited:
+        if (cell.wall & WEST == 0
+            and not self._data[x - 1][y].is_visited
+            and not self._data[x - 1][y].is_42_cell
+            ):
             directions.append(((x, y), x - 1, y))
         return directions
 
@@ -132,7 +151,8 @@ class Solver:
         self.found_path = True
 
     def start_solve(self, target: Any, args: Any) -> Thread | None:
-        if self.solver_threading is not None and self.solver_threading.is_alive():
+        if self.solver_threading is not None \
+                and self.solver_threading.is_alive():
             print("solve in progress...")
             return None
         self.solver_threading = Thread(target=target, args=args)

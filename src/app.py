@@ -163,7 +163,7 @@ class App:
         for j in range(cell.size):
             for i in range(cell.size):
                 offset = j * cell.image.sl + i * bpp
-                cell.image.data[offset : offset + bpp] = cell.color.to_bytes(
+                cell.image.data[offset:offset + bpp] = cell.color.to_bytes(
                     bpp, "little"
                 )
 
@@ -171,28 +171,28 @@ class App:
             for j in range(WALL_THICK):
                 for i in range(cell.size):
                     offset = (j) * cell.image.sl + (i) * bpp
-                    cell.image.data[offset : offset + bpp] = WALL_COLOR.to_bytes(
+                    cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
                         bpp, "little"
                     )
         if cell.wall & EAST:
             for j in range(cell.size):
                 for i in range(WALL_THICK):
                     offset = j * cell.image.sl + (cell.size - 1) * bpp
-                    cell.image.data[offset : offset + bpp] = WALL_COLOR.to_bytes(
+                    cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
                         bpp, "little"
                     )
         if cell.wall & WEST:
             for j in range(cell.size):
                 for i in range(WALL_THICK):
                     offset = j * cell.image.sl + i * bpp
-                    cell.image.data[offset : offset + bpp] = WALL_COLOR.to_bytes(
+                    cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
                         bpp, "little"
                     )
         if cell.wall & SOUTH:
             for j in range(WALL_THICK):
                 for i in range(cell.size):
                     offset = (cell.size - 1) * cell.image.sl + (i) * bpp
-                    cell.image.data[offset : offset + bpp] = WALL_COLOR.to_bytes(
+                    cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
                         bpp, "little"
                     )
         self.mlx.mlx_put_image_to_window(
@@ -213,7 +213,8 @@ class App:
         def binary_to_hex(binary_string: int) -> str:
             return format(binary_string, "X")
 
-        def writing_path(output_file: Any, path: list[tuple[int, int]]) -> None:
+        def writing_path(output_file: Any,
+                         path: list[tuple[int, int]]) -> None:
             for x, y in path:
                 cell = self.maze.data[x][y]
                 print(cell.parent)

@@ -32,6 +32,8 @@ class Cell:
 
     def remove_wall(self, wall: str) -> None:
         wall = wall.lower()
+        if self.is_42_cell:
+            return None
         if wall == "north" or wall == "n":
             if self.wall & NORTH:
                 self.wall -= NORTH

@@ -154,28 +154,42 @@ class Maze:
             return None
         walls = [("e", "w"), ("w", "e"), ("n", "s"), ("s", "n")]
         for i in range(len(self.data)):
-            row: list[Cell] = self.data[i][:]
-            random.shuffle(row)
-            for j in range(len(row)):
+            for j in range(len(self.data[i])):
                 x, y = i, j
                 if random.random() < probability:
                     wall1, wall2 = random.choice(walls)
-                    if wall1 == "s" and y + 1 < self.cols:
+                    if (
+                            wall1 == "s"
+                            and y < self.cols - 1
+                            and not self.data[x][y + 1].is_42_cell
+                    ):
                         self.data[x][y].remove_wall(wall1)
                         self.data[x][y].wall_closed = False
                         self.data[x][y + 1].remove_wall(wall2)
                         self.data[x][y + 1].wall_closed = False
-                    if wall1 == "n" and y - 1 > 0:
+                    if (
+                            wall1 == "n"
+                            and y - 1 > 0
+                            and not self.data[x][y - 1].is_42_cell
+                    ):
                         self.data[x][y].remove_wall(wall1)
                         self.data[x][y].wall_closed = False
                         self.data[x][y - 1].remove_wall(wall2)
                         self.data[x][y - 1].wall_closed = False
-                    if wall1 == "w" and x - 1 > 0:
+                    if (
+                            wall1 == "w"
+                            and x - 1 > 0
+                            and not self.data[x - 1][y].is_42_cell
+                    ):
                         self.data[x][y].remove_wall(wall1)
                         self.data[x][y].wall_closed = False
                         self.data[x - 1][y].remove_wall(wall2)
                         self.data[x - 1][y].wall_closed = False
-                    if wall1 == "e" and x < self.rows - 1:
+                    if (
+                            wall1 == "e"
+                            and x < self.rows - 1
+                            and not self.data[x + 1][y].is_42_cell
+                    ):
                         self.data[x][y].remove_wall(wall1)
                         self.data[x][y].wall_closed = False
                         self.data[x + 1][y].remove_wall(wall2)

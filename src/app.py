@@ -31,7 +31,6 @@ class App:
         self.config = config
         self.output_file = self.config.get("output_file")
         self.maze: Maze = Maze(self)
-        self.counter = 0
         self.rows = config.get("height")
         self.cols = config.get("width")
         self.maze.init_data(self.rows, self.cols)
@@ -134,9 +133,11 @@ class App:
             self.mlx.mlx_destroy_window(self.ptr, self.main_win)
             self.main_win = None
 
-        width = self.config.get("width") * 40
-        height = self.config.get("height") * 40
-        self.maze_win = self.mlx.mlx_new_window(self.ptr, width, height, TITLE)
+        self.width = self.config.get("width") * 40
+        self.height = self.config.get("height") * 40
+        self.maze_win = self.mlx.mlx_new_window(
+                self.ptr, self.width, self.height, TITLE
+                )
         self.draw_maze()
         self.draw_maze()
         self.event_handler()
@@ -147,9 +148,9 @@ class App:
         """
         Setting the position of entry and exit
         """
-        row = x // self.maze.rows
-        col = y // self.maze.cols
-        print(button, (row, self.maze.rows), (col, self.maze.cols))
+        row = (y * 40) // self.height
+        col = (x * 40) // self.width
+        print(button, (row, self.height), (col, self.width))
 
     def event_handler(self) -> None:
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)

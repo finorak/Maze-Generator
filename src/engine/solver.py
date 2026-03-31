@@ -1,4 +1,3 @@
-from os import sched_setaffinity
 from ..cell import Cell
 from typing import Any
 from ..setting import (
@@ -87,25 +86,29 @@ class Solver:
         if cell.is_42_cell:
             return []
         x, y = cell.row, cell.col
-        if (cell.wall & NORTH == 0
-            and not self._data[x][y - 1].is_visited
-            and not self.data[x][y - 1].is_42_cell
-            ):
+        if (
+                cell.wall & NORTH == 0
+                and not self._data[x][y - 1].is_visited
+                and not self.data[x][y - 1].is_42_cell
+        ):
             directions.append(((x, y), x, y - 1))
-        if (cell.wall & EAST == 0
-            and not self._data[x + 1][y].is_visited
-            and not self.data[x + 1][y].is_42_cell
-            ):
+        if (
+                cell.wall & EAST == 0
+                and not self._data[x + 1][y].is_visited
+                and not self.data[x + 1][y].is_42_cell
+        ):
             directions.append(((x, y), x + 1, y))
-        if (cell.wall & SOUTH == 0
-            and not self._data[x][y + 1].is_visited
-            and not self._data[x][y + 1].is_42_cell
-            ):
+        if (
+                cell.wall & SOUTH == 0
+                and not self._data[x][y + 1].is_visited
+                and not self._data[x][y + 1].is_42_cell
+        ):
             directions.append(((x, y), x, y + 1))
-        if (cell.wall & WEST == 0
-            and not self._data[x - 1][y].is_visited
-            and not self._data[x - 1][y].is_42_cell
-            ):
+        if (
+                cell.wall & WEST == 0
+                and not self._data[x - 1][y].is_visited
+                and not self._data[x - 1][y].is_42_cell
+        ):
             directions.append(((x, y), x - 1, y))
         return directions
 

@@ -19,7 +19,7 @@ run:
 	$(PYTHON) $(NAME)
 
 flake:
-	$(FLAKE) --exclude=.venv .
+	$(FLAKE) --exclude=$(VENV) .
 
 lint: flake
 	$(MYPY) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .

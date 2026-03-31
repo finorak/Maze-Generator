@@ -16,7 +16,6 @@ if __name__ == "__main__":
     # file_name = sys.argv[1]
     try:
         config = get_configuration("config.txt")
-        print((config.get("width"), config.get("height")))
         app = App(config)
         app.run()
     except Exception as e:

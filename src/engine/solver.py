@@ -1,6 +1,7 @@
 from ..cell import Cell
 from typing import Any
 from ..setting import (
+    CELL_SIZE,
     NORTH,
     SOUTH,
     WEST,
@@ -47,9 +48,9 @@ class Solver:
 
         def solve_maze(curr_pos: tuple[int, int]) -> bool:
             if self.found_path:
+                print("hello")
                 return True
             if curr_pos == self.exit:
-                self.path.append(curr_pos)
                 self.found_path = True
                 return True
             curr_x, curr_y = curr_pos
@@ -61,9 +62,13 @@ class Solver:
             for direction in directions:
                 if self.found_path or self.solver_threading is None:
                     return True
-                _, new_x, new_y = direction
-                if self._data[new_x][new_y].is_42_cell:
+                parent, new_x, new_y = direction
+                if (
+                        self._data[new_x][new_y].is_42_cell
+                        or self._data[new_x][new_y].is_visited
+                ):
                     continue
+                self.data[new_x][new_y].parent = parent
                 if self.dfs_solver((new_x, new_y)):
                     self.path.append((new_x, new_y))
                     curr_cell.color = PATH_FOUND_COLOR
@@ -71,7 +76,10 @@ class Solver:
                     self.path.append((new_x, new_y))
                     self.found_path = True
                     return True
-                self.data[new_x][new_y].color = CELL_COLOR
+                if not self.found_path:
+                    self.data[new_x][new_y].color = CELL_COLOR
+                else:
+                    self.data[new_x][new_y].col = rgb(255, 0, 0)
                 sleep(DISPLAY_INTERVAL)
             sleep(DISPLAY_INTERVAL)
             return False

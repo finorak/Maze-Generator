@@ -15,6 +15,7 @@ from .setting import (
     WALL_THICK,
     WALL_COLOR,
     DISPLAY_INTERVAL,
+    CELL_SIZE
 )
 from .cell import Cell
 from .engine.solver import Solver
@@ -116,6 +117,8 @@ class App:
                 print("maze not generate")
         elif key == ord("c"):
             self.put_maze_into_file()
+        elif key == ord('h'):
+            print("help")
         elif key == ord("r"):
             self.reinitialise()
 
@@ -133,8 +136,8 @@ class App:
             self.mlx.mlx_destroy_window(self.ptr, self.main_win)
             self.main_win = None
 
-        self.width = self.config.get("width") * 40
-        self.height = self.config.get("height") * 40
+        self.width = self.config.get("width") * CELL_SIZE
+        self.height = self.config.get("height") * CELL_SIZE
         self.maze_win = self.mlx.mlx_new_window(
                 self.ptr, self.width, self.height, TITLE
                 )
@@ -230,7 +233,6 @@ class App:
                     output_file.write("S")"""
             output_file.write("\n")
 
-        reversed(self.maze.data)
         with open(self.output_file, mode="w", encoding="utf-8") as output_file:
             for row in self.maze.data:
                 for cell in row:

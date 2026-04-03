@@ -16,12 +16,16 @@ from .cell import Cell
 
 
 class Maze:
-    def __init__(self, parent: Any):
+    def __init__(self, parent: Any, animate: bool = True) -> None:
         self.data: list[list[Cell]] | Any = None
         self.parent = parent
+        self.animate = animate
         self.perfect = parent.config.get("perfect")
+        if self.perfect is None:
+            self.perfect = True
         self.entry_pos = self.parent.config.get("entry")
         self.end_pos = self.parent.config.get("exit")
+        self.block: list[tuple[int, int]] = []
         self.is_generate = False
         self.generation_thread: Any = None
 
@@ -42,32 +46,64 @@ class Maze:
             for i in range(self.rows)
         ]
         self.make_42_block()
+        if (
+                not self.entry_pos or not self.end_pos
+                or self.entry_pos == self.end_pos
+                or self.entry_pos in self.block
+                or self.end_pos in self.block
+        ):
+            self.make_42_block(False)
+        self.entry_pos = list(self.entry_pos)
+        entry_x, entry_y = self.entry_pos
+        if entry_x < 0 or entry_x >= self.rows:
+            entry_x = 0
+        if entry_y < 0 or entry_y >= self.cols:
+            entry_y = 0
+        self.entry_pos = (entry_x, entry_y)
+        self.end_pos = list(self.end_pos)
+        end_x, end_y = self.end_pos
+        if end_x < 0 or end_x >= self.rows:
+            end_x = self.rows - 1
+        if end_y < 0 or end_y >= self.cols:
+            end_y = self.cols - 1
+        self.end_pos = (end_x, end_y)
         self.is_generate = False
 
-    def make_42_block(self) -> None:
-        color = BLOCK_42_COLOR
+    def make_42_block(self, show_logo: bool = True) -> None:
+        if show_logo:
+            color = BLOCK_42_COLOR
+        else:
+            color = CELL_STARTING_COLOR
 
         def set_four(x: int, y: int) -> None:
             for i in range(3):
-                self.data[x][y + i].is_42_cell = True
+                self.data[x][y + i].is_42_cell = show_logo
                 self.data[x][y + i].color = color
-                self.data[x + 2][y + 2 + i].is_42_cell = True
+                self.data[x + 2][y + 2 + i].is_42_cell = show_logo
                 self.data[x + 2][y + 2 + i].color = color
-            self.data[x + 1][y + 2].is_42_cell = True
+                self.block.append((x, y + i))
+                self.block.append((x + 2, y + 2 + i))
+            self.data[x + 1][y + 2].is_42_cell = show_logo
+            self.block.append((x + 1, y + 2))
             self.data[x + 1][y + 2].color = color
 
         def set_two(x: int, y: int) -> None:
             for i in range(3):
-                self.data[x + i][y].is_42_cell = True
+                self.data[x + i][y].is_42_cell = show_logo
                 self.data[x + i][y].color = color
-                self.data[x + i][y + 2].is_42_cell = True
+                self.data[x + i][y + 2].is_42_cell = show_logo
                 self.data[x + i][y + 2].color = color
-                self.data[x + i][y + 4].is_42_cell = True
+                self.data[x + i][y + 4].is_42_cell = show_logo
                 self.data[x + i][y + 4].color = color
-            self.data[x + 2][y + 1].is_42_cell = True
+                self.block.append((x + i, y))
+                self.block.append((x + i, y + 2))
+                self.block.append((x + i, y + 4))
+            self.data[x + 2][y + 1].is_42_cell = show_logo
             self.data[x + 2][y + 1].color = color
-            self.data[x][y + 3].is_42_cell = True
+            self.data[x][y + 3].is_42_cell = show_logo
             self.data[x][y + 3].color = color
+            self.block.append((x + 2, y + 1))
+            self.block.append((x, y + 3))
 
         set_four(self.rows // 2 - 3, self.cols // 2 - 2)
         set_two(self.rows // 2 + 1, self.cols // 2 - 2)
@@ -111,14 +147,14 @@ class Maze:
             return
         self.generation_thread = Thread(
                 target=self.generete,
-                args=(start_pos,))
+                args=(self.entry_pos,))
         self.generation_thread.daemon = True
         self.generation_thread.start()
 
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
         perfect = not self.perfect
         self.generate_maze(start_pos)
-        self.break_wall(int(perfect) * 25 / 100)
+        self.break_wall(int(perfect) * 50 / 100)
         """
         COLORING ENTRY AND END POINT
         """

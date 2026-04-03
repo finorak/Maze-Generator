@@ -3,8 +3,12 @@ Module containing the cell class
 """
 
 from typing import Any
+
 from .image import Image
-from . import NORTH, SOUTH, WEST, EAST, CELL_COLOR
+from .setting import (
+        NORTH, SOUTH, WEST,
+        EAST, CELL_COLOR, CELL_SIZE
+        )
 
 
 class Cell:
@@ -14,7 +18,7 @@ class Cell:
         col: int,
         rows: int,
         cols: int,
-        size: int = 40,
+        size: int = CELL_SIZE,
         color: int = CELL_COLOR,
     ) -> None:
         self.row = row

@@ -26,3 +26,11 @@ DISPLAY_INTERVAL = 0.05
 HELP_WIDTH = 200
 HELP_HEIGHT = 100
 CELL_SIZE = 20
+BASE_CONFIG = {
+        'width': 20,
+        'height': 20,
+        'entry': (0, 0),
+        'exit': (19, 19),
+        'output_file': 'maze.txt',
+        'perfext': 'true'
+        }

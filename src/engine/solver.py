@@ -1,7 +1,6 @@
 from ..cell import Cell
 from typing import Any
 from ..setting import (
-    CELL_SIZE,
     NORTH,
     SOUTH,
     WEST,
@@ -42,9 +41,9 @@ class Solver:
         self.is_generate = False
         self._data = data
 
-    def dfs_solver(self, curr_pos: tuple[int, int]) -> None:
+    def dfs_solver(self, curr_pos: tuple[int, int]) -> bool:
         if self.found_path:
-            return None
+            return False
 
         def solve_maze(curr_pos: tuple[int, int]) -> bool:
             if self.found_path:
@@ -86,6 +85,7 @@ class Solver:
 
         solve_maze(curr_pos)
         self.is_generate = True
+        return True
 
     def find_directions(self,
                         cell: Cell

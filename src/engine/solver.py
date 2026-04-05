@@ -19,8 +19,8 @@ class Solver:
     def __init__(
         self,
         data: list[list[Cell]],
-        ENTRY: tuple[int, int],
-        EXIT: tuple[int, int],
+        ENTRY: Any,
+        EXIT: Any,
         app: Any,
     ) -> None:
         self._data = data
@@ -77,8 +77,6 @@ class Solver:
                     return True
                 if not self.found_path:
                     self.data[new_x][new_y].color = CELL_COLOR
-                else:
-                    self.data[new_x][new_y].col = rgb(255, 0, 0)
                 sleep(DISPLAY_INTERVAL)
             sleep(DISPLAY_INTERVAL)
             return False

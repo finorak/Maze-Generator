@@ -175,8 +175,8 @@ class App:
                 self.solver.start_solve(dfs, (self.solver.entry,))
             else:
                 print("maze not generate")
-        elif key == ord("c"):
-            print("nothing")
+        elif key == ord("p"):
+            self.put_maze_into_file()
         elif key == ord('h'):
             self.open_help_window()
         elif key == ord("r"):
@@ -271,3 +271,35 @@ class App:
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell)
+
+    def put_maze_into_file(self) -> None:
+        def binary_to_hex(binary_string: int) -> str:
+            return format(binary_string, "X")
+
+        def writing_path(output_file: Any,
+                         path: list[tuple[int, int]]) -> None:
+            for x, y in path:
+                cell = self.maze.data[x][y]
+                print(cell.parent)
+                """
+                if cell.wall & NORTH == 0:
+                    output_file.write("N")
+                elif cell.wall & WEST == 0:
+                    output_file.write("W")
+                elif cell.wall & EAST == 0:
+                    output_file.write("E")
+                elif cell.wall & SOUTH == 0:
+                    output_file.write("S")"""
+            output_file.write("\n")
+
+        with open(self.output_file, mode="w", encoding="utf-8") as output_file:
+            for row in self.maze.data:
+                for cell in row:
+                    output_file.write(f"{binary_to_hex(cell.wall)}")
+                output_file.write("\n")
+            output_file.write("\n")
+            x, y = self.maze.entry_pos
+            end_x, end_y = self.maze.end_pos
+            output_file.write(f"{x}, {y}\n")
+            output_file.write(f"{end_x}, {end_y}\n")
+            writing_path(output_file, self.solver.path)

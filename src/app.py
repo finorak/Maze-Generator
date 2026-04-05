@@ -4,6 +4,8 @@ from mlx import Mlx
 from typing import Any
 from .setting import (
     HEIGHT,
+    HELP_HEIGHT,
+    HELP_WIDTH,
     STRING_HEIGHT_PADDDING,
     STRING_WIDTH_PADDING,
     WIDTH,
@@ -29,6 +31,7 @@ class App:
         self.main_win: Any = None
         self.maze_win: Any = None
         self.error_win: Any = None
+        self.help_win: Any = None
         self.config = config
         self.output_file = self.config.get("output_file")
         self.maze: Maze = Maze(self)
@@ -52,6 +55,59 @@ class App:
     def on_close(self, _param: Any) -> None:
         self.mlx.mlx_loop_exit(self.ptr)
 
+    def on_close_help(self, _param: Any) -> None:
+        if self.help_win is not None:
+            self.mlx.mlx_destroy_window(self.ptr, self.help_win)
+            self.help_win = None
+
+    def draw_help_win(self) -> None:
+        if self.help_win is None:
+            return None
+
+        lines = [
+            "Help / Controls",
+            "",
+            "Space : open the maze screen",
+            "g     : generate the maze",
+            "s     : solve with A*",
+            "d     : solve with DFS",
+            "c     : save the maze",
+            "r     : reset the maze",
+            "h     : open this help window",
+            "q/Esc : quit the application",
+        ]
+
+        y = 20
+        for index, text in enumerate(lines):
+            color = 0xFFFFFFFF if index == 0 else 0xFFD0D0D0
+            self.mlx.mlx_string_put(
+                self.ptr,
+                self.help_win,
+                20,
+                y,
+                color,
+                text,
+            )
+            y += 22
+
+    def open_help_window(self) -> None:
+        if self.help_win is not None:
+            return None
+
+        self.help_win = self.mlx.mlx_new_window(
+            self.ptr,
+            HELP_WIDTH,
+            HELP_HEIGHT,
+            "Help",
+        )
+        self.draw_help_win()
+        self.mlx.mlx_key_hook(self.help_win, self.on_key_help, None)
+        self.mlx.mlx_hook(self.help_win, 33, 0, self.on_close_help, None)
+
+    def on_key_help(self, key: Any, _param: Any) -> None:
+        if key in (65307, ord("q")):
+            self.mlx.mlx_loop_exit(self.ptr)
+
     def update(self, _param: Any) -> None:
         if self.start:
             now = time()
@@ -69,6 +125,8 @@ class App:
             self.mlx.mlx_destroy_window(self.ptr, self.maze_win)
         if self.error_win is not None:
             self.mlx.mlx_destroy_window(self.ptr, self.error_win)
+        if self.help_win is not None:
+            self.mlx.mlx_destroy_window(self.ptr, self.help_win)
         self.mlx.mlx_release(self.ptr)
 
     # ----------------------main win---------------------------#
@@ -77,6 +135,8 @@ class App:
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == 32:
             self.switch_to_maze()
+        elif key == ord("h"):
+            self.open_help_window()
 
     def run_main(self) -> None:
         self.main_win = self.mlx.mlx_new_window(self.ptr, WIDTH, HEIGHT, TITLE)
@@ -118,7 +178,7 @@ class App:
         elif key == ord("c"):
             self.put_maze_into_file()
         elif key == ord('h'):
-            print("help")
+            self.open_help_window()
         elif key == ord("r"):
             self.reinitialise()
 

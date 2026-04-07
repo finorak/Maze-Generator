@@ -69,8 +69,8 @@ def get_configuration(
                 line = line.strip().split("=")
                 if len(line) != 2:
                     continue
-                key: str = line[0]
-                value: Union[str, tuple[int, int], int, bool] = line[1]
+                key: str = line[0].strip()
+                value: Union[str, tuple[int, int], int, bool] = line[1].strip()
                 pos = value.strip().split(",")
                 if len(pos) == 2:
                     x = int(pos[0].strip())
@@ -79,7 +79,7 @@ def get_configuration(
                 config.update({key.strip().lower(): value})
         config = parse_config(config)
         if not config_is_valid(config):
-            raise Exception("Config file is not valid")
+            return "Config file is not valid"
         return config
     except Exception:
         raise Exception("Config file not provided")

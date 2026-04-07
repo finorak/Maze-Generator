@@ -3,6 +3,7 @@ from .maze import Maze
 from mlx import Mlx
 from typing import Any
 from .setting import (
+    BASE_CONFIG,
     HEIGHT,
     STRING_HEIGHT_PADDDING,
     STRING_WIDTH_PADDING,
@@ -26,19 +27,25 @@ class App:
         self.mlx = Mlx()
         self.ptr = self.mlx.mlx_init()
         self.start = False
+        self.init_attribute(config)
+
+    def init_attribute(self, config: Any) -> None:
         self.main_win: Any = None
         self.maze_win: Any = None
         self.error_win: Any = None
         self.config = config
+        if isinstance(self.config, str):
+            self.config = BASE_CONFIG
         self.output_file = self.config.get("output_file")
         self.maze: Maze = Maze(self)
-        self.rows = config.get("height")
-        self.cols = config.get("width")
+        self.rows = self.config.get("height")
+        self.cols = self.config.get("width")
         self.maze.init_data(self.rows, self.cols)
         self.solver: Solver = Solver(
             self.maze.data, self.maze.entry_pos, self.maze.end_pos, self
         )
         self.last_draw: float = 0
+        pass
 
     def init_image(self) -> None:
         if self.maze.data and self.maze.data[0][0].image.img is None:
@@ -92,9 +99,6 @@ class App:
         self.mlx.mlx_key_hook(self.main_win, self.on_key_main, None)
         self.mlx.mlx_hook(self.main_win, 33, 0, self.on_close, None)
 
-    # ----------------------main win---------------------------#
-
-    # ----------------------maze win---------------------------#
     def on_key_maze(self, key: Any, _param: Any) -> None:
         a_star = self.solver.solve
         dfs = self.solver.dfs_solver

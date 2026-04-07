@@ -21,15 +21,13 @@ class Maze:
         self.parent = parent
         self.animate = animate
         self.perfect = parent.config.get("perfect")
-        if self.perfect is None:
-            self.perfect = True
         self.entry_pos = self.parent.config.get("entry")
         self.end_pos = self.parent.config.get("exit")
         self.block: list[tuple[int, int]] = []
         self.is_generate = False
         self.generation_thread: Any = None
 
-    def init_data(self, cols: int, rows: int) -> None:
+    def init_data(self, cols: Any, rows: Any) -> None:
         self.cols = cols
         self.rows = rows
         self.data = [
@@ -185,7 +183,7 @@ class Maze:
             self.data[new_x][new_y].color = CELL_COLOR
         sleep(DISPLAY_INTERVAL)
 
-    def break_wall(self, probability: float = 0.25) -> None:
+    def break_wall(self, probability: float = 0.50) -> None:
         if probability == 0:
             return None
         walls = [("e", "w"), ("w", "e"), ("n", "s"), ("s", "n")]

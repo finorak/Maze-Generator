@@ -4,8 +4,7 @@ The main program for our maze generator
 
 try:
     from src.app import App
-    from src.utils import get_configuration
-    from src.setting import BASE_CONFIG
+    from src.utils.parsing import get_configuration
 except Exception as e:
     print(e)
 

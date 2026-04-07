@@ -152,7 +152,7 @@ class Maze:
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
         perfect = not self.perfect
         self.generate_maze(start_pos)
-        self.break_wall(int(perfect) * 50 / 100)
+        self.break_wall(int(perfect) * 25 / 100)
         """
         COLORING ENTRY AND END POINT
         """
@@ -181,7 +181,7 @@ class Maze:
             self.data[new_x][new_y].color = CELL_COLOR
         sleep(DISPLAY_INTERVAL)
 
-    def break_wall(self, probability: float = 0.50) -> None:
+    def break_wall(self, probability: float = 0.25) -> None:
         if probability == 0:
             return None
         walls = [("e", "w"), ("w", "e"), ("n", "s"), ("s", "n")]

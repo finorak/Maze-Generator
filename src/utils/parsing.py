@@ -3,15 +3,18 @@ Utils module
 This module contains the basique utils function we need
 might use class later on
 """
-from typing import Mapping, Union, Any
+from typing import Union, Any
+from src.utils.config_utils import get_config, custom_print
 
 
-def config_is_valid(config: dict[str, Union[str, int, tuple, bool]]
+def config_is_valid(config: dict[str, Any]
                     ) -> bool:
     """
     This function verify if the config is vaild or not
     """
     if config is None:
+        return False
+    if get_config(config):
         return False
     if "width" not in config or "height" not in config or not \
             config.get('width') or not config.get('height'):
@@ -22,7 +25,6 @@ def config_is_valid(config: dict[str, Union[str, int, tuple, bool]]
     if "entry" not in config or "exit" not in config:
         return False
     if not config.get('entry') or not isinstance(config["entry"], tuple):
-        print(config)
         return False
     if not isinstance(config["entry"][0], int) or not \
             isinstance(config["entry"][1], int):
@@ -36,11 +38,11 @@ def config_is_valid(config: dict[str, Union[str, int, tuple, bool]]
 
 
 def parse_config(config: dict[str, Any]
-                 ) -> dict[str, Union[bool, tuple, int]]:
+                 ) -> dict[str, Any]:
     """
     Parsing the config we got from get_configuration
     """
-    conf: Mapping = {}
+    conf: dict[str, Any] = {}
     for key, value in config.items():
         if isinstance(value, str) and value.isdigit():
             conf[key] = int(value)
@@ -49,28 +51,32 @@ def parse_config(config: dict[str, Any]
         elif isinstance(value, str) and value.lower() == "false":
             conf[key] = False
         else:
-            conf[key] = value
+            try:
+                conf[key] = int(value)
+            except Exception:
+                conf[key] = value
     return conf
 
 
 def get_configuration(
         file_name: str
-        ) -> dict[str, Union[bool, tuple[int, int]]] | str:
+        ) -> dict[str, Any]:
     """
     Getting the configuration file using dict
     """
-    config: dict[str, Any] | None = {}
+    from src.setting import BASE_CONFIG
+    config: dict[str, Any] = {}
     try:
         with open(file_name, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
             for line in lines:
                 if line.startswith("#"):
                     continue
-                line = line.strip().split("=")
-                if len(line) != 2:
+                new_line: list[str] = line.strip().split("=")
+                if len(new_line) != 2:
                     continue
-                key: str = line[0]
-                value: Union[str, tuple[int, int], int, bool] = line[1]
+                key: str = new_line[0]
+                value: Union[str, Any] = new_line[1].strip()
                 pos = value.strip().split(",")
                 if len(pos) == 2:
                     x = int(pos[0].strip())
@@ -79,7 +85,9 @@ def get_configuration(
                 config.update({key.strip().lower(): value})
         config = parse_config(config)
         if not config_is_valid(config):
-            raise Exception("Config file is not valid")
+            custom_print("\nSWITCHING TO BASE_CONFIG")
+            get_config(BASE_CONFIG)
+            return BASE_CONFIG
         return config
     except Exception:
         raise Exception("Config file not provided")

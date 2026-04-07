@@ -5,6 +5,7 @@ from typing import Any
 from .setting import (
     HEIGHT,
     HELP_HEIGHT,
+    HELP_TEXT,
     HELP_WIDTH,
     STRING_HEIGHT_PADDDING,
     STRING_WIDTH_PADDING,
@@ -21,25 +22,28 @@ from .setting import (
 )
 from .cell import Cell
 from .engine.solver import Solver
+from src.utils.maze_utils import put_maze_into_file
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class App:
-    def __init__(self, config: Any) -> None:
+    def __init__(self, config: dict[str, Any]) -> None:
         self.mlx = Mlx()
         self.ptr = self.mlx.mlx_init()
         self.start = False
+        self.init_attribute(config)
+
+    def init_attribute(self, config: Any) -> None:
         self.main_win: Any = None
         self.maze_win: Any = None
         self.error_win: Any = None
         self.help_win: Any = None
         self.config = config
-        self.output_file = self.config.get("output_file")
         self.maze: Maze = Maze(self)
-        self.rows = config.get("height")
-        self.cols = config.get("width")
+        self.rows = self.config.get("height")
+        self.cols = self.config.get("width")
         self.maze.init_data(self.rows, self.cols)
         self.solver: Solver = Solver(
             self.maze.data, self.maze.entry_pos, self.maze.end_pos, self
@@ -49,7 +53,9 @@ class App:
         self.get_image()
 
     def init_image(self) -> None:
-        if self.maze.data and self.maze.data[0][0].image.img is None:
+        if not self.maze.data:
+            return None
+        if self.maze.data[0][0].image.img is None:
             for row in self.maze.data:
                 for cell in row:
                     if cell.image.img is None:
@@ -80,21 +86,8 @@ class App:
         if self.help_win is None:
             return None
 
-        lines = [
-            "Help / Controls",
-            "",
-            "Space : open the maze screen",
-            "g     : generate the maze",
-            "s     : solve with A*",
-            "d     : solve with DFS",
-            "c     : save the maze",
-            "r     : reset the maze",
-            "h     : open this help window",
-            "q/Esc : quit the application",
-        ]
-
         y = 20
-        for index, text in enumerate(lines):
+        for index, text in enumerate(HELP_TEXT):
             color = 0xFFFFFFFF if index == 0 else 0xFFD0D0D0
             self.mlx.mlx_string_put(
                 self.ptr,
@@ -168,9 +161,6 @@ class App:
         self.mlx.mlx_key_hook(self.main_win, self.on_key_main, None)
         self.mlx.mlx_hook(self.main_win, 33, 0, self.on_close, None)
 
-    # ----------------------main win---------------------------#
-
-    # ----------------------maze win---------------------------#
     def on_key_maze(self, key: Any, _param: Any) -> None:
         a_star = self.solver.solve
         dfs = self.solver.dfs_solver
@@ -192,7 +182,12 @@ class App:
             else:
                 print("maze not generate")
         elif key == ord("p"):
-            self.put_maze_into_file()
+            put_maze_into_file(
+                    self.config.get('output_file'),
+                    self.maze.data,
+                    self.solver.path,
+                    self.config.get('entry'),
+                    self.config.get('exit'))
         elif key == ord('h'):
             self.open_help_window()
         elif key == ord("r"):
@@ -226,9 +221,9 @@ class App:
         """
         Setting the position of entry and exit
         """
-        row = (y * 40) // self.height
-        col = (x * 40) // self.width
-        print(button, (row, self.height), (col, self.width))
+        row = (x // CELL_SIZE)
+        col = (y // CELL_SIZE)
+        print(row, col)
 
     def event_handler(self) -> None:
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
@@ -296,35 +291,3 @@ class App:
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell)
-
-    def put_maze_into_file(self) -> None:
-        def binary_to_hex(binary_string: int) -> str:
-            return format(binary_string, "X")
-
-        def writing_path(output_file: Any,
-                         path: list[tuple[int, int]]) -> None:
-            for x, y in path:
-                cell = self.maze.data[x][y]
-                print(cell.parent)
-                """
-                if cell.wall & NORTH == 0:
-                    output_file.write("N")
-                elif cell.wall & WEST == 0:
-                    output_file.write("W")
-                elif cell.wall & EAST == 0:
-                    output_file.write("E")
-                elif cell.wall & SOUTH == 0:
-                    output_file.write("S")"""
-            output_file.write("\n")
-
-        with open(self.output_file, mode="w", encoding="utf-8") as output_file:
-            for row in self.maze.data:
-                for cell in row:
-                    output_file.write(f"{binary_to_hex(cell.wall)}")
-                output_file.write("\n")
-            output_file.write("\n")
-            x, y = self.maze.entry_pos
-            end_x, end_y = self.maze.end_pos
-            output_file.write(f"{x}, {y}\n")
-            output_file.write(f"{end_x}, {end_y}\n")
-            writing_path(output_file, self.solver.path)

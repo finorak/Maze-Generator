@@ -34,3 +34,15 @@ BASE_CONFIG = {
         'output_file': 'maze.txt',
         'perfext': 'true'
         }
+HELP_TEXT = [
+        "Help / Controls",
+        "",
+        "Space : open the maze screen",
+        "g     : generate the maze",
+        "s     : solve with A*",
+        "d     : solve with DFS",
+        "c     : save the maze",
+        "r     : reset the maze",
+        "h     : open this help window",
+        "q/Esc : quit the application",
+    ]

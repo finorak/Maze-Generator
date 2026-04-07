@@ -1,5 +1,3 @@
-SHELL := /bin/bash
-
 NAME=a_maze_ing.py
 VENV=.venv
 BIN_PATH=./$(VENV)/bin
@@ -17,6 +15,9 @@ $(VENV):
 
 run:
 	$(PYTHON) $(NAME)
+
+debug:
+	$(PYTHON) -m pdb $(NAME)
 
 flake:
 	$(FLAKE) --exclude=$(VENV) .
@@ -36,4 +37,4 @@ fclean: clean
 
 re: fclean install
 
-.PHONY: clean re fclean install run lint lint-strict flake
+.PHONY: clean re fclean install run lint lint-strict flake debug

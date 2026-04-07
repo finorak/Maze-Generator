@@ -47,7 +47,6 @@ class Solver:
 
         def solve_maze(curr_pos: tuple[int, int]) -> bool:
             if self.found_path:
-                print("hello")
                 return True
             if curr_pos == self.exit:
                 self.found_path = True
@@ -83,9 +82,7 @@ class Solver:
             sleep(DISPLAY_INTERVAL)
             return False
 
-        solve_maze(curr_pos)
-        self.is_generate = True
-        return True
+        return solve_maze(curr_pos)
 
     def find_directions(self,
                         cell: Cell

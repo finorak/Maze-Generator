@@ -34,6 +34,8 @@ def config_is_valid(config: dict[str, Any]
     if not isinstance(config['exit'][0], int) or not \
             isinstance(config["exit"][1], int):
         return False
+    if config['entry'] == config['exit']:
+        return False
     return True
 
 

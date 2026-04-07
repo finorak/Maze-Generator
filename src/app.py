@@ -9,6 +9,7 @@ from .setting import (
     HELP_WIDTH,
     STRING_HEIGHT_PADDDING,
     STRING_WIDTH_PADDING,
+    WALL_COLORS,
     WIDTH,
     TITLE,
     NORTH,
@@ -16,7 +17,6 @@ from .setting import (
     WEST,
     EAST,
     WALL_THICK,
-    WALL_COLOR,
     DISPLAY_INTERVAL,
     CELL_SIZE
 )
@@ -48,6 +48,8 @@ class App:
         self.solver: Solver = Solver(
             self.maze.data, self.maze.entry_pos, self.maze.end_pos, self
         )
+        self.index = 0
+        self.wall_color = WALL_COLORS[self.index]
         self.last_draw: float = 0
         self.images: dict[str, Any] = {}
         self.get_image()
@@ -190,6 +192,9 @@ class App:
                     self.config.get('exit'))
         elif key == ord('h'):
             self.open_help_window()
+        elif key == ord('u'):
+            self.index += 1
+            self.wall_color = WALL_COLORS[self.index % len(WALL_COLORS)]
         elif key == ord("r"):
             self.reinitialise()
 
@@ -200,7 +205,6 @@ class App:
         self.solver.found_path = False
         self.solver.solver_threading = None
         self.solver.path.clear()
-        self.draw_maze()
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:
@@ -243,6 +247,7 @@ class App:
         addr = self.mlx.mlx_get_data_addr(cell.image.img)
         cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
         bpp = cell.image.bpp // 8
+        wall_color = self.wall_color
         for j in range(cell.size):
             for i in range(cell.size):
                 offset = j * cell.image.sl + i * bpp
@@ -253,28 +258,28 @@ class App:
             for j in range(WALL_THICK):
                 for i in range(cell.size):
                     offset = (j) * cell.image.sl + (i) * bpp
-                    cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
+                    cell.image.data[offset:offset + bpp] = wall_color.to_bytes(
                         bpp, "little"
                     )
         if cell.wall & EAST:
             for j in range(cell.size):
                 for i in range(WALL_THICK):
                     offset = j * cell.image.sl + (cell.size - 1) * bpp
-                    cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
+                    cell.image.data[offset:offset + bpp] = wall_color.to_bytes(
                         bpp, "little"
                     )
         if cell.wall & WEST:
             for j in range(cell.size):
                 for i in range(WALL_THICK):
                     offset = j * cell.image.sl + i * bpp
-                    cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
+                    cell.image.data[offset:offset + bpp] = wall_color.to_bytes(
                         bpp, "little"
                     )
         if cell.wall & SOUTH:
             for j in range(WALL_THICK):
                 for i in range(cell.size):
                     offset = (cell.size - 1) * cell.image.sl + (i) * bpp
-                    cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
+                    cell.image.data[offset:offset + bpp] = wall_color.to_bytes(
                         bpp, "little"
                     )
         pos = (cell.row * cell.size, cell.col * cell.size)

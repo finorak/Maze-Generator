@@ -224,7 +224,7 @@ class App:
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
 
-    def draw_cell(self, cell: Cell):
+    def draw_cell(self, cell: Cell) -> None:
         addr = self.mlx.mlx_get_data_addr(cell.image.img)
         cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
         bpp = cell.image.bpp // 8

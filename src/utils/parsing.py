@@ -7,7 +7,7 @@ from typing import Union, Any
 from src.utils.config_utils import get_config, custom_print
 
 
-def config_is_valid(config: dict[str, Union[str, int, tuple, bool]]
+def config_is_valid(config: dict[str, Any]
                     ) -> bool:
     """
     This function verify if the config is vaild or not
@@ -38,7 +38,7 @@ def config_is_valid(config: dict[str, Union[str, int, tuple, bool]]
 
 
 def parse_config(config: dict[str, Any]
-                 ) -> dict[str, Union[bool, tuple, int]]:
+                 ) -> dict[str, Any]:
     """
     Parsing the config we got from get_configuration
     """
@@ -60,7 +60,7 @@ def parse_config(config: dict[str, Any]
 
 def get_configuration(
         file_name: str
-        ) -> dict[str, Any] | str:
+        ) -> dict[str, Any]:
     """
     Getting the configuration file using dict
     """
@@ -72,11 +72,11 @@ def get_configuration(
             for line in lines:
                 if line.startswith("#"):
                     continue
-                line = line.strip().split("=")
-                if len(line) != 2:
+                new_line: list[str] = line.strip().split("=")
+                if len(new_line) != 2:
                     continue
-                key: str = line[0]
-                value: Union[str, tuple[int, int], int, bool] = line[1].strip()
+                key: str = new_line[0]
+                value: Union[str, Any] = new_line[1].strip()
                 pos = value.strip().split(",")
                 if len(pos) == 2:
                     x = int(pos[0].strip())

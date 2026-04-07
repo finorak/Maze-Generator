@@ -48,10 +48,11 @@ class App:
             self.maze.data, self.maze.entry_pos, self.maze.end_pos, self
         )
         self.last_draw: float = 0
-        pass
 
     def init_image(self) -> None:
-        if self.maze.data and self.maze.data[0][0].image.img is None:
+        if not self.maze.data:
+            return None
+        if self.maze.data[0][0].image.img is None:
             for row in self.maze.data:
                 for cell in row:
                     if cell.image.img is None:
@@ -214,8 +215,8 @@ class App:
         """
         Setting the position of entry and exit
         """
-        row = (y * 40) // self.height
-        col = (x * 40) // self.width
+        row = (y * CELL_SIZE) // self.height
+        col = (x * CELL_SIZE) // self.width
         print(button, (row, self.height), (col, self.width))
 
     def event_handler(self) -> None:

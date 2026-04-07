@@ -18,12 +18,15 @@ from .setting import (
     EAST,
     WALL_THICK,
     DISPLAY_INTERVAL,
-    CELL_SIZE
+    CELL_SIZE,
+    IMAGES,
+    rgb
 )
 from .cell import Cell
 from .engine.solver import Solver
 from src.utils.maze_utils import put_maze_into_file
 import os
+from .image import Image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -53,6 +56,9 @@ class App:
         self.last_draw: float = 0
         self.images: dict[str, Any] = {}
         self.get_image()
+        self.bg = Image()
+        self.init_img_bg()
+        
 
     def init_image(self) -> None:
         if not self.maze.data:
@@ -65,16 +71,27 @@ class App:
                             self.ptr, cell.size, cell.size
                         )
 
+    def init_img_bg(self, color: Any=rgb(255,0,0)) -> None:
+        self.bg.img = self.mlx.mlx_new_image(
+            self.ptr,
+            self.config.get("width") * CELL_SIZE,
+            self.config.get("height") * CELL_SIZE
+        )
+        addr = self.mlx.mlx_get_data_addr(self.bg.img)
+        self.bg.data, self.bg.bpp, self.bg.sl, _ = addr
+        byte_per_pixel = self.bg.bpp // 8
+        for j in range(HEIGHT):
+            for i in range(WIDTH):
+                offset = j * self.bg.sl + i * byte_per_pixel
+                self.bg.data[offset:offset + byte_per_pixel] = color.to_bytes(
+                        byte_per_pixel,
+                        'little')
+
     def get_image(self) -> None:
-        entry_path = os.path.normpath(os.path.join(BASE_DIR, "..", "assets","path", "initial.png"))
-        exit_path = os.path.normpath(os.path.join(BASE_DIR, "..", "assets","path", "exit.png"))
-        path_path = os.path.normpath(os.path.join(BASE_DIR, "..", "assets","path", "path.png"))
-        entry_img, _,_ = self.mlx.mlx_png_file_to_image(self.ptr, entry_path)
-        exit_img, _,_ = self.mlx.mlx_png_file_to_image(self.ptr, exit_path)
-        path_img, _,_ = self.mlx.mlx_png_file_to_image(self.ptr, path_path)
-        self.images.update({"entry": entry_img})
-        self.images.update({"exit": exit_img})
-        self.images.update({"path": path_img})
+        for key, value in IMAGES.items():
+            path = os.path.normpath(os.path.join(BASE_DIR, "..", *(value.split('/'))))
+            img, _, _ = self.mlx.mlx_png_file_to_image(self.ptr, path)
+            self.images.update({key: img})
 
     def on_close(self, _param: Any) -> None:
         self.mlx.mlx_loop_exit(self.ptr)
@@ -170,6 +187,7 @@ class App:
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord("g"):
             if self.maze.is_generate:
+                print("maze already generate")
                 return None
             self.maze.start_generate()
             self.solver.data = self.maze.data
@@ -215,6 +233,7 @@ class App:
         self.maze_win = self.mlx.mlx_new_window(
                 self.ptr, self.width, self.height, TITLE
                 )
+        self.init_image()
         self.draw_maze()
         self.draw_maze()
         self.event_handler()
@@ -233,6 +252,12 @@ class App:
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
+
+    def draw_backgroud(self):
+        self.mlx.mlx_put_image_to_window(
+            self.ptr, self.maze_win, self.bg.img,
+            0, 0
+        )
 
     def draw_image(self, win: Any, pos: tuple[int, int], img: Any) -> None:
         self.mlx.mlx_put_image_to_window(
@@ -254,36 +279,37 @@ class App:
                 cell.image.data[offset:offset + bpp] = cell.color.to_bytes(
                     bpp, "little"
                 )
-        if cell.wall & NORTH:
-            for j in range(WALL_THICK):
-                for i in range(cell.size):
-                    offset = (j) * cell.image.sl + (i) * bpp
-                    cell.image.data[offset:offset + bpp] = wall_color.to_bytes(
-                        bpp, "little"
-                    )
-        if cell.wall & EAST:
-            for j in range(cell.size):
-                for i in range(WALL_THICK):
-                    offset = j * cell.image.sl + (cell.size - 1) * bpp
-                    cell.image.data[offset:offset + bpp] = wall_color.to_bytes(
-                        bpp, "little"
-                    )
-        if cell.wall & WEST:
-            for j in range(cell.size):
-                for i in range(WALL_THICK):
-                    offset = j * cell.image.sl + i * bpp
-                    cell.image.data[offset:offset + bpp] = wall_color.to_bytes(
-                        bpp, "little"
-                    )
-        if cell.wall & SOUTH:
-            for j in range(WALL_THICK):
-                for i in range(cell.size):
-                    offset = (cell.size - 1) * cell.image.sl + (i) * bpp
-                    cell.image.data[offset:offset + bpp] = wall_color.to_bytes(
-                        bpp, "little"
-                    )
+        # if cell.wall & NORTH:
+        #     for j in range(WALL_THICK):
+        #         for i in range(cell.size):
+        #             offset = (j) * cell.image.sl + (i) * bpp
+        #             cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
+        #                 bpp, "little"
+        #             )
+        # if cell.wall & EAST:
+        #     for j in range(cell.size):
+        #         for i in range(WALL_THICK):
+        #             offset = j * cell.image.sl + (cell.size - 1) * bpp
+        #             cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
+        #                 bpp, "little"
+        #             )
+        # if cell.wall & WEST:
+        #     for j in range(cell.size):
+        #         for i in range(WALL_THICK):
+        #             offset = j * cell.image.sl + i * bpp
+        #             cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
+        #                 bpp, "little"
+        #             )
+        # if cell.wall & SOUTH:
+        #     for j in range(WALL_THICK):
+        #         for i in range(cell.size):
+        #             offset = (cell.size - 1) * cell.image.sl + (i) * bpp
+        #             cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
+        #                 bpp, "little"
+        #             )
         pos = (cell.row * cell.size, cell.col * cell.size)
         self.draw_image(self.maze_win, pos, cell.image.img)
+        self.draw_image(self.maze_win, pos, self.images.get(f"{cell.wall:04b}"))
         if self.maze.is_generate and (cell.row, cell.col) == self.config.get("entry"):
             self.draw_image(self.maze_win, pos, self.images.get("entry"))
         if self.maze.is_generate and (cell.row, cell.col) == self.config.get("exit"):
@@ -292,7 +318,8 @@ class App:
             self.draw_image(self.maze_win, pos, self.images.get("path"))
 
     def draw_maze(self) -> None:
-        self.init_image()
+        # self.init_image()
+        # self.draw_backgroud()
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell)

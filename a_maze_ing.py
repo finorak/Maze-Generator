@@ -4,12 +4,10 @@ The main program for our maze generator
 
 try:
     from src.app import App
+    from src.utils.parsing import get_configuration
 except Exception as e:
     print(e)
-try:
-    from src.utils import get_configuration
-except Exception as e:
-    print(e)
+
 
 if __name__ == "__main__":
     message: str | None = None

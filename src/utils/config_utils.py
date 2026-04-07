@@ -7,8 +7,8 @@ def custom_print(text: Any,
                  timer: float = 0.08) -> None:
     text_len = len(text)
     for i in range(text_len):
-        print(text[i], flush=True, end="" if i < text_len - 1 else delimiter)
-        sleep(timer)
+        print(text[i], flush=False, end="" if i < text_len - 1 else delimiter)
+        # sleep(timer)
 
 
 def get_config(config: dict[str, Any],

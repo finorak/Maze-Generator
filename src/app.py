@@ -157,7 +157,7 @@ class App:
             WIDTH // 2 - STRING_WIDTH_PADDING,
             STRING_HEIGHT_PADDDING,
             0xFFFFFFFF,
-            "Choose options:",
+            "Enter space to continue...",
         )
 
         self.mlx.mlx_key_hook(self.main_win, self.on_key_main, None)

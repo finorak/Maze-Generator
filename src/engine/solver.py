@@ -1,6 +1,6 @@
 from ..cell import Cell
 from typing import Any
-from ..setting import (
+from src.setting import (
     NORTH,
     SOUTH,
     WEST,
@@ -76,8 +76,6 @@ class Solver:
                     return True
                 if not self.found_path:
                     self.data[new_x][new_y].color = CELL_COLOR
-                else:
-                    self.data[new_x][new_y].col = rgb(255, 0, 0)
                 sleep(DISPLAY_INTERVAL)
             sleep(DISPLAY_INTERVAL)
             return False

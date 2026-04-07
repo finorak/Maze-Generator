@@ -16,11 +16,9 @@ def get_config(config: dict[str, Any],
     if start:
         custom_print("GETTING CONFIG FILE...")
     error = False
-    sleep(0.01)
     for key, value in config.items():
         checker = "[0K]"
         custom_print(key, " : ")
-        sleep(0.01)
         if (isinstance(value, int) and (key == "width"
                                         or key == "height")):
             if value >= 30 or value <= 0:

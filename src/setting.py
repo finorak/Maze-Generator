@@ -20,7 +20,12 @@ ENTRY_COLOR = rgb(214, 106, 151)
 EXIT_COLOR = rgb(214, 106, 151)
 WALL_COLOR = rgb(0, 0, 0)
 WALL_COLOR_2 = rgb(255, 0, 0)
-WALL_COLORS = [WALL_COLOR, WALL_COLOR_2]
+WALL_COLOR_3 = rgb(126, 200, 80)
+WALL_COLOR_4 = rgb(86, 125, 70)
+WALL_COLORS = [
+        WALL_COLOR, WALL_COLOR_2, WALL_COLOR_3,
+        WALL_COLOR_4
+        ]
 PATH_FOUND_COLOR = rgb(106, 214, 205)
 STRING_HEIGHT_PADDDING = 100
 STRING_WIDTH_PADDING = 100
@@ -28,6 +33,7 @@ DISPLAY_INTERVAL = 0.05
 HELP_WIDTH = 520
 HELP_HEIGHT = 660
 CELL_SIZE = 40
+
 BASE_CONFIG = {
         'width': 20,
         'height': 20,
@@ -36,15 +42,17 @@ BASE_CONFIG = {
         'output_file': 'maze.txt',
         'perfext': 'true'
         }
+
 HELP_TEXT = [
         "Help / Controls",
         "",
         "Space : open the maze screen",
         "g     : generate the maze",
-        "s     : solve with A*",
+        "s     : solve with A* (shortest path)",
         "d     : solve with DFS",
         "c     : save the maze",
         "r     : reset the maze",
         "h     : open this help window",
+        "u     : Change the wall color",
         "q/Esc : quit the application",
     ]

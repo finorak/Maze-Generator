@@ -21,6 +21,9 @@ from .setting import (
 )
 from .cell import Cell
 from .engine.solver import Solver
+import os
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class App:
@@ -42,6 +45,8 @@ class App:
             self.maze.data, self.maze.entry_pos, self.maze.end_pos, self
         )
         self.last_draw: float = 0
+        self.images: dict[str, Any] = {}
+        self.get_image()
 
     def init_image(self) -> None:
         if self.maze.data and self.maze.data[0][0].image.img is None:
@@ -51,6 +56,17 @@ class App:
                         cell.image.img = self.mlx.mlx_new_image(
                             self.ptr, cell.size, cell.size
                         )
+
+    def get_image(self) -> None:
+        entry_path = os.path.normpath(os.path.join(BASE_DIR, "..", "assets","path", "initial.png"))
+        exit_path = os.path.normpath(os.path.join(BASE_DIR, "..", "assets","path", "exit.png"))
+        path_path = os.path.normpath(os.path.join(BASE_DIR, "..", "assets","path", "path.png"))
+        entry_img, _,_ = self.mlx.mlx_png_file_to_image(self.ptr, entry_path)
+        exit_img, _,_ = self.mlx.mlx_png_file_to_image(self.ptr, exit_path)
+        path_img, _,_ = self.mlx.mlx_png_file_to_image(self.ptr, path_path)
+        self.images.update({"entry": entry_img})
+        self.images.update({"exit": exit_img})
+        self.images.update({"path": path_img})
 
     def on_close(self, _param: Any) -> None:
         self.mlx.mlx_loop_exit(self.ptr)
@@ -219,6 +235,15 @@ class App:
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
 
+    def draw_image(self, win: Any, pos: tuple[int, int], img: Any) -> None:
+        self.mlx.mlx_put_image_to_window(
+            self.ptr,
+            win,
+            img,
+            pos[0],
+            pos[1]
+        )
+
     def draw_cell(self, cell: Cell):
         addr = self.mlx.mlx_get_data_addr(cell.image.img)
         cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
@@ -229,7 +254,6 @@ class App:
                 cell.image.data[offset:offset + bpp] = cell.color.to_bytes(
                     bpp, "little"
                 )
-
         if cell.wall & NORTH:
             for j in range(WALL_THICK):
                 for i in range(cell.size):
@@ -258,13 +282,14 @@ class App:
                     cell.image.data[offset:offset + bpp] = WALL_COLOR.to_bytes(
                         bpp, "little"
                     )
-        self.mlx.mlx_put_image_to_window(
-            self.ptr,
-            self.maze_win,
-            cell.image.img,
-            cell.row * cell.size,
-            cell.col * cell.size,
-        )
+        pos = (cell.row * cell.size, cell.col * cell.size)
+        self.draw_image(self.maze_win, pos, cell.image.img)
+        if self.maze.is_generate and (cell.row, cell.col) == self.config.get("entry"):
+            self.draw_image(self.maze_win, pos, self.images.get("entry"))
+        if self.maze.is_generate and (cell.row, cell.col) == self.config.get("exit"):
+            self.draw_image(self.maze_win, pos, self.images.get("exit"))
+        if self.maze.is_generate and (cell.row, cell.col) in self.solver.path:
+            self.draw_image(self.maze_win, pos, self.images.get("path"))
 
     def draw_maze(self) -> None:
         self.init_image()

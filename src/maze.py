@@ -158,12 +158,10 @@ class Maze:
         """
         COLORING ENTRY AND END POINT
         """
-        entry_x, entry_y = self.entry_pos
-        entry_cell = self.data[entry_x][entry_y]
-        entry_cell.color = ENTRY_COLOR
-        end_x, end_y = self.end_pos
-        end_cell = self.data[end_x][end_y]
-        end_cell.color = EXIT_COLOR
+        x, y = self.entry_pos
+        self.data[x][y].color = ENTRY_COLOR
+        x, y = self.end_pos
+        self.data[x][y].color = EXIT_COLOR
         self.is_generate = True
 
     def generate_maze(self, start_pos: tuple[int, int]) -> None:

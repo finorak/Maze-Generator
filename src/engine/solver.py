@@ -159,6 +159,10 @@ class Solver:
             self._data[x][y].color = rgb(106, 214, 205)
         if animate:
             sleep(DISPLAY_INTERVAL)
+        x, y = self.entry
+        self._data[x][y].color = rgb(106, 214, 205)
+        x, y = self.exit
+        self._data[x][y].color = rgb(106, 214, 205)
         self.found_path = True
 
     def start_solve(self, target: Any, args: Any) -> Thread | None:

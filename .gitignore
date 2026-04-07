@@ -5,3 +5,4 @@ __pychache__
 *.pyc
 *.css
 maze.txt
+convert_img.py

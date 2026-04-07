@@ -19,8 +19,8 @@ class Solver:
     def __init__(
         self,
         data: list[list[Cell]],
-        ENTRY: Any,
-        EXIT: Any,
+        ENTRY: tuple[int, int],
+        EXIT: tuple[int, int],
         app: Any,
     ) -> None:
         self._data = data
@@ -41,9 +41,9 @@ class Solver:
         self.is_generate = False
         self._data = data
 
-    def dfs_solver(self, curr_pos: tuple[int, int]) -> None:
+    def dfs_solver(self, curr_pos: tuple[int, int]) -> bool:
         if self.found_path:
-            return None
+            return False
 
         def solve_maze(curr_pos: tuple[int, int]) -> bool:
             if self.found_path:
@@ -77,12 +77,15 @@ class Solver:
                     return True
                 if not self.found_path:
                     self.data[new_x][new_y].color = CELL_COLOR
+                else:
+                    self.data[new_x][new_y].col = rgb(255, 0, 0)
                 sleep(DISPLAY_INTERVAL)
             sleep(DISPLAY_INTERVAL)
             return False
 
         solve_maze(curr_pos)
         self.is_generate = True
+        return True
 
     def find_directions(self,
                         cell: Cell

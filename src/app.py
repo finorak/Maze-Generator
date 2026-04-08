@@ -39,21 +39,25 @@ class App:
         self.error_win: Any = None
         self.help_win: Any = None
         self.config = config
-        self.maze: Maze = Maze(self)
         self.rows = self.config.get("height")
         self.cols = self.config.get("width")
+        self.entry_pos: tuple[int, int] | Any = self.config.get('entry')
+        self.end_pos: tuple[int, int] | Any = self.config.get('exit')
+        self.perfect: bool = self.config.get('perfect')
+        if not self.perfect:
+            self.perfect = True
+        self.activate_mouse = False
+        self.maze: Maze = Maze(self.entry_pos, self.end_pos, self.perfect)
         self.maze.init_data(self.rows, self.cols)
         self.solver: Solver = Solver(
-            self.maze.data, self.maze.entry_pos, self.maze.end_pos, self
+            self.maze.data, self.entry_pos, self.end_pos
         )
-        self.index = 0
-        self.wall_color = WALL_COLORS[self.index]
+        self.pending_wait = False
         self.last_draw: float = 0
         self.images: dict[str, Any] = {}
         self.get_image()
         self.bg = Image()
         self.init_img_bg()
-        
 
     def init_image(self) -> None:
         if not self.maze.data:
@@ -169,9 +173,10 @@ class App:
             WIDTH // 2 - STRING_WIDTH_PADDING,
             STRING_HEIGHT_PADDDING,
             0xFFFFFFFF,
-            "Choose options:",
+            "Enter space to continue...",
         )
-
+        if self.pending_wait:
+            print("test")
         self.mlx.mlx_key_hook(self.main_win, self.on_key_main, None)
         self.mlx.mlx_hook(self.main_win, 33, 0, self.on_close, None)
 
@@ -186,38 +191,51 @@ class App:
                 return None
             self.maze.start_generate()
             self.solver.data = self.maze.data
+            self.activate_mouse = False
         elif key == ord("s"):
             if self.maze.is_generate:
+                self.activate_mouse = False
                 self.solver.start_solve(a_star, ())
             else:
                 print("maze not generate")
         elif key == ord("d"):
             if self.maze.is_generate:
-                self.solver.start_solve(dfs, (self.solver.entry,))
+                self.activate_mouse = False
+                self.solver.start_solve(dfs, (self.entry_pos,))
             else:
                 print("maze not generate")
         elif key == ord("p"):
+            self.activate_mouse = False
             put_maze_into_file(
                     self.config.get('output_file'),
                     self.maze.data,
                     self.solver.path,
-                    self.config.get('entry'),
-                    self.config.get('exit'))
+                    self.entry_pos,
+                    self.end_pos)
         elif key == ord('h'):
             self.open_help_window()
         elif key == ord('u'):
             self.index += 1
             self.wall_color = WALL_COLORS[self.index % len(WALL_COLORS)]
+        elif key == ord('e'):
+            if self.maze.is_generate or self.solver.solver_threading:
+                print("Maze already generated"
+                      "Place r to regenerate")
+                return None
+            self.activate_mouse = not self.activate_mouse
+            self.entry_pos = None
+            self.end_pos = None
         elif key == ord("r"):
             self.reinitialise()
 
     def reinitialise(self) -> None:
         if not self.maze.is_generate and not self.solver.found_path:
             return None
-        self.maze.init_data(self.rows, self.cols)
+        self.maze.init_data(self.rows, self.cols, True)
         self.solver.is_generate = False
         self.solver.solver_threading = None
-        self.solver.path = []
+        self.solver.path.clear()
+        print("test")
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:
@@ -241,7 +259,31 @@ class App:
         """
         row = (x // CELL_SIZE)
         col = (y // CELL_SIZE)
-        print(row, col)
+        if (row, col) in self.maze.block:
+            print("Can't place here")
+            return None
+        if not self.activate_mouse:
+            return None
+        if self.solver.solver_threading:
+            print("Solver running can't modify maze")
+            return None
+        if self.end_pos:
+            self.activate_mouse = False
+            return None
+        if self.entry_pos and self.entry_pos == self.end_pos:
+            print("Can't place at the same pos")
+            return None
+        if not self.entry_pos:
+            self.entry_pos = (row, col)
+            self.maze.entry_pos = self.entry_pos
+            self.solver.entry = self.entry_pos
+            print(f"Entry placed at {self.entry_pos}")
+        else:
+            self.end_pos = (row, col)
+            print(f"Exit placed at {self.end_pos}")
+            self.maze.end_pos = self.end_pos
+            self.solver.exit = self.end_pos
+            self.pending_wait = True
 
     def event_handler(self) -> None:
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
@@ -259,8 +301,7 @@ class App:
             self.ptr,
             win,
             img,
-            pos[0],
-            pos[1]
+            *pos
         )
 
     def draw_cell(self, cell: Cell, update_all: bool = False):

@@ -1,6 +1,6 @@
 from ..cell import Cell
 from typing import Any
-from ..setting import (
+from src.setting import (
     NORTH,
     SOUTH,
     WEST,
@@ -19,15 +19,13 @@ class Solver:
     def __init__(
         self,
         data: list[list[Cell]],
-        ENTRY: tuple[int, int],
-        EXIT: tuple[int, int],
-        app: Any,
+        entry_pos: tuple[int, int],
+        end_pos: tuple[int, int],
     ) -> None:
         self._data = data
-        self.entry = ENTRY
-        self.exit = EXIT
+        self.entry = entry_pos
+        self.exit = end_pos
         self.path: list[tuple[int, int]] = []
-        self.app = app
         self.is_generate = False
         self.found_path = False
         self.solver_threading: Thread | Any = None
@@ -76,8 +74,6 @@ class Solver:
                     return True
                 if not self.found_path:
                     self.data[new_x][new_y].color = CELL_COLOR
-                else:
-                    self.data[new_x][new_y].col = rgb(255, 0, 0)
                 sleep(DISPLAY_INTERVAL)
             sleep(DISPLAY_INTERVAL)
             return False
@@ -151,18 +147,11 @@ class Solver:
         for p in all_path:
             x, y = p
             self._data[x][y].color = CELL_COLOR
-        for p in self.path:
-            x, y = p
-            self._data[x][y].color = rgb(106, 214, 205)
         if animate:
             sleep(DISPLAY_INTERVAL)
-        x, y = self.entry
-        self._data[x][y].color = rgb(106, 214, 205)
-        x, y = self.exit
-        self._data[x][y].color = rgb(106, 214, 205)
         self.found_path = True
 
-    def start_solve(self, target: Any, args: Any) -> Thread | None:
+    def start_solve(self, target: Any, args: Any) -> None:
         if self.solver_threading is not None \
                 and self.solver_threading.is_alive():
             print("solve in progress...")
@@ -170,4 +159,3 @@ class Solver:
         self.solver_threading = Thread(target=target, args=args)
         self.solver_threading.daemon = True
         self.solver_threading.start()
-        return self.solver_threading

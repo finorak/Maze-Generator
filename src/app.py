@@ -191,17 +191,21 @@ class App:
                 return None
             self.maze.start_generate()
             self.solver.data = self.maze.data
+            self.activate_mouse = False
         elif key == ord("s"):
             if self.maze.is_generate:
+                self.activate_mouse = False
                 self.solver.start_solve(a_star, ())
             else:
                 print("maze not generate")
         elif key == ord("d"):
             if self.maze.is_generate:
+                self.activate_mouse = False
                 self.solver.start_solve(dfs, (self.entry_pos,))
             else:
                 print("maze not generate")
         elif key == ord("p"):
+            self.activate_mouse = False
             put_maze_into_file(
                     self.config.get('output_file'),
                     self.maze.data,
@@ -227,10 +231,11 @@ class App:
     def reinitialise(self) -> None:
         if not self.maze.is_generate and not self.solver.found_path:
             return None
-        self.maze.init_data(self.rows, self.cols)
+        self.maze.init_data(self.rows, self.cols, True)
         self.solver.found_path = False
         self.solver.solver_threading = None
         self.solver.path.clear()
+        print("test")
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:
@@ -254,6 +259,9 @@ class App:
         """
         row = (x // CELL_SIZE)
         col = (y // CELL_SIZE)
+        if (row, col) in self.maze.block:
+            print("Can't place here")
+            return None
         if not self.activate_mouse:
             return None
         if self.solver.solver_threading:
@@ -296,7 +304,7 @@ class App:
             *pos
         )
 
-    def draw_cell(self, cell: Cell):
+    def draw_cell(self, cell: Cell) -> None:
         addr = self.mlx.mlx_get_data_addr(cell.image.img)
         cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
         bpp = cell.image.bpp // 8

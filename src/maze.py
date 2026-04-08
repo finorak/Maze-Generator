@@ -6,8 +6,6 @@ from src.setting import (
     BLOCK_42_COLOR,
     CELL_COLOR,
     CELL_STARTING_COLOR,
-    ENTRY_COLOR,
-    EXIT_COLOR,
     TRAVERSING_COLOR,
     VISITED_COLOR,
     DISPLAY_INTERVAL,
@@ -22,13 +20,13 @@ class Maze:
         self.entry_pos = entry_pos
         self.end_pos = end_pos
         self.perfect = perfect
-        self.data: list[list[Cell]] | Any = None
+        self.data: list[list[Cell]] = []
         self.animate = animate
         self.block: list[tuple[int, int]] = []
         self.is_generate = False
         self.generation_thread: Any = None
 
-    def init_data(self, cols: Any, rows: Any) -> None:
+    def init_data(self, cols: Any, rows: Any, show: bool = False) -> None:
         self.cols = cols
         self.rows = rows
         self.data = [
@@ -44,6 +42,8 @@ class Maze:
             ]
             for i in range(self.rows)
         ]
+        if show:
+            print(len(self.data), len(self.data[0]))
         self.make_42_block()
         if (
                 not self.entry_pos or not self.end_pos

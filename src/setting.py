@@ -37,10 +37,10 @@ HELP_HEIGHT = 660
 CELL_SIZE = 40
 
 BASE_CONFIG = {
-        'width': 9,
-        'height': 7,
-        'entry': (2, 0),
-        'exit': (3, 0),
+        'width': 16,
+        'height': 16,
+        'entry': (0, 0),
+        'exit': (15, 15),
         'output_file': 'maze.txt',
         'perfext': 'true'
         }

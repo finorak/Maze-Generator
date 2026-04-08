@@ -1,6 +1,8 @@
 from time import sleep
 from typing import Any
 
+from src import setting
+
 
 def custom_print(text: Any,
                  delimiter: str = "\n",
@@ -16,11 +18,12 @@ def get_config(config: dict[str, Any],
     if start:
         custom_print("GETTING CONFIG FILE...")
     error = False
+    width = config.get('width')
+    height = config.get('height')
     for key, value in config.items():
         checker = "[0K]"
         custom_print(key, " : ")
-        if (isinstance(value, int) and (key == "width"
-                                        or key == "height")):
+        if (isinstance(value, int) and key in ("width", "height")):
             if value >= 30 or value <= 0:
                 checker = "[ERROR]"
                 error = True
@@ -28,10 +31,9 @@ def get_config(config: dict[str, Any],
             if value not in ("true", "false"):
                 checker = "[ERROR]"
                 error = True
-        if (
-                isinstance(value, tuple)
-                and (key == "entry" or key == "exit")):
-            if (value[0] < 0 > value[1]):
+        if isinstance(value, tuple) and (key in ("entry", "exit")):
+            if (value[0] < 0 > value[1]) or (
+                    value[0] >= width or value[1] >= height):
                 checker = "[ERROR]"
                 error = True
         custom_print(f"{value} {checker}")

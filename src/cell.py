@@ -26,7 +26,7 @@ class Cell:
         self.rows = rows
         self.cols = cols
         self._color = color
-        self.wall = 0b1111
+        self._wall = 0b1111
         self.is_42_cell = False
         self.is_visited = False
         self.wall_closed = True
@@ -36,13 +36,22 @@ class Cell:
         self.updated: bool = False
 
     @property
-    def color(self):
+    def color(self) -> int:
         return self._color
 
     @color.setter
-    def color(self, color: int):
+    def color(self, color: int) -> None:
         self.updated = False
         self._color = color
+    
+    @property
+    def wall(self) -> int:
+        return self._wall
+    
+    @wall.setter
+    def wall(self, wall: int) -> None:
+        self.updated = False
+        self._wall = wall
 
     def remove_wall(self, wall: str) -> None:
         wall = wall.lower()

@@ -232,10 +232,10 @@ class App:
         if not self.maze.is_generate and not self.solver.found_path:
             return None
         self.maze.init_data(self.rows, self.cols, True)
+        print("maze init")
         self.solver.is_generate = False
         self.solver.solver_threading = None
         self.solver.path.clear()
-        print("test")
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:
@@ -310,7 +310,6 @@ class App:
             addr = self.mlx.mlx_get_data_addr(cell.image.img)
             cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
             bpp = cell.image.bpp // 8
-            wall_color = self.wall_color
             for j in range(cell.size):
                 for i in range(cell.size):
                     offset = j * cell.image.sl + i * bpp

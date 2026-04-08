@@ -28,23 +28,32 @@ class Maze:
         self.wall_destroyer:None | tuple[int, int] = None
 
     def init_data(self, cols: Any, rows: Any, show: bool = False) -> None:
-        self.cols = cols
-        self.rows = rows
-        self.data = [
-            [
-                Cell(
-                    row=i,
-                    col=j,
-                    cols=self.rows,
-                    rows=self.cols,
-                    color=CELL_STARTING_COLOR,
-                )
-                for j in range(self.cols)
+        if len(self.data) == 0:
+            self.cols = cols
+            self.rows = rows
+            self.data = [
+                [
+                    Cell(
+                        row=i,
+                        col=j,
+                        cols=self.rows,
+                        rows=self.cols,
+                        color=CELL_STARTING_COLOR,
+                    )
+                    for j in range(self.cols)
+                ]
+                for i in range(self.rows)
             ]
-            for i in range(self.rows)
-        ]
-        if show:
-            print(len(self.data), len(self.data[0]))
+            if show:
+                print(len(self.data), len(self.data[0]))
+        else:
+            for row in self.data:
+                for cell in row:
+                    cell.wall = 0b1111
+                    cell.is_visited = False
+                    cell.is_42_cell = False
+                    cell.wall_closed = True
+                    cell.parent = None
         self.make_42_block()
         if (
                 not self.entry_pos or not self.end_pos
@@ -148,7 +157,7 @@ class Maze:
             return
         self.generation_thread = Thread(
                 target=self.generete,
-                args=(self.entry_pos,))
+                args=(start_pos,))
         self.generation_thread.daemon = True
         self.generation_thread.start()
 
@@ -160,6 +169,7 @@ class Maze:
         COLORING ENTRY AND END POINT
         """
         self.is_generate = True
+        self.wall_destroyer = None
 
     def generate_maze(self, start_pos: tuple[int, int]) -> None:
         self.wall_destroyer = start_pos

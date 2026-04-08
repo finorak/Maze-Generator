@@ -26,6 +26,7 @@ class Maze:
         self.block: list[tuple[int, int]] = []
         self.is_generate = False
         self.generation_thread: Any = None
+        self.wall_destroyer:None | tuple[int, int] = None
 
     def init_data(self, cols: Any, rows: Any) -> None:
         self.cols = cols
@@ -66,6 +67,7 @@ class Maze:
             end_y = self.cols - 1
         self.end_pos = (end_x, end_y)
         self.is_generate = False
+        self.generation_thread = None
 
     def make_42_block(self, show_logo: bool = True) -> None:
         if show_logo:
@@ -156,29 +158,30 @@ class Maze:
         """
         COLORING ENTRY AND END POINT
         """
-        x, y = self.entry_pos
-        self.data[x][y].color = ENTRY_COLOR
-        x, y = self.end_pos
-        self.data[x][y].color = EXIT_COLOR
+        # x, y = self.entry_pos
+        # self.data[x][y].color = ENTRY_COLOR
+        # x, y = self.end_pos
+        # self.data[x][y].color = EXIT_COLOR
         self.is_generate = True
 
     def generate_maze(self, start_pos: tuple[int, int]) -> None:
+        self.wall_destroyer = start_pos
         start_x, start_y = start_pos
         cell = self.data[start_x][start_y]
         cell.wall_closed = False
-        cell.color = VISITED_COLOR
+        # cell.color = VISITED_COLOR
         neightboors = self.find_neighbor_closed((start_x, start_y))
         random.shuffle(neightboors)
         for neightboor in neightboors:
             wall1, wall2, new_x, new_y = neightboor
+            self.wall_destroyer = (new_x, new_y)
+            self.data[new_x][new_y].updated = False
             if not self.data[new_x][new_y].wall_closed:
                 continue
             cell.remove_wall(wall1)
-            self.data[new_x][new_y].color = TRAVERSING_COLOR
             self.data[new_x][new_y].remove_wall(wall2)
             sleep(DISPLAY_INTERVAL)
             self.generate_maze((new_x, new_y))
-            self.data[new_x][new_y].color = CELL_COLOR
         sleep(DISPLAY_INTERVAL)
 
     def break_wall(self, probability: float = 0.25) -> None:

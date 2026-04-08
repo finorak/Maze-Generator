@@ -25,7 +25,7 @@ class Cell:
         self.col = col
         self.rows = rows
         self.cols = cols
-        self.color = color
+        self._color = color
         self.wall = 0b1111
         self.is_42_cell = False
         self.is_visited = False
@@ -33,6 +33,16 @@ class Cell:
         self.size = size
         self.image: Any = Image()
         self.parent: tuple[int, int] | Any = None
+        self.updated: bool = False
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, color: int):
+        self.updated = False
+        self._color = color
 
     def remove_wall(self, wall: str) -> None:
         wall = wall.lower()
@@ -50,3 +60,4 @@ class Cell:
         if wall == "east" or wall == "e":
             if self.wall & EAST:
                 self.wall -= EAST
+        self.updated = False

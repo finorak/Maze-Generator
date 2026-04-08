@@ -16,13 +16,14 @@ from .cell import Cell
 
 
 class Maze:
-    def __init__(self, parent: Any, animate: bool = True) -> None:
+    def __init__(self, entry_pos: tuple[int, int],
+                 end_pos: tuple[int, int],
+                 perfect: bool = True, animate: bool = True) -> None:
+        self.entry_pos = entry_pos
+        self.end_pos = end_pos
+        self.perfect = perfect
         self.data: list[list[Cell]] | Any = None
-        self.parent = parent
         self.animate = animate
-        self.perfect = parent.config.get("perfect")
-        self.entry_pos = self.parent.config.get("entry")
-        self.end_pos = self.parent.config.get("exit")
         self.block: list[tuple[int, int]] = []
         self.is_generate = False
         self.generation_thread: Any = None
@@ -156,10 +157,6 @@ class Maze:
         """
         COLORING ENTRY AND END POINT
         """
-        x, y = self.entry_pos
-        self.data[x][y].color = ENTRY_COLOR
-        x, y = self.end_pos
-        self.data[x][y].color = EXIT_COLOR
         self.is_generate = True
 
     def generate_maze(self, start_pos: tuple[int, int]) -> None:

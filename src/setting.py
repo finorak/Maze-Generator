@@ -56,6 +56,7 @@ HELP_TEXT = [
         "r     : reset the maze",
         "h     : open this help window",
         "u     : Change the wall color",
+        "e     : Place entry pos and exit pos",
         "q/Esc : quit the application",
     ]
 

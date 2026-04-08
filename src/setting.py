@@ -1,7 +1,15 @@
 from .utils import rgb
 
 
-WIDTH = 840
+THEME = [
+    rgb(0, 255, 255),
+    rgb(38, 41, 196),
+    rgb(200, 50, 255),
+    rgb(255, 120, 0),
+    rgb(255, 200, 50)
+]
+
+WIDTH = 800
 HEIGHT = 600
 TITLE = "Mazing Generator and solver"
 # Wall direction
@@ -10,9 +18,9 @@ SOUTH = 0b0100
 WEST = 0b1000
 EAST = 0b0010
 WALL_THICK = 2
-CELL_COLOR = rgb(223, 221, 142)
+CELL_COLOR = rgb(60, 167, 194)
 TRAVERSING_COLOR = rgb(98, 189, 166)
-CELL_STARTING_COLOR = rgb(223, 221, 142)
+CELL_STARTING_COLOR = rgb(60, 167, 194)
 WALL_COLOR = rgb(0, 0, 0)
 CLEAR_COLOR = rgb(0, 0, 0)
 VISITED_COLOR = rgb(223, 221, 142)
@@ -31,7 +39,7 @@ WALL_COLORS = [
 PATH_FOUND_COLOR = rgb(106, 214, 205)
 STRING_HEIGHT_PADDDING = 100
 STRING_WIDTH_PADDING = 100
-DISPLAY_INTERVAL = 0.02
+DISPLAY_INTERVAL = 0.1
 HELP_WIDTH = 520
 HELP_HEIGHT = 660
 CELL_SIZE = 40
@@ -61,6 +69,7 @@ HELP_TEXT = [
     ]
 
 IMAGES = {
+    "home": "assets/home.png",
     "entry": "assets/path/entry.png",
     "exit": "assets/path/exit.png",
     "path": "assets/path/path.png",

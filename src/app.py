@@ -70,7 +70,7 @@ class App:
                             self.ptr, cell.size, cell.size
                         )
 
-    def init_img_bg(self, color: Any=rgb(100,80,50)) -> None:
+    def init_img_bg(self, color: Any=rgb(255,80,50)) -> None:
         self.bg.img = self.mlx.mlx_new_image(
             self.ptr,
             self.config.get("width") * CELL_SIZE,
@@ -167,16 +167,9 @@ class App:
 
     def run_main(self) -> None:
         self.main_win = self.mlx.mlx_new_window(self.ptr, WIDTH, HEIGHT, TITLE)
-        self.mlx.mlx_string_put(
-            self.ptr,
-            self.main_win,
-            WIDTH // 2 - STRING_WIDTH_PADDING,
-            STRING_HEIGHT_PADDDING,
-            0xFFFFFFFF,
-            "Enter space to continue...",
-        )
         if self.pending_wait:
             print("test")
+        self.draw_image(self.main_win, (0, 0), self.images.get("home"))
         self.mlx.mlx_key_hook(self.main_win, self.on_key_main, None)
         self.mlx.mlx_hook(self.main_win, 33, 0, self.on_close, None)
 
@@ -232,7 +225,6 @@ class App:
         if not self.maze.is_generate and not self.solver.found_path:
             return None
         self.maze.init_data(self.rows, self.cols, True)
-        print("maze init")
         self.solver.is_generate = False
         self.solver.solver_threading = None
         self.solver.path.clear()

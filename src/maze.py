@@ -4,10 +4,7 @@ from time import sleep
 from typing import Any
 from src.setting import (
     BLOCK_42_COLOR,
-    CELL_COLOR,
     CELL_STARTING_COLOR,
-    TRAVERSING_COLOR,
-    VISITED_COLOR,
     DISPLAY_INTERVAL,
 )
 from .cell import Cell

@@ -7,9 +7,6 @@ def put_maze_into_file(file_name: str,
                        path: list[tuple[int, int]],
                        entry_pos: tuple[int, int],
                        end_pos: tuple[int, int]) -> None:
-    def binary_to_hex(binary_string: int) -> str:
-        return format(binary_string, "X")
-
     def writing_path(
             output_file: Any,
             path: list[tuple[int, int]]) -> None:
@@ -30,7 +27,7 @@ def put_maze_into_file(file_name: str,
     with open(file_name, mode="w", encoding="utf-8") as output_file:
         for row in data:
             for cell in row:
-                output_file.write(f"{binary_to_hex(cell.wall)}")
+                output_file.write(f"{cell.wall:X}")
             output_file.write("\n")
         output_file.write("\n")
         x, y = entry_pos

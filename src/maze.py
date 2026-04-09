@@ -13,6 +13,7 @@ from .cell import Cell
 class Maze:
     def __init__(self, entry_pos: tuple[int, int],
                  end_pos: tuple[int, int],
+                 cols: int, rows: int,
                  perfect: bool = True, animate: bool = True) -> None:
         self.entry_pos = entry_pos
         self.end_pos = end_pos
@@ -21,20 +22,18 @@ class Maze:
         self.animate = animate
         self.block: list[tuple[int, int]] = []
         self.is_generate = False
+        self.rows = rows
+        self.cols = cols
         self.generation_thread: Any = None
         self.wall_destroyer:None | tuple[int, int] = None
 
-    def init_data(self, cols: Any, rows: Any, show: bool = False) -> None:
+    def init_data(self, show: bool = False) -> None:
         if len(self.data) == 0:
-            self.cols = cols
-            self.rows = rows
             self.data = [
                 [
                     Cell(
                         row=i,
                         col=j,
-                        cols=self.rows,
-                        rows=self.cols,
                         color=CELL_STARTING_COLOR,
                     )
                     for j in range(self.cols)
@@ -53,11 +52,11 @@ class Maze:
                     cell.parent = None
         self.make_42_block()
         if (
-                not self.entry_pos or not self.end_pos
-                or self.entry_pos == self.end_pos
-                or self.entry_pos in self.block
+                self.entry_pos in self.block
                 or self.end_pos in self.block
         ):
+            print("Entry or Exit inside 42 block "
+                  "Generating without 42 block")
             self.make_42_block(False)
         self.entry_pos = list(self.entry_pos)
         entry_x, entry_y = self.entry_pos

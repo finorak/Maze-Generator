@@ -47,8 +47,10 @@ class App:
         if not self.perfect:
             self.perfect = True
         self.activate_mouse = False
-        self.maze: Maze = Maze(self.entry_pos, self.end_pos, self.perfect)
-        self.maze.init_data(self.rows, self.cols)
+        self.maze: Maze = Maze(self.entry_pos,
+                               self.end_pos, self.rows,
+                               self.cols, self.perfect)
+        self.maze.init_data()
         self.solver: Solver = Solver(
             self.maze.data, self.entry_pos, self.end_pos
         )
@@ -224,8 +226,9 @@ class App:
     def reinitialise(self) -> None:
         if not self.maze.is_generate and not self.solver.found_path:
             return None
-        self.maze.init_data(self.rows, self.cols, True)
+        self.maze.init_data()
         self.solver.is_generate = False
+        self.solver.found_path = False
         self.solver.solver_threading = None
         self.solver.path.clear()
 
@@ -251,9 +254,6 @@ class App:
         """
         row = (x // CELL_SIZE)
         col = (y // CELL_SIZE)
-        if (row, col) in self.maze.block:
-            print("Can't place here")
-            return None
         if not self.activate_mouse:
             return None
         if self.solver.solver_threading:
@@ -275,7 +275,7 @@ class App:
             print(f"Exit placed at {self.end_pos}")
             self.maze.end_pos = self.end_pos
             self.solver.exit = self.end_pos
-            self.pending_wait = True
+            self.maze.init_data()
 
     def event_handler(self) -> None:
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
@@ -311,17 +311,15 @@ class App:
             self.draw_image(self.maze_win, pos, cell.image.img)
             cell.updated = True
             self.draw_image(self.maze_win, pos, self.images.get(f"{cell.wall:04b}"))
-        if self.maze.is_generate and (cell.row, cell.col) == self.config.get("entry"):
+        if self.maze.is_generate and (cell.row, cell.col) == self.entry_pos:
             self.draw_image(self.maze_win, (pos[0] + 3, pos[1] + 3), self.images.get("entry"))
-        if self.maze.is_generate and (cell.row, cell.col) == self.config.get("exit"):
+        if self.maze.is_generate and (cell.row, cell.col) == self.end_pos:
             self.draw_image(self.maze_win, (pos[0] + 4, pos[1] + 5 ), self.images.get("exit"))
         if self.maze.is_generate and (cell.row, cell.col) in self.solver.path:
             self.draw_image(self.maze_win, pos, self.images.get("path"))
         if not self.maze.is_generate and (cell.row, cell.col) == self.maze.wall_destroyer:
             self.draw_image(self.maze_win, pos, self.images.get("path"))
             cell.updated = False
-        
-    
 
     def draw_maze(self, update_all: bool = False) -> None:
         for row in self.maze.data:

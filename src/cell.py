@@ -16,15 +16,11 @@ class Cell:
         self,
         row: int,
         col: int,
-        rows: int,
-        cols: int,
         size: int = CELL_SIZE,
         color: int = CELL_COLOR,
     ) -> None:
         self.row = row
         self.col = col
-        self.rows = rows
-        self.cols = cols
         self._color = color
         self._wall = 0b1111
         self.is_42_cell = False

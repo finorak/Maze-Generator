@@ -55,6 +55,8 @@ class App:
         self.solver: Solver = Solver(
             self.maze.data, self.entry_pos, self.end_pos
         )
+        self.index = 0
+        self.wall_color = WALL_COLORS[self.index % len(WALL_COLORS)]
         self.last_draw: float = 0
         self.images: dict[str, Any] = {}
         self.get_image()
@@ -194,7 +196,8 @@ class App:
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord("g"):
             if self.maze.is_generate:
-                print("maze already generate")
+                self.start_sound.play()
+                print("Maze already generated")
                 return None
             self.maze.start_generate()
             self.solver.data = self.maze.data
@@ -205,6 +208,7 @@ class App:
                 self.solver.start_solve(a_star, ())
                 self.playing = True
             else:
+                self.start_sound.play()
                 print("maze not generate")
         elif key == ord("d"):
             if self.maze.is_generate:
@@ -212,6 +216,7 @@ class App:
                 self.activate_mouse = False
                 self.solver.start_solve(dfs, (self.entry_pos,))
             else:
+                self.start_sound.play()
                 print("maze not generate")
         elif key == ord("p"):
             self.activate_mouse = False
@@ -228,6 +233,7 @@ class App:
             self.wall_color = WALL_COLORS[self.index % len(WALL_COLORS)]
         elif key == ord('e'):
             if self.maze.is_generate or self.solver.solver_threading:
+                self.start_sound.play()
                 print("Maze already generated"
                       "Place r to regenerate")
                 return None
@@ -236,6 +242,8 @@ class App:
             self.end_pos = None
         elif key == ord("r"):
             self.reinitialise()
+        else:
+            self.start_sound.play()
 
     def reinitialise(self) -> None:
         if not self.maze.is_generate and not self.solver.found_path:
@@ -266,19 +274,19 @@ class App:
         """
         Setting the position of entry and exit
         """
-        row = (x // CELL_SIZE)
-        col = (y // CELL_SIZE)
+        if button != 1 or not self.activate_mouse:
+            print("Button not reconized")
+            return None
         if not self.activate_mouse:
             return None
         if self.solver.solver_threading:
             print("Solver running can't modify maze")
             return None
-        if self.end_pos:
-            self.activate_mouse = False
-            return None
         if self.entry_pos and self.entry_pos == self.end_pos:
             print("Can't place at the same pos")
             return None
+        row = (x // CELL_SIZE)
+        col = (y // CELL_SIZE)
         if not self.entry_pos:
             self.entry_pos = (row, col)
             self.maze.entry_pos = self.entry_pos
@@ -290,6 +298,7 @@ class App:
             self.maze.end_pos = self.end_pos
             self.solver.exit = self.end_pos
             self.maze.init_data()
+            self.activate_mouse = False
 
     def event_handler(self) -> None:
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
@@ -328,13 +337,12 @@ class App:
         if self.maze.is_generate and (cell.row, cell.col) == self.entry_pos:
             self.draw_image(self.maze_win, (pos[0] + 3, pos[1] + 3), self.images.get("entry"))
         if self.maze.is_generate and (cell.row, cell.col) == self.end_pos:
-            self.draw_image(self.maze_win, (pos[0] // 2 + 4, pos[1] // 2 + 5), self.images.get("exit"))
+            self.draw_image(self.maze_win, (pos[0] + 4, pos[1] + 5), self.images.get("exit"))
         if self.maze.is_generate and (cell.row, cell.col) in self.solver.path:
             self.draw_image(self.maze_win, pos, self.images.get("path"))
         if not self.maze.is_generate and (cell.row, cell.col) == self.maze.wall_destroyer:
             self.draw_image(self.maze_win, pos, self.images.get("path"))
             cell.updated = False
-            self.playing = False
 
     def draw_maze(self, update_all: bool = False) -> None:
         for row in self.maze.data:

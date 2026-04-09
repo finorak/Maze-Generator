@@ -1,6 +1,7 @@
 from ..cell import Cell
 from typing import Any
 from src.setting import (
+    CELL_STARTING_COLOR,
     NORTH,
     SOUTH,
     WEST,
@@ -67,13 +68,13 @@ class Solver:
                 self.data[new_x][new_y].parent = parent
                 if self.dfs_solver((new_x, new_y)):
                     self.path.append((new_x, new_y))
-                    curr_cell.color = PATH_FOUND_COLOR
+                    curr_cell.color = CELL_STARTING_COLOR
                     sleep(DISPLAY_INTERVAL)
-                    self.path.append((new_x, new_y))
+                    if (new_x, new_y) != self.exit:
+                        self.path.append((new_x, new_y))
                     self.found_path = True
                     return True
-                if not self.found_path:
-                    self.data[new_x][new_y].color = CELL_COLOR
+                self.data[new_x][new_y].color = CELL_COLOR
                 sleep(DISPLAY_INTERVAL)
             sleep(DISPLAY_INTERVAL)
             return False

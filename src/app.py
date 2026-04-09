@@ -241,6 +241,10 @@ class App:
             self.entry_pos = None
             self.end_pos = None
         elif key == ord("r"):
+            if self.solver.solver_threading is not None \
+                and self.solver.solver_threading.is_alive():
+                print("solve in progress...")
+                return None
             self.reinitialise()
         else:
             self.start_sound.play()

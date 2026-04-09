@@ -11,7 +11,7 @@ from src.setting import (
     PATH_FOUND_COLOR,
 )
 from collections import deque
-from ..utils.color_genertor import rgb
+from src.utils.color_genertor import rgb
 from threading import Thread
 from time import sleep
 

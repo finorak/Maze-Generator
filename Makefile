@@ -10,6 +10,9 @@ install: $(VENV)
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 
+list:
+	$(PIP) list
+
 $(VENV):
 	python3 -m venv $(VENV)
 

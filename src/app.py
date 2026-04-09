@@ -1,20 +1,20 @@
 from time import time
 from .maze import Maze
 from mlx import Mlx
+import pygame
 from typing import Any
 from .setting import (
     HEIGHT,
     HELP_HEIGHT,
     HELP_TEXT,
     HELP_WIDTH,
-    STRING_HEIGHT_PADDDING,
-    STRING_WIDTH_PADDING,
     WALL_COLORS,
     WIDTH,
     TITLE,
     DISPLAY_INTERVAL,
     CELL_SIZE,
     IMAGES,
+    get_path,
     rgb
 )
 from .cell import Cell
@@ -28,6 +28,7 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 class App:
     def __init__(self, config: dict[str, Any]) -> None:
+        pygame.init()
         self.mlx = Mlx()
         self.ptr = self.mlx.mlx_init()
         self.start = False
@@ -60,6 +61,16 @@ class App:
         self.get_image()
         self.bg = Image()
         self.init_img_bg()
+        self.load_sound_effect()
+
+    def load_sound_effect(self):
+        self.start_sound = pygame.mixer.Sound(
+                get_path(BASE_DIR, "spooky_time.mp3")
+                    )
+        self.found_sound = pygame.mixer.Sound(
+                get_path(BASE_DIR, "path_found_vfx.mp3")
+                )
+        self.start_sound.play()
 
     def init_image(self) -> None:
         if not self.maze.data:
@@ -162,8 +173,10 @@ class App:
     def on_key_main(self, key: Any, _param: Any) -> None:
         if key in (65307, ord("q")):
             self.mlx.mlx_loop_exit(self.ptr)
+            pygame.mixer.music.stop()
         elif key == 32:
             self.switch_to_maze()
+            self.start_sound.fadeout(500)
         elif key == ord("h"):
             self.open_help_window()
 

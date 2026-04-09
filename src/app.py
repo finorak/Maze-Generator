@@ -45,7 +45,7 @@ class App:
         self.entry_pos: tuple[int, int] | Any = self.config.get('entry')
         self.end_pos: tuple[int, int] | Any = self.config.get('exit')
         self.perfect: bool = self.config.get('perfect')
-        if not self.perfect:
+        if self.perfect is None:
             self.perfect = True
         self.activate_mouse = False
         self.maze: Maze = Maze(self.entry_pos,
@@ -55,7 +55,6 @@ class App:
         self.solver: Solver = Solver(
             self.maze.data, self.entry_pos, self.end_pos
         )
-        self.pending_wait = False
         self.last_draw: float = 0
         self.images: dict[str, Any] = {}
         self.get_image()
@@ -64,8 +63,9 @@ class App:
         self.load_sound_effect()
 
     def load_sound_effect(self):
+        self.playing = False
         self.start_sound = pygame.mixer.Sound(
-                get_path(BASE_DIR, "spooky_time.mp3")
+                get_path(BASE_DIR, "fah.mp3")
                     )
         self.found_sound = pygame.mixer.Sound(
                 get_path(BASE_DIR, "path_found_vfx.mp3")
@@ -75,19 +75,20 @@ class App:
     def init_image(self) -> None:
         if not self.maze.data:
             return None
-        if self.maze.data[0][0].image.img is None:
-            for row in self.maze.data:
-                for cell in row:
-                    if cell.image.img is None:
-                        cell.image.img = self.mlx.mlx_new_image(
-                            self.ptr, cell.size, cell.size
-                        )
+        if self.maze.data[0][0].image.img is not None:
+            return None
+        for row in self.maze.data:
+            for cell in row:
+                if cell.image.img is None:
+                    cell.image.img = self.mlx.mlx_new_image(
+                        self.ptr, cell.size, cell.size
+                    )
 
     def init_img_bg(self, color: Any=rgb(255,80,50)) -> None:
         self.bg.img = self.mlx.mlx_new_image(
             self.ptr,
-            self.config.get("width") * CELL_SIZE,
-            self.config.get("height") * CELL_SIZE
+            self.cols * CELL_SIZE,
+            self.rows * CELL_SIZE
         )
         addr = self.mlx.mlx_get_data_addr(self.bg.img)
         self.bg.data, self.bg.bpp, self.bg.sl, _ = addr
@@ -176,14 +177,12 @@ class App:
             pygame.mixer.music.stop()
         elif key == 32:
             self.switch_to_maze()
-            self.start_sound.fadeout(500)
+            self.start_sound.stop()
         elif key == ord("h"):
             self.open_help_window()
 
     def run_main(self) -> None:
         self.main_win = self.mlx.mlx_new_window(self.ptr, WIDTH, HEIGHT, TITLE)
-        if self.pending_wait:
-            print("test")
         self.draw_image(self.main_win, (0, 0), self.images.get("home"))
         self.mlx.mlx_key_hook(self.main_win, self.on_key_main, None)
         self.mlx.mlx_hook(self.main_win, 33, 0, self.on_close, None)
@@ -204,10 +203,12 @@ class App:
             if self.maze.is_generate:
                 self.activate_mouse = False
                 self.solver.start_solve(a_star, ())
+                self.playing = True
             else:
                 print("maze not generate")
         elif key == ord("d"):
             if self.maze.is_generate:
+                self.playing = True
                 self.activate_mouse = False
                 self.solver.start_solve(dfs, (self.entry_pos,))
             else:
@@ -327,12 +328,13 @@ class App:
         if self.maze.is_generate and (cell.row, cell.col) == self.entry_pos:
             self.draw_image(self.maze_win, (pos[0] + 3, pos[1] + 3), self.images.get("entry"))
         if self.maze.is_generate and (cell.row, cell.col) == self.end_pos:
-            self.draw_image(self.maze_win, (pos[0] + 4, pos[1] + 5 ), self.images.get("exit"))
+            self.draw_image(self.maze_win, (pos[0] // 2 + 4, pos[1] // 2 + 5), self.images.get("exit"))
         if self.maze.is_generate and (cell.row, cell.col) in self.solver.path:
             self.draw_image(self.maze_win, pos, self.images.get("path"))
         if not self.maze.is_generate and (cell.row, cell.col) == self.maze.wall_destroyer:
             self.draw_image(self.maze_win, pos, self.images.get("path"))
             cell.updated = False
+            self.playing = False
 
     def draw_maze(self, update_all: bool = False) -> None:
         for row in self.maze.data:

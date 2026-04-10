@@ -86,7 +86,7 @@ class App:
                         self.ptr, cell.size, cell.size
                     )
 
-    def init_img_bg(self, color: Any=rgb(255,80,50)) -> None:
+    def init_img_bg(self, color: int = rgb(255,80,50)) -> None:
         self.bg.img = self.mlx.mlx_new_image(
             self.ptr,
             self.cols * CELL_SIZE,
@@ -177,6 +177,8 @@ class App:
         if key in (65307, ord("q")):
             self.mlx.mlx_loop_exit(self.ptr)
             pygame.mixer.music.stop()
+        elif key == ord('o'):
+            self.mlx.mlx_destroy_image(self.ptr, self.images.get("home"))
         elif key == 32:
             self.switch_to_maze()
             self.start_sound.stop()
@@ -199,6 +201,12 @@ class App:
                 self.start_sound.play()
                 print("Maze already generated")
                 return None
+            if self.entry_pos is None:
+                print("Enter entry point")
+                return None
+            if self.end_pos is None:
+                print("Enter exit pos")
+                return None
             self.maze.start_generate()
             self.solver.data = self.maze.data
             self.activate_mouse = False
@@ -219,6 +227,10 @@ class App:
                 self.start_sound.play()
                 print("maze not generate")
         elif key == ord("p"):
+            if self.thread_running() or not self.solver.found_path:
+                print("Can't write maze to file")
+                self.start_sound.play()
+                return None
             self.activate_mouse = False
             put_maze_into_file(
                     self.config.get('output_file'),
@@ -232,6 +244,10 @@ class App:
             self.index += 1
             self.wall_color = WALL_COLORS[self.index % len(WALL_COLORS)]
         elif key == ord('e'):
+            if self.thread_running():
+                print("Can't place during maze solving or generating")
+                self.start_sound.play()
+                return None
             if self.maze.is_generate or self.solver.solver_threading:
                 self.start_sound.play()
                 print("Maze already generated"
@@ -243,11 +259,17 @@ class App:
         elif key == ord("r"):
             if self.solver.solver_threading is not None \
                 and self.solver.solver_threading.is_alive():
-                print("solve in progress...")
+                print("Can't regenerate, wait...")
+                self.start_sound.play()
                 return None
             self.reinitialise()
-        else:
-            self.start_sound.play()
+
+    def thread_running(self):
+        return (self.solver.solver_threading is not None \
+                and self.solver.solver_threading.is_alive()) \
+                or (self.maze.generation_thread is not None \
+                and self.maze.generation_thread.is_alive())
+
 
     def reinitialise(self) -> None:
         if not self.maze.is_generate and not self.solver.found_path:
@@ -278,10 +300,11 @@ class App:
         """
         Setting the position of entry and exit
         """
-        if button != 1 or not self.activate_mouse:
+        if button != 1:
             print("Button not reconized")
             return None
         if not self.activate_mouse:
+            print("Press e to activate mouse")
             return None
         if self.solver.solver_threading:
             print("Solver running can't modify maze")
@@ -341,7 +364,7 @@ class App:
         if self.maze.is_generate and (cell.row, cell.col) == self.entry_pos:
             self.draw_image(self.maze_win, (pos[0] + 3, pos[1] + 3), self.images.get("entry"))
         if self.maze.is_generate and (cell.row, cell.col) == self.end_pos:
-            self.draw_image(self.maze_win, (pos[0] + 4, pos[1] + 5), self.images.get("exit"))
+            self.draw_image(self.maze_win, (pos[0] + 12, pos[1] + 5), self.images.get("exit"))
         if self.maze.is_generate and (cell.row, cell.col) in self.solver.path:
             self.draw_image(self.maze_win, pos, self.images.get("path"))
         if not self.maze.is_generate and (cell.row, cell.col) == self.maze.wall_destroyer:

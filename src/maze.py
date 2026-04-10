@@ -24,7 +24,7 @@ class Maze:
         self.is_generate = False
         self.rows = rows
         self.cols = cols
-        self.generation_thread: Any = None
+        self.generation_thread: Thread | Any = None
         self.wall_destroyer:None | tuple[int, int] = None
 
     def init_data(self, show: bool = False) -> None:

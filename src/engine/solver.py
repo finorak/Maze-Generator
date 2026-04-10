@@ -48,7 +48,6 @@ class Solver:
             if self.found_path:
                 return True
             if curr_pos == self.exit:
-                self.found_path = True
                 return True
             curr_x, curr_y = curr_pos
             curr_cell = self.data[curr_x][curr_y]
@@ -65,16 +64,14 @@ class Solver:
                         or self._data[new_x][new_y].is_visited
                 ):
                     continue
-                self.data[new_x][new_y].parent = parent
+                self._data[new_x][new_y].parent = parent
                 if self.dfs_solver((new_x, new_y)):
                     self.path.append((new_x, new_y))
                     curr_cell.color = CELL_STARTING_COLOR
                     sleep(DISPLAY_INTERVAL)
-                    if (new_x, new_y) != self.exit:
-                        self.path.append((new_x, new_y))
                     self.found_path = True
                     return True
-                self.data[new_x][new_y].color = CELL_COLOR
+                self._data[new_x][new_y].color = CELL_COLOR
                 sleep(DISPLAY_INTERVAL)
             sleep(DISPLAY_INTERVAL)
             return False
@@ -144,12 +141,9 @@ class Solver:
             if animate:
                 sleep(DISPLAY_INTERVAL)
             x, y = self._data[x][y].parent
-        self.path.reverse()
         for p in all_path:
             x, y = p
             self._data[x][y].color = CELL_COLOR
-        if animate:
-            sleep(DISPLAY_INTERVAL)
         self.found_path = True
 
     def start_solve(self, target: Any, args: Any) -> None:

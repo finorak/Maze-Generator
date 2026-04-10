@@ -3,8 +3,6 @@ import random
 from time import sleep
 from typing import Any
 from src.setting import (
-    BLOCK_42_COLOR,
-    CELL_STARTING_COLOR,
     DISPLAY_INTERVAL,
 )
 from .cell import Cell
@@ -88,38 +86,25 @@ class Maze:
                     cell.color = color
 
     def make_42_block(self, show_logo: bool = True) -> None:
-        if show_logo:
-            color = BLOCK_42_COLOR
-        else:
-            color = CELL_STARTING_COLOR
-
         def set_four(x: int, y: int) -> None:
             for i in range(3):
                 self.data[x][y + i].is_42_cell = show_logo
-                self.data[x][y + i].color = color
                 self.data[x + 2][y + 2 + i].is_42_cell = show_logo
-                self.data[x + 2][y + 2 + i].color = color
                 self.block.append((x, y + i))
                 self.block.append((x + 2, y + 2 + i))
             self.data[x + 1][y + 2].is_42_cell = show_logo
             self.block.append((x + 1, y + 2))
-            self.data[x + 1][y + 2].color = color
 
         def set_two(x: int, y: int) -> None:
             for i in range(3):
                 self.data[x + i][y].is_42_cell = show_logo
-                self.data[x + i][y].color = color
                 self.data[x + i][y + 2].is_42_cell = show_logo
-                self.data[x + i][y + 2].color = color
                 self.data[x + i][y + 4].is_42_cell = show_logo
-                self.data[x + i][y + 4].color = color
                 self.block.append((x + i, y))
                 self.block.append((x + i, y + 2))
                 self.block.append((x + i, y + 4))
             self.data[x + 2][y + 1].is_42_cell = show_logo
-            self.data[x + 2][y + 1].color = color
             self.data[x][y + 3].is_42_cell = show_logo
-            self.data[x][y + 3].color = color
             self.block.append((x + 2, y + 1))
             self.block.append((x, y + 3))
 

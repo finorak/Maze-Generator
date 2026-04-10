@@ -1,8 +1,4 @@
-from time import sleep
 from typing import Any
-
-from src import setting
-
 
 def custom_print(text: Any,
                  delimiter: str = "\n",

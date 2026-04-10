@@ -15,7 +15,6 @@ from .setting import (
     CELL_SIZE,
     IMAGES,
     get_path,
-    rgb
 )
 from .cell import Cell
 from .engine.solver import Solver
@@ -224,8 +223,8 @@ class App:
         elif key == ord('h'):
             self.open_help_window()
         elif key == ord('c'):
-            self.index += 1
-            wall_color = WALL_COLORS[self.index % len(WALL_COLORS)]
+            self.index = (self.index + 1) % len(WALL_COLORS)
+            wall_color = WALL_COLORS[self.index]
             if self.solver.solver_threading is not None \
                 and self.solver.solver_threading.is_alive():
                 self.maze.change_color(wall_color, "solve")
@@ -267,6 +266,7 @@ class App:
         self.solver.found_path = False
         self.solver.solver_threading = None
         self.solver.path.clear()
+        self.maze.change_color(WALL_COLORS[self.index])
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:

@@ -2,7 +2,7 @@ from .utils import rgb
 import os
 
 
-THEME = [
+WALL_COLORS = [
     rgb(0, 255, 255),
     rgb(38, 41, 196),
     rgb(200, 50, 255),
@@ -33,10 +33,6 @@ WALL_COLOR = rgb(0, 0, 0)
 WALL_COLOR_2 = rgb(255, 0, 0)
 WALL_COLOR_3 = rgb(126, 200, 80)
 WALL_COLOR_4 = rgb(86, 125, 70)
-WALL_COLORS = [
-        CELL_STARTING_COLOR, WALL_COLOR,
-        WALL_COLOR_4, WALL_COLOR_2, WALL_COLOR_3,
-        ]
 PATH_FOUND_COLOR = rgb(106, 214, 205)
 STRING_HEIGHT_PADDDING = 100
 STRING_WIDTH_PADDING = 100

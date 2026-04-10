@@ -34,7 +34,6 @@ class Maze:
                     Cell(
                         row=i,
                         col=j,
-                        color=CELL_STARTING_COLOR,
                     )
                     for j in range(self.cols)
                 ]
@@ -74,6 +73,19 @@ class Maze:
         self.end_pos = (end_x, end_y)
         self.is_generate = False
         self.generation_thread = None
+
+    def change_color(self, color: int, condition: str= "all") -> None:
+        for row in self.data:
+            for cell in row:
+                c: bool = True
+                if condition == "all":
+                    c = True
+                elif condition == "solve":
+                    c = not cell.is_visited
+                elif condition == "generate":
+                    c = not cell.wall_closed
+                if not cell.is_42_cell and c:
+                    cell.color = color
 
     def make_42_block(self, show_logo: bool = True) -> None:
         if show_logo:
@@ -172,7 +184,6 @@ class Maze:
         start_x, start_y = start_pos
         cell = self.data[start_x][start_y]
         cell.wall_closed = False
-        # cell.color = VISITED_COLOR
         neightboors = self.find_neighbor_closed((start_x, start_y))
         random.shuffle(neightboors)
         for neightboor in neightboors:

@@ -61,7 +61,6 @@ class App:
         self.images: dict[str, Any] = {}
         self.get_image()
         self.bg = Image()
-        self.init_img_bg()
         self.load_sound_effect()
 
     def load_sound_effect(self):
@@ -85,22 +84,6 @@ class App:
                     cell.image.img = self.mlx.mlx_new_image(
                         self.ptr, cell.size, cell.size
                     )
-
-    def init_img_bg(self, color: Any=rgb(255,80,50)) -> None:
-        self.bg.img = self.mlx.mlx_new_image(
-            self.ptr,
-            self.cols * CELL_SIZE,
-            self.rows * CELL_SIZE
-        )
-        addr = self.mlx.mlx_get_data_addr(self.bg.img)
-        self.bg.data, self.bg.bpp, self.bg.sl, _ = addr
-        byte_per_pixel = self.bg.bpp // 8
-        for j in range(HEIGHT):
-            for i in range(WIDTH):
-                offset = j * self.bg.sl + i * byte_per_pixel
-                self.bg.data[offset:offset + byte_per_pixel] = color.to_bytes(
-                        byte_per_pixel,
-                        'little')
 
     def get_image(self) -> None:
         for key, value in IMAGES.items():
@@ -228,9 +211,14 @@ class App:
                     self.end_pos)
         elif key == ord('h'):
             self.open_help_window()
-        elif key == ord('u'):
+        elif key == ord('c'):
             self.index += 1
-            self.wall_color = WALL_COLORS[self.index % len(WALL_COLORS)]
+            wall_color = WALL_COLORS[self.index % len(WALL_COLORS)]
+            if self.solver.solver_threading is not None \
+                and self.solver.solver_threading.is_alive():
+                self.maze.change_color(wall_color, "solve")
+            else:
+                self.maze.change_color(wall_color, "all")
         elif key == ord('e'):
             if self.maze.is_generate or self.solver.solver_threading:
                 self.start_sound.play()

@@ -6,7 +6,7 @@ from typing import Any
 from .image import Image
 from .setting import (
         NORTH, SOUTH, WEST,
-        EAST, CELL_COLOR, CELL_SIZE
+        EAST, WALL_COLORS, CELL_SIZE,
         )
 
 
@@ -16,7 +16,7 @@ class Cell:
         row: int,
         col: int,
         size: int = CELL_SIZE,
-        color: int = CELL_COLOR,
+        color: int = WALL_COLORS[0],
     ) -> None:
         self.row = row
         self.col = col

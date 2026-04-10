@@ -20,11 +20,16 @@ def get_config(config: dict[str, Any],
     error = False
     width = config.get('width')
     height = config.get('height')
+    if width is None or height is None:
+        return False
     for key, value in config.items():
         checker = "[0K]"
         custom_print(key, " : ")
         if (isinstance(value, int) and key in ("width", "height")):
-            if value >= 30 or value <= 0:
+            if width <= 15 and height <= 15:
+                checker = "[ERROR]"
+                error = True
+            if value <= 0:
                 checker = "[ERROR]"
                 error = True
         if isinstance(value, str) and key == "perfect":
@@ -32,6 +37,9 @@ def get_config(config: dict[str, Any],
                 checker = "[ERROR]"
                 error = True
         if isinstance(value, tuple) and (key in ("entry", "exit")):
+            if config.get('entry') == config.get("exit"):
+                checker = "[ERROR]"
+                error = True
             if (value[0] < 0 > value[1]) or (
                     value[0] >= width or value[1] >= height):
                 checker = "[ERROR]"

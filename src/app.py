@@ -21,6 +21,7 @@ from .engine.solver import Solver
 from src.utils.maze_utils import put_maze_into_file
 import os
 from .image import Image
+from src import maze
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -167,6 +168,9 @@ class App:
         elif key == ord("h"):
             self.open_help_window()
 
+    def get_wall_color(self) -> int:
+        return self.wall_color
+
     def run_main(self) -> None:
         self.main_win = self.mlx.mlx_new_window(self.ptr, WIDTH, HEIGHT, TITLE)
         self.draw_image(self.main_win, (0, 0), self.images.get("home"))
@@ -184,18 +188,18 @@ class App:
                 print("Maze already generated")
                 return None
             if self.entry_pos is None:
-                print("Enter entry point")
-                return None
+                self.entry_pos = (0, 0)
             if self.end_pos is None:
-                print("Enter exit pos")
-                return None
+                self.end_pos = (self.rows - 1, self.cols - 1)
             self.maze.start_generate()
             self.solver.data = self.maze.data
             self.activate_mouse = False
         elif key == ord("s"):
             if self.maze.is_generate:
                 self.activate_mouse = False
-                self.solver.start_solve(a_star, ())
+                self.solver.start_solve(a_star,
+                                        (lambda: self.get_wall_color(),
+                                        self.maze.change_color))
                 self.playing = True
             else:
                 self.start_sound.play()
@@ -204,7 +208,9 @@ class App:
             if self.maze.is_generate:
                 self.playing = True
                 self.activate_mouse = False
-                self.solver.start_solve(dfs, (self.entry_pos,))
+                self.solver.start_solve(dfs, (lambda: self.get_wall_color(),
+                                              self.maze.change_color,
+                                              self.entry_pos,))
             else:
                 self.start_sound.play()
                 print("maze not generate")
@@ -224,12 +230,12 @@ class App:
             self.open_help_window()
         elif key == ord('c'):
             self.index = (self.index + 1) % len(WALL_COLORS)
-            wall_color = WALL_COLORS[self.index]
+            self.wall_color = WALL_COLORS[self.index]
             if self.solver.solver_threading is not None \
                 and self.solver.solver_threading.is_alive():
-                self.maze.change_color(wall_color, "solve")
+                self.maze.change_color(self.wall_color, "solve")
             else:
-                self.maze.change_color(wall_color, "all")
+                self.maze.change_color(self.wall_color, "all")
         elif key == ord('e'):
             if self.thread_running():
                 print("Can't place during maze solving or generating")

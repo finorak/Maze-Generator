@@ -1,5 +1,5 @@
 from ..cell import Cell
-from typing import Any
+from typing import Any, Callable
 from src.setting import (
     NORTH,
     SOUTH,
@@ -27,6 +27,7 @@ class Solver:
         self.path: list[tuple[int, int]] = []
         self.is_generate = False
         self.found_path = False
+        self.remove_color = True
         self.solver_threading: Thread | Any = None
 
     @property
@@ -38,7 +39,9 @@ class Solver:
         self.is_generate = False
         self._data = data
 
-    def dfs_solver(self, curr_pos: tuple[int, int]) -> bool:
+    def dfs_solver(self, get_color: Callable,
+                   func: Callable | None = None,
+                   curr_pos: tuple[int, int] = (0, 0)) -> bool:
         if self.found_path:
             return False
 
@@ -63,9 +66,13 @@ class Solver:
                 ):
                     continue
                 self._data[new_x][new_y].parent = parent
-                if self.dfs_solver((new_x, new_y)):
+                if self.dfs_solver(get_color, func=func, curr_pos=(new_x, new_y)):
                     self.path.append((new_x, new_y))
                     # curr_cell.color = CELL_STARTING_COLOR
+                    if self.remove_color:
+                        if func:
+                            func(get_color(), "all")
+                            self.remove_color = False
                     sleep(DISPLAY_INTERVAL)
                     self.found_path = True
                     return True
@@ -109,7 +116,10 @@ class Solver:
             directions.append(((x, y), x - 1, y))
         return directions
 
-    def solve(self, animate: bool = True) -> None:
+    def solve(self,
+              get_color: Callable,
+              func: Callable[[int, str], None] | None = None,
+              animate: bool = True) -> None:
         if self.found_path:
             return None
         all_path: list[tuple[int, int]] = []
@@ -139,9 +149,8 @@ class Solver:
             if animate:
                 sleep(DISPLAY_INTERVAL)
             x, y = self._data[x][y].parent
-        for p in all_path:
-            x, y = p
-            # self._data[x][y].color = CELL_COLOR
+        if func:
+            func(get_color(), "all")
         self.found_path = True
 
     def start_solve(self, target: Any, args: Any) -> None:

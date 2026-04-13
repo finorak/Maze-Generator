@@ -66,7 +66,9 @@ class Solver:
                 ):
                     continue
                 self._data[new_x][new_y].parent = parent
-                if self.dfs_solver(get_color, func=func, curr_pos=(new_x, new_y)):
+                if self.dfs_solver(
+                        get_color, func=func,
+                        curr_pos=(new_x, new_y)):
                     self.path.append((new_x, new_y))
                     # curr_cell.color = CELL_STARTING_COLOR
                     if self.remove_color:

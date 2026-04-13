@@ -23,7 +23,7 @@ class Maze:
         self.rows = rows
         self.cols = cols
         self.generation_thread: Thread | Any = None
-        self.wall_destroyer:None | tuple[int, int] = None
+        self.wall_destroyer: tuple[int, int] | None = None
 
     def init_data(self, show: bool = False) -> None:
         if len(self.data) == 0:
@@ -55,14 +55,12 @@ class Maze:
             print("Entry or Exit inside 42 block "
                   "Generating without 42 block")
             self.make_42_block(False)
-        self.entry_pos = list(self.entry_pos)
         entry_x, entry_y = self.entry_pos
         if entry_x < 0 or entry_x >= self.rows:
             entry_x = 0
         if entry_y < 0 or entry_y >= self.cols:
             entry_y = 0
         self.entry_pos = (entry_x, entry_y)
-        self.end_pos = list(self.end_pos)
         end_x, end_y = self.end_pos
         if end_x < 0 or end_x >= self.rows:
             end_x = self.rows - 1
@@ -72,7 +70,7 @@ class Maze:
         self.is_generate = False
         self.generation_thread = None
 
-    def change_color(self, color: int, condition: str= "all") -> None:
+    def change_color(self, color: int, condition: str = "all") -> None:
         for row in self.data:
             for cell in row:
                 c: bool = True

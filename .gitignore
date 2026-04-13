@@ -6,3 +6,4 @@ __pychache__
 *.css
 maze.txt
 convert_img.py
+output_validator.py

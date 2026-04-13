@@ -23,9 +23,9 @@ def get_config(config: dict[str, Any],
         checker = "[0K]"
         custom_print(key, " : ")
         if (isinstance(value, int) and key in ("width", "height")):
-            if width <= 15 and height <= 15:
-                checker = "[ERROR]"
-                error = True
+            # if width <= 15 and height <= 15:
+            #     checker = "[ERROR]"
+            #     error = True
             if value <= 0:
                 checker = "[ERROR]"
                 error = True

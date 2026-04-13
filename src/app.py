@@ -70,7 +70,7 @@ class App:
         self.found_sound = pygame.mixer.Sound(
                 get_path(BASE_DIR, "path_found_vfx.mp3")
                 )
-        self.start_sound.play()
+      #  self.start_sound.play()
 
     def init_image(self) -> None:
         if not self.maze.data:
@@ -185,7 +185,7 @@ class App:
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord("g"):
             if self.maze.is_generate:
-                self.start_sound.play()
+               self.start_sound.play()
                 print("Maze already generated")
                 return None
             if self.entry_pos == (-1, -1):
@@ -210,7 +210,7 @@ class App:
                 )
                 self.playing = True
             else:
-                self.start_sound.play()
+               self.start_sound.play()
                 print("maze not generate")
         elif key == ord("d"):
             if self.maze.is_generate:
@@ -225,7 +225,7 @@ class App:
         elif key == ord("p"):
             if self.thread_running() or not self.solver.found_path:
                 print("Can't write maze to file")
-                self.start_sound.play()
+               self.start_sound.play()
                 return None
             self.activate_mouse = False
             put_maze_into_file(
@@ -249,7 +249,7 @@ class App:
         elif key == ord('e'):
             if self.thread_running():
                 print("Can't place during maze solving or generating")
-                self.start_sound.play()
+               self.start_sound.play()
                 return None
             if self.maze.is_generate or self.solver.solver_threading:
                 self.start_sound.play()
@@ -265,19 +265,14 @@ class App:
                     and self.solver.solver_threading.is_alive()
             ):
                 print("Can't regenerate, wait...")
-                self.start_sound.play()
+               self.start_sound.play()
                 return None
             self.reinitialise()
 
-    def thread_running(self):
+    def thread_running(self) -> bool:
         return (
-            (
-                self.solver.solver_threading is not None
-                and self.solver.solver_threading.is_alive()
-            ) or (
-                self.maze.generation_thread is not None
-                and self.maze.generation_thread.is_alive()
-            )
+            self.solver.solver_threading is not None
+            and self.solver.solver_threading.is_alive()
         )
 
     def reinitialise(self) -> None:

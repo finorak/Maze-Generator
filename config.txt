@@ -5,6 +5,7 @@ WIDTH                         =     21
 
 HEIGHT=15
 ENTRY=0,0
-EXIT   =             16 , 16
+EXIT   =             5 , 5
 OUTPUT_FILE=maze.txt
-PERFECT=false
+PERFECT=False
+SHOW_BLOCK = False

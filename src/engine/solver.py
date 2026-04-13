@@ -75,9 +75,8 @@ class Solver:
                     self.path.append((new_x, new_y))
                     # curr_cell.color = CELL_STARTING_COLOR
                     if self.remove_color:
-                        if func:
-                            func(get_color(), "all")
-                            self.remove_color = False
+                        func(get_color(), "all")
+                        self.remove_color = False
                     sleep(DISPLAY_INTERVAL)
                     self.found_path = True
                     return True
@@ -156,8 +155,7 @@ class Solver:
             if animate:
                 sleep(DISPLAY_INTERVAL)
             x, y = self._data[x][y].parent
-        if func:
-            func(get_color(), "all")
+        func(get_color(), "all")
         self.found_path = True
 
     def start_solve(self, target: Any, args: Any) -> None:

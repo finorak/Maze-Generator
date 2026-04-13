@@ -188,12 +188,6 @@ class App:
                 self.start_sound.play()
                 print("Maze already generated")
                 return None
-            if self.entry_pos == (-1, -1):
-                print("enter entry pos to continue!")
-                return None
-            if self.end_pos == (-1, -1):
-                print("enter exit pos to continue!")
-                return None
             self.maze.start_generate()
             self.solver.data = self.maze.data
             self.activate_mouse = False
@@ -265,7 +259,27 @@ class App:
                 return None
             self.perfect = not self.perfect
             self.maze.perfect = self.perfect
-            self.reinitialise()
+            self.reinitialise(perfect=self.perfect)
+        elif key == ord("f"):
+            if (
+                    self.solver.solver_threading is not None
+                    and self.solver.solver_threading.is_alive()
+            ):
+                print("Can't regenerate, wait...")
+                self.start_sound.play()
+                return None
+            self.maze.perfect = self.perfect
+            self.maze.show_logo = not self.maze.show_logo
+            if self.maze.show_logo:
+                if self.entry_pos in self.maze.block:
+                    self.entry_pos = (0, 0)
+                if self.end_pos in self.maze.block:
+                    self.end_pos = (self.cols - 1, self.rows - 1)
+            self.maze.entry_pos = self.entry_pos
+            self.maze.end_pos = self.end_pos
+            self.reinitialise(
+                    show_logo=self.maze.show_logo,
+                    perfect=self.maze.show_logo)
 
     def thread_running(self) -> bool:
         return (
@@ -273,9 +287,12 @@ class App:
             and self.solver.solver_threading.is_alive()
         )
 
-    def reinitialise(self) -> None:
+    def reinitialise(self,
+                     show_logo: bool = True,
+                     perfect: bool = True) -> None:
         if not self.maze.is_generate and not self.solver.found_path:
             return None
+        self.maze.perfect = perfect
         self.maze.init_data()
         self.solver.is_generate = False
         self.solver.found_path = False

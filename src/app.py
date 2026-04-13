@@ -62,7 +62,7 @@ class App:
         self.bg = Image()
         self.load_sound_effect()
 
-    def load_sound_effect(self):
+    def load_sound_effect(self) -> None:
         self.playing = False
         self.start_sound = pygame.mixer.Sound(
                 get_path(BASE_DIR, "fah.mp3")
@@ -188,16 +188,22 @@ class App:
                 self.start_sound.play()
                 print("Maze already generated")
                 return None
-            if self.entry_pos is None:
-                self.entry_pos = (0, 0)
-            if self.end_pos is None:
-                self.end_pos = (self.rows - 1, self.cols - 1)
+            if self.entry_pos == (-1, -1):
+                print("enter entry pos to continue!")
+                return None
+            if self.end_pos == (-1, -1):
+                print("enter exit pos to continue!")
+                return None
             self.maze.start_generate()
             self.solver.data = self.maze.data
             self.activate_mouse = False
         elif key == ord("s"):
             if self.maze.is_generate:
                 self.activate_mouse = False
+                self.solver.start_solve(
+                        a_star,
+                        (lambda: self.get_wall_color(),
+                         self.maze.change_color))
                 self.solver.start_solve(
                     a_star,
                     (lambda: self.get_wall_color(), self.maze.change_color)
@@ -233,8 +239,10 @@ class App:
         elif key == ord('c'):
             self.index = (self.index + 1) % len(WALL_COLORS)
             self.wall_color = WALL_COLORS[self.index]
-            if self.solver.solver_threading is not None \
-                    and self.solver.solver_threading.is_alive():
+            if (
+                    self.solver.solver_threading is not None
+                    and self.solver.solver_threading.is_alive()
+            ):
                 self.maze.change_color(self.wall_color, "solve")
             else:
                 self.maze.change_color(self.wall_color, "all")
@@ -245,15 +253,17 @@ class App:
                 return None
             if self.maze.is_generate or self.solver.solver_threading:
                 self.start_sound.play()
-                print("Maze already generated"
+                print("Maze already generated "
                       "Place r to regenerate")
                 return None
             self.activate_mouse = not self.activate_mouse
-            self.entry_pos = None
-            self.end_pos = None
+            self.entry_pos = (-1, -1)
+            self.end_pos = (-1, -1)
         elif key == ord("r"):
-            if self.solver.solver_threading is not None \
-                    and self.solver.solver_threading.is_alive():
+            if (
+                    self.solver.solver_threading is not None
+                    and self.solver.solver_threading.is_alive()
+            ):
                 print("Can't regenerate, wait...")
                 self.start_sound.play()
                 return None
@@ -309,12 +319,12 @@ class App:
         if self.solver.solver_threading:
             print("Solver running can't modify maze")
             return None
-        if self.entry_pos and self.entry_pos == self.end_pos:
+        if self.entry_pos != (-1, -1) and self.entry_pos == self.end_pos:
             print("Can't place at the same pos")
             return None
         row = (x // CELL_SIZE)
         col = (y // CELL_SIZE)
-        if not self.entry_pos:
+        if self.entry_pos == (-1, -1):
             self.entry_pos = (row, col)
             self.maze.entry_pos = self.entry_pos
             self.solver.entry = self.entry_pos
@@ -332,7 +342,7 @@ class App:
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
 
-    def draw_backgroud(self):
+    def draw_backgroud(self) -> None:
         self.mlx.mlx_put_image_to_window(
             self.ptr, self.maze_win, self.bg.img,
             0, 0
@@ -346,7 +356,7 @@ class App:
             *pos
         )
 
-    def draw_cell(self, cell: Cell, update_all: bool = False):
+    def draw_cell(self, cell: Cell, update_all: bool = False) -> None:
         pos = (cell.row * cell.size, cell.col * cell.size)
         if not cell.updated or update_all:
             addr = self.mlx.mlx_get_data_addr(cell.image.img)
@@ -374,12 +384,16 @@ class App:
                 self.images.get("exit")
             )
         if self.maze.is_generate and (cell.row, cell.col) in self.solver.path:
-            self.draw_image(self.maze_win, pos, self.images.get("path"))
-        if (
-            not self.maze.is_generate and
-            (cell.row, cell.col) == self.maze.wall_destroyer
-        ):
-            self.draw_image(self.maze_win, pos, self.images.get("path"))
+            self.draw_image(
+                    self.maze_win,
+                    pos,
+                    self.images.get("path"))
+        if not self.maze.is_generate and \
+                (cell.row, cell.col) == self.maze.wall_destroyer:
+            self.draw_image(
+                    self.maze_win,
+                    pos,
+                    self.images.get("path"))
             cell.updated = False
 
     def draw_maze(self, update_all: bool = False) -> None:

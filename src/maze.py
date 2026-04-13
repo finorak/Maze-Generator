@@ -55,14 +55,12 @@ class Maze:
             print("Entry or Exit inside 42 block "
                   "Generating without 42 block")
             self.make_42_block(False)
-        self.entry_pos = list(self.entry_pos)
         entry_x, entry_y = self.entry_pos
         if entry_x < 0 or entry_x >= self.rows:
             entry_x = 0
         if entry_y < 0 or entry_y >= self.cols:
             entry_y = 0
         self.entry_pos = (entry_x, entry_y)
-        self.end_pos = list(self.end_pos)
         end_x, end_y = self.end_pos
         if end_x < 0 or end_x >= self.rows:
             end_x = self.rows - 1

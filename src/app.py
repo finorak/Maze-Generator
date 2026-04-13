@@ -222,7 +222,7 @@ class App:
             else:
                 self.start_sound.play()
                 print("maze not generate")
-        elif key == ord("p"):
+        elif key == ord("w"):
             if self.thread_running() or not self.solver.found_path:
                 print("Can't write maze to file")
                 self.start_sound.play()
@@ -246,19 +246,6 @@ class App:
                 self.maze.change_color(self.wall_color, "solve")
             else:
                 self.maze.change_color(self.wall_color, "all")
-        elif key == ord('e'):
-            if self.thread_running():
-                print("Can't place during maze solving or generating")
-                self.start_sound.play()
-                return None
-            if self.maze.is_generate or self.solver.solver_threading:
-                self.start_sound.play()
-                print("Maze already generated "
-                      "Place r to regenerate")
-                return None
-            self.activate_mouse = not self.activate_mouse
-            self.entry_pos = (-1, -1)
-            self.end_pos = (-1, -1)
         elif key == ord("r"):
             if (
                     self.solver.solver_threading is not None
@@ -267,6 +254,17 @@ class App:
                 print("Can't regenerate, wait...")
                 self.start_sound.play()
                 return None
+            self.reinitialise()
+        elif key == ord('p'):
+            if (
+                    self.solver.solver_threading is not None
+                    and self.solver.solver_threading.is_alive()
+            ):
+                print("Can't regenerate, wait...")
+                self.start_sound.play()
+                return None
+            self.perfect = not self.perfect
+            self.maze.perfect = self.perfect
             self.reinitialise()
 
     def thread_running(self) -> bool:

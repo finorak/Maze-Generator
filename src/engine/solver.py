@@ -42,7 +42,7 @@ class Solver:
     def dfs_solver(
         self,
         get_color: Callable,
-        func: Callable | None = None,
+        func: Callable,
         curr_pos: tuple[int, int] = (0, 0),
     ) -> bool:
         if self.found_path:
@@ -123,7 +123,7 @@ class Solver:
     def solve(
         self,
         get_color: Callable,
-        func: Callable[[int, str], None] | None = None,
+        func: Callable[[int, str], None],
         animate: bool = True,
     ) -> None:
         if self.found_path:

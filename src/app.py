@@ -278,7 +278,7 @@ class App:
         self.solver.found_path = False
         self.solver.solver_threading = None
         self.solver.path.clear()
-        self.maze.change_color(WALL_COLORS[self.index])
+        self.solver.remove_color = True
 
     def switch_to_maze(self) -> None:
         if self.main_win is not None:

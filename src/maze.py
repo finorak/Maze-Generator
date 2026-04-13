@@ -25,7 +25,7 @@ class Maze:
         self.generation_thread: Thread | Any = None
         self.wall_destroyer: None | tuple[int, int] = None
 
-    def init_data(self, show: bool = False) -> None:
+    def init_data(self) -> None:
         if len(self.data) == 0:
             self.data = [
                 [
@@ -37,8 +37,6 @@ class Maze:
                 ]
                 for i in range(self.rows)
             ]
-            if show:
-                print(len(self.data), len(self.data[0]))
         else:
             for row in self.data:
                 for cell in row:
@@ -47,14 +45,19 @@ class Maze:
                     cell.is_42_cell = False
                     cell.wall_closed = True
                     cell.parent = None
-        self.make_42_block()
+        if not self.block:
+            self.get_block()
+        self.make_42_block(
+                not (
+                    self.end_pos in self.block or self.entry_pos in self.block
+                    )
+                )
         if (
                 self.entry_pos in self.block
                 or self.end_pos in self.block
         ):
             print("Entry or Exit inside 42 block "
                   "Generating without 42 block")
-            self.make_42_block(False)
         entry_x, entry_y = self.entry_pos
         if entry_x < 0 or entry_x >= self.rows:
             entry_x = 0
@@ -83,31 +86,27 @@ class Maze:
                 if not cell.is_42_cell and c:
                     cell.color = color
 
-    def make_42_block(self, show_logo: bool = True) -> None:
-        def set_four(x: int, y: int) -> None:
+    def get_block(self) -> None:
+        def get_four(x: int, y: int) -> None:
             for i in range(3):
-                self.data[x][y + i].is_42_cell = show_logo
-                self.data[x + 2][y + 2 + i].is_42_cell = show_logo
                 self.block.append((x, y + i))
                 self.block.append((x + 2, y + 2 + i))
-            self.data[x + 1][y + 2].is_42_cell = show_logo
             self.block.append((x + 1, y + 2))
 
-        def set_two(x: int, y: int) -> None:
+        def get_two(x: int, y: int) -> None:
             for i in range(3):
-                self.data[x + i][y].is_42_cell = show_logo
-                self.data[x + i][y + 2].is_42_cell = show_logo
-                self.data[x + i][y + 4].is_42_cell = show_logo
                 self.block.append((x + i, y))
                 self.block.append((x + i, y + 2))
                 self.block.append((x + i, y + 4))
-            self.data[x + 2][y + 1].is_42_cell = show_logo
-            self.data[x][y + 3].is_42_cell = show_logo
             self.block.append((x + 2, y + 1))
             self.block.append((x, y + 3))
 
-        set_four(self.rows // 2 - 3, self.cols // 2 - 2)
-        set_two(self.rows // 2 + 1, self.cols // 2 - 2)
+        get_four(self.rows // 2 - 3, self.cols // 2 - 2)
+        get_two(self.rows // 2 + 1, self.cols // 2 - 2)
+
+    def make_42_block(self, show_logo: bool = True) -> None:
+        for x, y in self.block:
+            self.data[x][y].is_42_cell = show_logo
 
     def find_neighbor_closed(
         self, cell_coord: tuple[int, int]

@@ -38,11 +38,11 @@ class Cell:
     def color(self, color: int) -> None:
         self.updated = False
         self._color = color
-    
+
     @property
     def wall(self) -> int:
         return self._wall
-    
+
     @wall.setter
     def wall(self, wall: int) -> None:
         self.updated = False

@@ -39,9 +39,12 @@ class Solver:
         self.is_generate = False
         self._data = data
 
-    def dfs_solver(self, get_color: Callable,
-                   func: Callable | None = None,
-                   curr_pos: tuple[int, int] = (0, 0)) -> bool:
+    def dfs_solver(
+        self,
+        get_color: Callable,
+        func: Callable | None = None,
+        curr_pos: tuple[int, int] = (0, 0),
+    ) -> bool:
         if self.found_path:
             return False
 
@@ -61,12 +64,14 @@ class Solver:
                     return True
                 parent, new_x, new_y = direction
                 if (
-                        self._data[new_x][new_y].is_42_cell
-                        or self._data[new_x][new_y].is_visited
+                    self._data[new_x][new_y].is_42_cell
+                    or self._data[new_x][new_y].is_visited
                 ):
                     continue
                 self._data[new_x][new_y].parent = parent
-                if self.dfs_solver(get_color, func=func, curr_pos=(new_x, new_y)):
+                if self.dfs_solver(
+                    get_color, func=func, curr_pos=(new_x, new_y)
+                ):
                     self.path.append((new_x, new_y))
                     # curr_cell.color = CELL_STARTING_COLOR
                     if self.remove_color:
@@ -83,43 +88,45 @@ class Solver:
 
         return solve_maze(curr_pos)
 
-    def find_directions(self,
-                        cell: Cell
-                        ) -> list[tuple[tuple[int, int], int, int]]:
+    def find_directions(
+        self, cell: Cell
+    ) -> list[tuple[tuple[int, int], int, int]]:
         directions: list[tuple[tuple[int, int], int, int]] = []
         if cell.is_42_cell:
             return []
         x, y = cell.row, cell.col
         if (
-                cell.wall & NORTH == 0
-                and not self._data[x][y - 1].is_visited
-                and not self.data[x][y - 1].is_42_cell
+            cell.wall & NORTH == 0
+            and not self._data[x][y - 1].is_visited
+            and not self.data[x][y - 1].is_42_cell
         ):
             directions.append(((x, y), x, y - 1))
         if (
-                cell.wall & EAST == 0
-                and not self._data[x + 1][y].is_visited
-                and not self.data[x + 1][y].is_42_cell
+            cell.wall & EAST == 0
+            and not self._data[x + 1][y].is_visited
+            and not self.data[x + 1][y].is_42_cell
         ):
             directions.append(((x, y), x + 1, y))
         if (
-                cell.wall & SOUTH == 0
-                and not self._data[x][y + 1].is_visited
-                and not self._data[x][y + 1].is_42_cell
+            cell.wall & SOUTH == 0
+            and not self._data[x][y + 1].is_visited
+            and not self._data[x][y + 1].is_42_cell
         ):
             directions.append(((x, y), x, y + 1))
         if (
-                cell.wall & WEST == 0
-                and not self._data[x - 1][y].is_visited
-                and not self._data[x - 1][y].is_42_cell
+            cell.wall & WEST == 0
+            and not self._data[x - 1][y].is_visited
+            and not self._data[x - 1][y].is_42_cell
         ):
             directions.append(((x, y), x - 1, y))
         return directions
 
-    def solve(self,
-              get_color: Callable,
-              func: Callable[[int, str], None] | None = None,
-              animate: bool = True) -> None:
+    def solve(
+        self,
+        get_color: Callable,
+        func: Callable[[int, str], None] | None = None,
+        animate: bool = True,
+    ) -> None:
         if self.found_path:
             return None
         all_path: list[tuple[int, int]] = []
@@ -154,8 +161,10 @@ class Solver:
         self.found_path = True
 
     def start_solve(self, target: Any, args: Any) -> None:
-        if self.solver_threading is not None \
-                and self.solver_threading.is_alive():
+        if (
+            self.solver_threading is not None and
+            self.solver_threading.is_alive()
+        ):
             print("solve in progress...")
             return None
         self.solver_threading = Thread(target=target, args=args)

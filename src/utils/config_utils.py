@@ -1,5 +1,6 @@
 from typing import Any
 
+
 def custom_print(text: Any,
                  delimiter: str = "\n",
                  timer: float = 0.08) -> None:

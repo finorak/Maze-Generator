@@ -23,7 +23,7 @@ class Maze:
         self.rows = rows
         self.cols = cols
         self.generation_thread: Thread | Any = None
-        self.wall_destroyer:None | tuple[int, int] = None
+        self.wall_destroyer: None | tuple[int, int] = None
 
     def init_data(self, show: bool = False) -> None:
         if len(self.data) == 0:
@@ -72,7 +72,7 @@ class Maze:
         self.is_generate = False
         self.generation_thread = None
 
-    def change_color(self, color: int, condition: str= "all") -> None:
+    def change_color(self, color: int, condition: str = "all") -> None:
         for row in self.data:
             for cell in row:
                 c: bool = True

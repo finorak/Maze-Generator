@@ -187,10 +187,12 @@ class App:
                 self.start_sound.play()
                 print("Maze already generated")
                 return None
-            if self.entry_pos is None:
-                self.entry_pos = (0, 0)
-            if self.end_pos is None:
-                self.end_pos = (self.rows - 1, self.cols - 1)
+            if self.entry_pos == (-1, -1):
+                print("enter entry pos to continue!")
+                return None
+            if self.end_pos == (-1, -1):
+                print("enter exit pos to continue!")
+                return None
             self.maze.start_generate()
             self.solver.data = self.maze.data
             self.activate_mouse = False
@@ -246,12 +248,12 @@ class App:
                 return None
             if self.maze.is_generate or self.solver.solver_threading:
                 self.start_sound.play()
-                print("Maze already generated"
+                print("Maze already generated "
                       "Place r to regenerate")
                 return None
             self.activate_mouse = not self.activate_mouse
-            self.entry_pos = None
-            self.end_pos = None
+            self.entry_pos = (-1, -1)
+            self.end_pos = (-1, -1)
         elif key == ord("r"):
             if (
                     self.solver.solver_threading is not None
@@ -307,12 +309,12 @@ class App:
         if self.solver.solver_threading:
             print("Solver running can't modify maze")
             return None
-        if self.entry_pos and self.entry_pos == self.end_pos:
+        if self.entry_pos != (-1, -1) and self.entry_pos == self.end_pos:
             print("Can't place at the same pos")
             return None
         row = (x // CELL_SIZE)
         col = (y // CELL_SIZE)
-        if not self.entry_pos:
+        if self.entry_pos == (-1, -1):
             self.entry_pos = (row, col)
             self.maze.entry_pos = self.entry_pos
             self.solver.entry = self.entry_pos

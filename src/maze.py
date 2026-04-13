@@ -80,9 +80,7 @@ class Maze:
                     c = not cell.is_visited
                 elif condition == "generate":
                     c = not cell.wall_closed
-                if c and self.entry_pos in self.block or self.end_pos in self.block:
-                    cell.col = color
-                elif not cell.is_42_cell and c:
+                if not cell.is_42_cell and c:
                     cell.color = color
 
     def make_42_block(self, show_logo: bool = True) -> None:

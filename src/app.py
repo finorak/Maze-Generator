@@ -70,7 +70,7 @@ class App:
         self.found_sound = pygame.mixer.Sound(
                 get_path(BASE_DIR, "path_found_vfx.mp3")
                 )
-        self.start_sound.play()
+      #  self.start_sound.play()
 
     def init_image(self) -> None:
         if not self.maze.data:
@@ -269,15 +269,10 @@ class App:
                 return None
             self.reinitialise()
 
-    def thread_running(self):
+    def thread_running(self) -> bool:
         return (
-            (
-                self.solver.solver_threading is not None
-                and self.solver.solver_threading.is_alive()
-            ) or (
-                self.maze.generation_thread is not None
-                and self.maze.generation_thread.is_alive()
-            )
+            self.solver.solver_threading is not None
+            and self.solver.solver_threading.is_alive()
         )
 
     def reinitialise(self) -> None:

@@ -158,7 +158,6 @@ class Solver:
             x, y = self._data[x][y].parent
         if func:
             func(get_color(), "all")
-        self.path.reverse()
         self.found_path = True
 
     def start_solve(self, target: Any, args: Any) -> None:

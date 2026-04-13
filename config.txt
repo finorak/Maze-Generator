@@ -1,10 +1,10 @@
-WIDTH                         =     33
+WIDTH                         =     17
 # this is a comment
 
 
 
-HEIGHT=25
+HEIGHT=17
 ENTRY=0,0
-EXIT   =              10, 12
+EXIT   =             16 , 16
 OUTPUT_FILE=maze.txt
-PERFECT=False
+PERFECT=false

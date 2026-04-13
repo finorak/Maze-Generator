@@ -70,7 +70,7 @@ class App:
         self.found_sound = pygame.mixer.Sound(
                 get_path(BASE_DIR, "path_found_vfx.mp3")
                 )
-      #  self.start_sound.play()
+        self.start_sound.play()
 
     def init_image(self) -> None:
         if not self.maze.data:

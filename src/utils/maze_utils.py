@@ -7,12 +7,12 @@ def put_maze_into_file(file_name: str,
                        path: list[tuple[int, int]],
                        entry_pos: tuple[int, int],
                        end_pos: tuple[int, int]) -> None:
+    path.reverse()
     def writing_path(
             output_file: Any,
             path: list[tuple[int, int]]) -> None:
         for x, y in path:
             cell = data[x][y]
-            print(cell.parent)
             if cell.parent[1] == y + 1:
                 output_file.write("N")
             elif cell.parent[0] == x + 1:

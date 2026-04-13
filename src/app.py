@@ -86,8 +86,9 @@ class App:
 
     def get_image(self) -> None:
         for key, value in IMAGES.items():
-            path = os.path.normpath(os.path.join(
-                BASE_DIR, "..", *(value.split('/'))))
+            path = os.path.normpath(
+                os.path.join(BASE_DIR, "..", *(value.split('/')))
+            )
             img, _, _ = self.mlx.mlx_png_file_to_image(self.ptr, path)
             self.images.update({key: img})
 
@@ -203,6 +204,10 @@ class App:
                         a_star,
                         (lambda: self.get_wall_color(),
                          self.maze.change_color))
+                self.solver.start_solve(
+                    a_star,
+                    (lambda: self.get_wall_color(), self.maze.change_color)
+                )
                 self.playing = True
             else:
                 self.start_sound.play()
@@ -264,11 +269,16 @@ class App:
                 return None
             self.reinitialise()
 
-    def thread_running(self) -> bool:
-        return ((self.solver.solver_threading is not None
-                and self.solver.solver_threading.is_alive())
-                or (self.maze.generation_thread is not None
-                and self.maze.generation_thread.is_alive()))
+    def thread_running(self):
+        return (
+            (
+                self.solver.solver_threading is not None
+                and self.solver.solver_threading.is_alive()
+            ) or (
+                self.maze.generation_thread is not None
+                and self.maze.generation_thread.is_alive()
+            )
+        )
 
     def reinitialise(self) -> None:
         if not self.maze.is_generate and not self.solver.found_path:
@@ -361,18 +371,18 @@ class App:
             self.draw_image(self.maze_win, pos, cell.image.img)
             cell.updated = True
             self.draw_image(
-                    self.maze_win, pos,
-                    self.images.get(f"{cell.wall:04b}"))
+                self.maze_win, pos, self.images.get(f"{cell.wall:04b}")
+            )
         if self.maze.is_generate and (cell.row, cell.col) == self.entry_pos:
             self.draw_image(
-                    self.maze_win,
-                    (pos[0] + 3, pos[1] + 3),
-                    self.images.get("entry"))
+                self.maze_win, (pos[0] + 3, pos[1] + 3),
+                self.images.get("entry")
+            )
         if self.maze.is_generate and (cell.row, cell.col) == self.end_pos:
             self.draw_image(
-                    self.maze_win,
-                    (pos[0] + 12, pos[1] + 5),
-                    self.images.get("exit"))
+                self.maze_win, (pos[0] + 12, pos[1] + 5),
+                self.images.get("exit")
+            )
         if self.maze.is_generate and (cell.row, cell.col) in self.solver.path:
             self.draw_image(
                     self.maze_win,

@@ -23,7 +23,7 @@ class Maze:
         self.rows = rows
         self.cols = cols
         self.generation_thread: Thread | Any = None
-        self.wall_destroyer: tuple[int, int] | None = None
+        self.wall_destroyer: None | tuple[int, int] = None
 
     def init_data(self) -> None:
         if len(self.data) == 0:

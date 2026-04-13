@@ -310,32 +310,41 @@ class App:
         """
         Setting the position of entry and exit
         """
-        if button != 1:
+        print(f"button: {button}")
+        if button != 1 and button != 3:
             print("Button not reconized")
-            return None
-        if not self.activate_mouse:
-            print("Press e to activate mouse")
-            return None
+            return
+        if not self.maze.is_generate:
+            print("maze not generate")
+            return
         if self.solver.solver_threading:
             print("Solver running can't modify maze")
-            return None
-        if self.entry_pos != (-1, -1) and self.entry_pos == self.end_pos:
-            print("Can't place at the same pos")
-            return None
+            return
         row = (x // CELL_SIZE)
         col = (y // CELL_SIZE)
-        if self.entry_pos == (-1, -1):
+        print((row, col))
+        if button == 1:
+            x_entry, y_entry = self.entry_pos
+            if (
+                (row, col) == self.end_pos or
+                self.maze.data[row][col].is_42_cell
+            ):
+                return
+            self.maze.data[x_entry][y_entry].updated = False
             self.entry_pos = (row, col)
-            self.maze.entry_pos = self.entry_pos
-            self.solver.entry = self.entry_pos
-            print(f"Entry placed at {self.entry_pos}")
-        else:
+            self.maze.entry_pos = (row, col)
+            self.solver.entry = (row, col)
+        if button == 3:
+            x_end, y_end = self.end_pos
+            if (
+                (row, col) == self.entry_pos or
+                self.maze.data[row][col].is_42_cell
+            ):
+                return
+            self.maze.data[x_end][y_end].updated = False
             self.end_pos = (row, col)
-            print(f"Exit placed at {self.end_pos}")
-            self.maze.end_pos = self.end_pos
-            self.solver.exit = self.end_pos
-            self.maze.init_data()
-            self.activate_mouse = False
+            self.maze.end_pos = (row, col)
+            self.solver.exit = (row, col)
 
     def event_handler(self) -> None:
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)

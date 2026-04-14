@@ -8,4 +8,3 @@ ENTRY=0,0
 EXIT   =             5 , 5
 OUTPUT_FILE=maze.txt
 PERFECT=False
-SHOW_BLOCK = False

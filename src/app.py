@@ -248,7 +248,9 @@ class App:
                 print("Can't regenerate, wait...")
                 self.start_sound.play()
                 return None
-            self.reinitialise()
+            self.reinitialise(
+                    show_logo=self.maze.show_logo,
+                    perfect=self.perfect)
         elif key == ord('p'):
             if (
                     self.solver.solver_threading is not None
@@ -259,7 +261,9 @@ class App:
                 return None
             self.perfect = not self.perfect
             self.maze.perfect = self.perfect
-            self.reinitialise(perfect=self.perfect)
+            self.reinitialise(
+                    show_logo=self.maze.show_logo,
+                    perfect=self.perfect)
         elif key == ord("f"):
             if (
                     self.solver.solver_threading is not None
@@ -277,6 +281,8 @@ class App:
                     self.end_pos = (self.cols - 1, self.rows - 1)
             self.maze.entry_pos = self.entry_pos
             self.maze.end_pos = self.end_pos
+            self.solver.entry = self.entry_pos
+            self.solver.exit = self.end_pos
             self.reinitialise(
                     show_logo=self.maze.show_logo,
                     perfect=self.perfect)
@@ -288,13 +294,14 @@ class App:
         )
 
     def reinitialise(self,
-                     show_logo: bool = True,
+                     show_logo: bool | None = True,
                      perfect: bool = True) -> None:
         if not self.maze.is_generate and not self.solver.found_path:
             return None
         self.maze.perfect = perfect
         self.maze.show_logo = show_logo
         self.maze.init_data()
+        self.maze.change_color(self.get_wall_color(), "all")
         self.solver.is_generate = False
         self.solver.found_path = False
         self.solver.solver_threading = None

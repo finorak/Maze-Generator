@@ -19,8 +19,7 @@ class Maze:
         self.data: list[list[Cell]] = []
         self.animate = animate
         self.block: list[tuple[int, int]] = []
-        self.show_logo: bool = True
-        self.show = True
+        self.show_logo: bool | None = None
         self.is_generate = False
         self.rows = rows
         self.cols = cols
@@ -49,11 +48,10 @@ class Maze:
                     cell.parent = None
         if not self.block:
             self.get_block()
-        if self.show:
+        if self.show_logo is None:
             self.show_logo = not (
                 self.end_pos in self.block or self.entry_pos in self.block
                 )
-            self.show = False
         self.make_42_block(self.show_logo)
         if (
                 self.entry_pos in self.block
@@ -87,6 +85,8 @@ class Maze:
                 elif condition == "generate":
                     c = not cell.wall_closed
                 if not cell.is_42_cell and c:
+                    cell.color = color
+                if not self.show_logo and c:
                     cell.color = color
 
     def get_block(self) -> None:
@@ -157,7 +157,7 @@ class Maze:
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
         perfect = not self.perfect
         self.generate_maze(start_pos)
-        self.break_wall(int(perfect) * 27 / 100)
+        self.break_wall(int(perfect) * 10 / 100)
         """
         COLORING ENTRY AND END POINT
         """

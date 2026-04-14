@@ -18,25 +18,10 @@ NORTH = 0b0001
 SOUTH = 0b0100
 WEST = 0b1000
 EAST = 0b0010
-# WALL_THICK = 2
-# CELL_COLOR = rgb(60, 167, 194)
-# TRAVERSING_COLOR = rgb(98, 189, 166)
-# CELL_STARTING_COLOR = rgb(60, 167, 194)
-# WALL_COLOR = rgb(0, 0, 0)
-# CLEAR_COLOR = rgb(0, 0, 0)
-# VISITED_COLOR = rgb(223, 221, 142)
-# BLOCK_42_COLOR = rgb(200, 250, 0)
-# ENTRY_COLOR = rgb(214, 106, 151)
-# EXIT_COLOR = rgb(106, 214, 205)
-# PATH_FOUND_COLOR = rgb(106, 214, 205)
-# WALL_COLOR = rgb(0, 0, 0)
-# WALL_COLOR_2 = rgb(255, 0, 0)
-# WALL_COLOR_3 = rgb(126, 200, 80)
-# WALL_COLOR_4 = rgb(86, 125, 70)
 PATH_FOUND_COLOR = rgb(106, 214, 205)
 STRING_HEIGHT_PADDDING = 100
 STRING_WIDTH_PADDING = 100
-DISPLAY_INTERVAL = 0.01
+DISPLAY_INTERVAL = 0.02
 HELP_WIDTH = 520
 HELP_HEIGHT = 660
 CELL_SIZE = 40
@@ -62,6 +47,8 @@ HELP_TEXT = [
         "h     : open this help window",
         "u     : Change the wall color",
         "e     : Place entry pos and exit pos",
+        "f     : To show/hide the 42 blocks",
+        "p     : To switch between perfect/non-perfect maze",
         "q/Esc : quit the application",
     ]
 

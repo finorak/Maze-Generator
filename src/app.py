@@ -279,7 +279,7 @@ class App:
             self.maze.end_pos = self.end_pos
             self.reinitialise(
                     show_logo=self.maze.show_logo,
-                    perfect=self.maze.show_logo)
+                    perfect=self.perfect)
 
     def thread_running(self) -> bool:
         return (
@@ -293,6 +293,7 @@ class App:
         if not self.maze.is_generate and not self.solver.found_path:
             return None
         self.maze.perfect = perfect
+        self.maze.show_logo = show_logo
         self.maze.init_data()
         self.solver.is_generate = False
         self.solver.found_path = False

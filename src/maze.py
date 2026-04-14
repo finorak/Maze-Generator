@@ -19,7 +19,8 @@ class Maze:
         self.data: list[list[Cell]] = []
         self.animate = animate
         self.block: list[tuple[int, int]] = []
-        self.show_logo: bool | None = True
+        self.show_logo: bool = True
+        self.show = True
         self.is_generate = False
         self.rows = rows
         self.cols = cols
@@ -48,10 +49,11 @@ class Maze:
                     cell.parent = None
         if not self.block:
             self.get_block()
-        if self.show_logo is None:
+        if self.show:
             self.show_logo = not (
                 self.end_pos in self.block or self.entry_pos in self.block
                 )
+            self.show = False
         self.make_42_block(self.show_logo)
         if (
                 self.entry_pos in self.block

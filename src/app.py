@@ -66,13 +66,19 @@ class App:
 
     def load_sound_effect(self) -> None:
         self.playing = False
-        self.start_sound = pygame.mixer.Sound(
+        self.game_start = pygame.mixer.Sound(
+                get_path(BASE_DIR, "game_start.mp3")
+                )
+        self.end_reached = pygame.mixer.Sound(
+                get_path(BASE_DIR, "end_reached.mp3")
+                )
+        self.troll_sound = pygame.mixer.Sound(
                 get_path(BASE_DIR, "fah.mp3")
                     )
         self.found_sound = pygame.mixer.Sound(
                 get_path(BASE_DIR, "path_found_vfx.mp3")
                 )
-        self.start_sound.play()
+        self.game_start.play()
 
     def init_image(self) -> None:
         if not self.maze.data:
@@ -167,7 +173,7 @@ class App:
             self.mlx.mlx_destroy_image(self.ptr, self.images.get("home"))
         elif key == 32:
             self.switch_to_maze()
-            self.start_sound.stop()
+            self.troll_sound.stop()
         elif key == ord("h"):
             self.open_help_window()
 
@@ -187,7 +193,7 @@ class App:
             self.mlx.mlx_loop_exit(self.ptr)
         elif key == ord("g"):
             if self.maze.is_generate:
-                self.start_sound.play()
+                self.troll_sound.play()
                 print("Maze already generated")
                 return None
             if self.entry_pos == self.end_pos:
@@ -209,7 +215,7 @@ class App:
                          self.maze.change_color))
                 self.playing = True
             else:
-                self.start_sound.play()
+                self.troll_sound.play()
                 print("maze not generate")
         elif key == ord("d"):
             if self.maze.is_generate:
@@ -219,12 +225,12 @@ class App:
                                               self.maze.change_color,
                                               self.entry_pos,))
             else:
-                self.start_sound.play()
+                self.troll_sound.play()
                 print("maze not generate")
         elif key == ord("w"):
             if self.thread_running() or not self.solver.found_path:
                 print("Can't write maze to file")
-                self.start_sound.play()
+                self.troll_sound.play()
                 return None
             self.activate_mouse = False
             put_maze_into_file(
@@ -251,7 +257,7 @@ class App:
                     and self.solver.solver_threading.is_alive()
             ):
                 print("Can't regenerate, wait...")
-                self.start_sound.play()
+                self.troll_sound.play()
                 return None
             self.reinitialise(
                     show_logo=self.maze.show_logo,
@@ -262,7 +268,7 @@ class App:
                     and self.solver.solver_threading.is_alive()
             ):
                 print("Can't regenerate, wait...")
-                self.start_sound.play()
+                self.troll_sound.play()
                 return None
             self.perfect = not self.perfect
             self.maze.perfect = self.perfect
@@ -275,7 +281,7 @@ class App:
                     and self.solver.solver_threading.is_alive()
             ):
                 print("Can't regenerate, wait...")
-                self.start_sound.play()
+                self.troll_sound.play()
                 return None
             self.maze.perfect = self.perfect
             self.maze.show_logo = not self.maze.show_logo
@@ -303,6 +309,7 @@ class App:
                      perfect: bool = True) -> None:
         if not self.maze.is_generate and not self.solver.found_path:
             return None
+        self.navigator.can_move = False
         self.maze.perfect = perfect
         self.maze.show_logo = show_logo
         self.maze.init_data()
@@ -370,7 +377,7 @@ class App:
             self.solver.exit = (row, col)
 
     def event_handler(self) -> None:
-        self.mlx.mlx_hook(self.maze_win, 2, 1 << 0, self.navigator.move, None)
+        self.mlx.mlx_hook(self.maze_win, 2, 1, self.navigator.move, None)
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)

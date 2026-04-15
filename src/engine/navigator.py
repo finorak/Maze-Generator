@@ -32,6 +32,8 @@ class PlayerNavigator:
         elif key == 65364 and self.y + 1 < self.parent.rows:
             if self.is_valid(self.x, self.y, self.x, self.y + 1, SOUTH):
                 self.y += 1
+        if (self.x, self.y) == self.parent.end_pos:
+            self.parent.end_reached.play()
         self.parent.entry_pos = (self.x, self.y)
 
     def is_valid(self, x: int, y: int,

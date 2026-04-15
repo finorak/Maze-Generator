@@ -32,8 +32,8 @@ lint-strict: flake
 	$(MYPY) --strict  --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .
 
 clean:
-	find . -name "*.pyc" -exec rm -rf {} \;
-	find . -type d \( -name "__pycache__" -o -name ".mypy_cache" \) -exec rm -rf {} \;
+	find . -name "*.pyc" -exec rm -rf {} +
+	find . -type d \( -name "__pycache__" -o -name ".mypy_cache" \) -exec rm -rf {} +
 
 fclean: clean
 	rm -rf $(VENV)

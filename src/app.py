@@ -190,6 +190,13 @@ class App:
                 self.start_sound.play()
                 print("Maze already generated")
                 return None
+            if self.entry_pos == self.end_pos:
+                self.entry_pos = (0, 0)
+                self.end_pos = (self.cols - 1, self.rows - 1)
+                self.maze.entry_pos = (0, 0)
+                self.maze.end_pos = self.end_pos
+                self.solver.entry = self.entry_pos
+                self.solver.exit = self.end_pos
             self.maze.start_generate()
             self.solver.data = self.maze.data
             self.activate_mouse = False

@@ -15,6 +15,7 @@ class PlayerNavigator:
             return None
         if key == ord("j"):
             if not self.can_move:
+                self.parent.set_pos()
                 self.can_move = True
         if not self.can_move:
             return None

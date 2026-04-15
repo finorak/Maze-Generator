@@ -169,8 +169,6 @@ class App:
         if key in (65307, ord("q")):
             self.mlx.mlx_loop_exit(self.ptr)
             pygame.mixer.music.stop()
-        elif key == ord('o'):
-            self.mlx.mlx_destroy_image(self.ptr, self.images.get("home"))
         elif key == 32:
             self.switch_to_maze()
             self.troll_sound.stop()
@@ -191,6 +189,12 @@ class App:
         dfs = self.solver.dfs_solver
         if key in (65307, ord("q")):
             self.mlx.mlx_loop_exit(self.ptr)
+        if self.navigator.can_move and (
+                key != ord('r') and
+                key != ord('f') and
+                key != ord('p') and
+                key != ord('h')):
+            return None
         elif key == ord("g"):
             if self.maze.is_generate:
                 self.troll_sound.play()
@@ -259,6 +263,8 @@ class App:
                 print("Can't regenerate, wait...")
                 self.troll_sound.play()
                 return None
+            self.navigator.x = self.entry_pos[0]
+            self.navigator.y = self.entry_pos[1]
             self.reinitialise(
                     show_logo=self.maze.show_logo,
                     perfect=self.perfect)
@@ -290,13 +296,18 @@ class App:
                     self.entry_pos = (0, 0)
                 if self.end_pos in self.maze.block:
                     self.end_pos = (self.cols - 1, self.rows - 1)
-            self.maze.entry_pos = self.entry_pos
-            self.maze.end_pos = self.end_pos
-            self.solver.entry = self.entry_pos
-            self.solver.exit = self.end_pos
+            self.set_pos()
             self.reinitialise(
                     show_logo=self.maze.show_logo,
                     perfect=self.perfect)
+
+    def set_pos(self):
+        self.maze.entry_pos = self.entry_pos
+        self.maze.end_pos = self.end_pos
+        self.solver.entry = self.entry_pos
+        self.solver.exit = self.end_pos
+        self.navigator.x = self.entry_pos[0]
+        self.navigator.y = self.entry_pos[1]
 
     def thread_running(self) -> bool:
         return (

@@ -21,27 +21,24 @@ class PlayerNavigator:
         x_temp, y_temp = self.x, self.y
         self.parent.maze.data[x_temp][y_temp].updated = False
         if key == 65361 and self.x - 1 >= 0:
-            if self.parent.maze.data[self.x][self.y].wall & WEST:
-                return None
-            if self.parent.maze.data[self.x - 1][self.y].is_42_cell:
-                return None
-            self.x -= 1
+            if self.is_valid(self.x, self.y, self.x - 1, self.y, WEST):
+                self.x -= 1
         elif key == 65363 and self.x + 1 < self.parent.cols:
-            if self.parent.maze.data[self.x][self.y].wall & EAST:
-                return None
-            if self.parent.maze.data[self.x + 1][self.y].is_42_cell:
-                return None
-            self.x += 1
+            if self.is_valid(self.x, self.y, self.x + 1, self.y, EAST):
+                self.x += 1
         elif key == 65362 and self.y - 1 >= 0:
-            if self.parent.maze.data[self.x][self.y].wall & NORTH:
-                return None
-            if self.parent.maze.data[self.x][self.y - 1].is_42_cell:
-                return None
-            self.y -= 1
+            if self.is_valid(self.x, self.y, self.x, self.y - 1, NORTH):
+                self.y -= 1
         elif key == 65364 and self.y + 1 < self.parent.rows:
-            if self.parent.maze.data[self.x][self.y].wall & SOUTH:
-                return None
-            if self.parent.maze.data[self.x][self.y + 1].is_42_cell:
-                return None
-            self.y += 1
+            if self.is_valid(self.x, self.y, self.x, self.y + 1, SOUTH):
+                self.y += 1
         self.parent.entry_pos = (self.x, self.y)
+
+    def is_valid(self, x: int, y: int,
+                 x_upper: int, y_upper: int,
+                 wall: int) -> bool:
+        if self.parent.maze.data[x][y].wall & wall:
+            return False
+        if self.parent.data[x_upper][y_upper].is_42_cell:
+            return False
+        return True

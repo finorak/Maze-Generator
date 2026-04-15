@@ -348,6 +348,8 @@ class App:
             self.entry_pos = (row, col)
             self.maze.entry_pos = (row, col)
             self.solver.entry = (row, col)
+            self.navigator.x = row
+            self.navigator.y = col
         if button == 3:
             x_end, y_end = self.end_pos
             if (

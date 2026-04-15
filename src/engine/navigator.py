@@ -39,6 +39,6 @@ class PlayerNavigator:
                  wall: int) -> bool:
         if self.parent.maze.data[x][y].wall & wall:
             return False
-        if self.parent.data[x_upper][y_upper].is_42_cell:
+        if self.parent.maze.data[x_upper][y_upper].is_42_cell:
             return False
         return True

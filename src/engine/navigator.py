@@ -19,9 +19,9 @@ class PlayerNavigator:
         print(key)
         if key == 65361:
             self.x -= 1
-        elif key == 65362:
-            self.x += 1
         elif key == 65363:
+            self.x += 1
+        elif key == 65362:
             self.y -= 1
         elif key == 65364:
             self.y += 1

@@ -301,7 +301,7 @@ class App:
                     show_logo=self.maze.show_logo,
                     perfect=self.perfect)
 
-    def set_pos(self):
+    def set_pos(self) -> None:
         self.maze.entry_pos = self.entry_pos
         self.maze.end_pos = self.end_pos
         self.solver.entry = self.entry_pos
@@ -351,6 +351,8 @@ class App:
         """
         Setting the position of entry and exit
         """
+        if self.navigator.can_move:
+            return None
         if button != 1 and button != 3:
             print("Button not reconized")
             return

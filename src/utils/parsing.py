@@ -77,8 +77,8 @@ def get_configuration(
                 new_line: list[str] = line.strip().split("=")
                 if len(new_line) != 2:
                     continue
-                key: str = new_line[0]
-                value: Union[str, Any] = new_line[1].strip()
+                key: str = new_line[0].strip(" \t\r")
+                value: Union[str, Any] = new_line[1].strip(" \t\r")
                 pos = value.strip().split(",")
                 if len(pos) == 2:
                     x = int(pos[0].strip())

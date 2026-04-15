@@ -1,4 +1,6 @@
 from time import time
+
+from src.engine.navigator import PlayerNavigator
 from .maze import Maze
 from mlx import Mlx
 import pygame
@@ -32,6 +34,7 @@ class App:
         self.ptr = self.mlx.mlx_init()
         self.start = False
         self.init_attribute(config)
+        self.navigator = PlayerNavigator(self)
 
     def init_attribute(self, config: Any) -> None:
         self.main_win: Any = None
@@ -46,7 +49,6 @@ class App:
         self.perfect: bool = self.config.get('perfect')
         if self.perfect is None:
             self.perfect = True
-        self.activate_mouse = False
         self.maze: Maze = Maze(self.entry_pos,
                                self.end_pos, self.rows,
                                self.cols, self.perfect)
@@ -198,10 +200,6 @@ class App:
                         a_star,
                         (lambda: self.get_wall_color(),
                          self.maze.change_color))
-                self.solver.start_solve(
-                    a_star,
-                    (lambda: self.get_wall_color(), self.maze.change_color)
-                )
                 self.playing = True
             else:
                 self.start_sound.play()
@@ -328,19 +326,17 @@ class App:
         """
         Setting the position of entry and exit
         """
-        print(f"button: {button}")
         if button != 1 and button != 3:
             print("Button not reconized")
             return
         if not self.maze.is_generate:
             print("maze not generate")
             return
-        if self.solver.solver_threading:
+        if self.thread_running():
             print("Solver running can't modify maze")
             return
         row = (x // CELL_SIZE)
         col = (y // CELL_SIZE)
-        print((row, col))
         if button == 1:
             x_entry, y_entry = self.entry_pos
             if (
@@ -365,9 +361,10 @@ class App:
             self.solver.exit = (row, col)
 
     def event_handler(self) -> None:
+        self.mlx.mlx_hook(self.maze_win, 2, 1 << 0, self.navigator.move, None)
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
-        self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
+        self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
 
     def draw_backgroud(self) -> None:
         self.mlx.mlx_put_image_to_window(

@@ -77,6 +77,7 @@ class Solver:
                     if self.remove_color:
                         func(get_color(), "all")
                         self.remove_color = False
+                        self.found_path = True
                     sleep(DISPLAY_INTERVAL)
                     self.found_path = True
                     return True

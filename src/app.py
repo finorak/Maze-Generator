@@ -200,13 +200,6 @@ class App:
                 self.troll_sound.play()
                 print("Maze already generated")
                 return None
-            if self.entry_pos == self.end_pos:
-                self.entry_pos = (0, 0)
-                self.end_pos = (self.cols - 1, self.rows - 1)
-                self.maze.entry_pos = (0, 0)
-                self.maze.end_pos = self.end_pos
-                self.solver.entry = self.entry_pos
-                self.solver.exit = self.end_pos
             self.maze.start_generate()
             self.solver.data = self.maze.data
             self.activate_mouse = False
@@ -263,8 +256,6 @@ class App:
                 print("Can't regenerate, wait...")
                 self.troll_sound.play()
                 return None
-            self.navigator.x = self.entry_pos[0]
-            self.navigator.y = self.entry_pos[1]
             self.reinitialise(
                     show_logo=self.maze.show_logo,
                     perfect=self.perfect)
@@ -291,12 +282,6 @@ class App:
                 return None
             self.maze.perfect = self.perfect
             self.maze.show_logo = not self.maze.show_logo
-            if self.maze.show_logo:
-                if self.entry_pos in self.maze.block:
-                    self.entry_pos = (0, 0)
-                if self.end_pos in self.maze.block:
-                    self.end_pos = (self.cols - 1, self.rows - 1)
-            self.set_pos()
             self.reinitialise(
                     show_logo=self.maze.show_logo,
                     perfect=self.perfect)
@@ -320,6 +305,15 @@ class App:
                      perfect: bool = True) -> None:
         if not self.maze.is_generate and not self.solver.found_path:
             return None
+        if self.maze.show_logo:
+            if self.entry_pos in self.maze.block:
+                self.entry_pos = (0, 0)
+            if self.end_pos in self.maze.block:
+                self.end_pos = (self.cols - 1, self.rows - 1)
+        if self.entry_pos == self.end_pos:
+            self.entry_pos = (0, 0)
+            self.end_pos = (self.cols - 1, self.rows - 1)
+        self.set_pos()
         self.navigator.can_move = False
         self.maze.perfect = perfect
         self.maze.show_logo = show_logo

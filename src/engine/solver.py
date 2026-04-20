@@ -24,7 +24,7 @@ class Solver:
         self._data = data
         self.entry = entry_pos
         self.exit = end_pos
-        self.path: list[tupletuple[int, int]] = []
+        self.path: list[tuple[int, int]] = []
         self.is_generate = False
         self.found_path = False
         self.remove_color = True

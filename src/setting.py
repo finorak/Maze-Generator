@@ -36,7 +36,6 @@ BASE_CONFIG = {
 }
 
 HELP_TEXT = [
-<<<<<<< HEAD
         "Help / Controls",
         "",
         "Space : open the maze screen",
@@ -51,23 +50,6 @@ HELP_TEXT = [
         "p     : To switch between perfect/non-perfect maze",
         "q/Esc : quit the application",
     ]
-=======
-    "Help / Controls",
-    "",
-    "Space : open the maze screen",
-    "g     : generate the maze",
-    "s     : solve with A* (shortest path)",
-    "d     : solve with DFS",
-    "c     : save the maze",
-    "r     : reset the maze",
-    "h     : open this help window",
-    "u     : Change the wall color",
-    "e     : Place entry pos and exit pos",
-    "f     : To show/hide the 42 blocks",
-    "p     : To switch between perfect/non-perfect maze",
-    "q/Esc : quit the application",
-]
->>>>>>> 6861d39f2e381f0c163ac35422e50c33aa8f738d
 
 IMAGES = {
     "home": "assets/home.png",

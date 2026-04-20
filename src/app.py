@@ -8,8 +8,8 @@ from typing import Any
 from .setting import (
     HEIGHT,
     HELP_HEIGHT,
-    HELP_TEXT,
     HELP_WIDTH,
+    HELP_TEXT,
     WALL_COLORS,
     WIDTH,
     TITLE,

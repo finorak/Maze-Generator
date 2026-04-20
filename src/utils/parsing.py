@@ -36,6 +36,12 @@ def config_is_valid(config: dict[str, Any]
         return False
     if config['entry'] == config['exit']:
         return False
+    if config['height'] <= 0 or config['height'] <= 0:
+        return False
+    if config['entry'][0] < 0 or config['entry'][1] < 0:
+        return False
+    if config['exit'][0] < 0 or config['exit'][1] < 0:
+        return False
     return True
 
 
@@ -90,7 +96,8 @@ def get_configuration(
                 config.update({key.strip().lower(): value})
         config = parse_config(config)
         if not config_is_valid(config):
-            custom_print("\nSWITCHING TO BASE_CONFIG")
+            print("\nCONFIG ERROR !!!")
+            custom_print("SWITCHING TO BASE_CONFIG")
             get_config(BASE_CONFIG)
             return BASE_CONFIG
         return config

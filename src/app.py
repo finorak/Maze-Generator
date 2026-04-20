@@ -366,6 +366,9 @@ class App:
         if self.thread_running():
             print("Solver running can't modify maze")
             return
+        if self.solver.found_path:
+            print("you can move the entry or exit")
+            return
         row = (x // CELL_SIZE)
         col = (y // CELL_SIZE)
         if button == 1:
@@ -398,12 +401,6 @@ class App:
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
-
-    def draw_backgroud(self) -> None:
-        self.mlx.mlx_put_image_to_window(
-            self.ptr, self.maze_win, self.bg.img,
-            0, 0
-        )
 
     def draw_image(self, win: Any, pos: tuple[int, int], img: Any) -> None:
         self.mlx.mlx_put_image_to_window(

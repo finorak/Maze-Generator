@@ -22,8 +22,8 @@ PATH_FOUND_COLOR = rgb(106, 214, 205)
 STRING_HEIGHT_PADDDING = 100
 STRING_WIDTH_PADDING = 100
 DISPLAY_INTERVAL = 0.02
-HELP_WIDTH = 520
-HELP_HEIGHT = 660
+HELP_WIDTH = 800
+HELP_HEIGHT = 600
 CELL_SIZE = 40
 
 BASE_CONFIG = {
@@ -35,24 +35,9 @@ BASE_CONFIG = {
     "perfext": "true",
 }
 
-HELP_TEXT = [
-        "Help / Controls",
-        "",
-        "Space : open the maze screen",
-        "g     : generate the maze",
-        "s     : solve with A* (shortest path)",
-        "d     : solve with DFS",
-        "c     : save the maze",
-        "r     : reset the maze",
-        "h     : open this help window",
-        "u     : Change the wall color",
-        "f     : To show/hide the 42 blocks",
-        "p     : To switch between perfect/non-perfect maze",
-        "q/Esc : quit the application",
-    ]
-
 IMAGES = {
     "home": "assets/home.png",
+    "help": "assets/help.png",
     "entry": "assets/path/entry.png",
     "exit": "assets/path/exit.png",
     "path": "assets/path/path.png",

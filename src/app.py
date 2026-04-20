@@ -211,6 +211,9 @@ class App:
             self.solver.data = self.maze.data
             self.activate_mouse = False
         elif key == ord("s"):
+            if self.solver.found_path:
+                self.solver.show = (True, not self.solver.show[1])
+            print(self.solver.show)
             if self.maze.is_generate:
                 self.activate_mouse = False
                 self.solver.start_solve(
@@ -412,6 +415,7 @@ class App:
     def draw_cell(self, cell: Cell, update_all: bool = False) -> None:
         pos = (cell.row * cell.size, cell.col * cell.size)
         if not cell.updated or update_all:
+            print(f"update cell {(cell.col, cell.row)}")
             addr = self.mlx.mlx_get_data_addr(cell.image.img)
             cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
             bpp = cell.image.bpp // 8
@@ -437,10 +441,14 @@ class App:
                 self.images.get("exit")
             )
         if self.maze.is_generate and (cell.row, cell.col) in self.solver.path:
-            self.draw_image(
-                    self.maze_win,
-                    pos,
-                    self.images.get("path"))
+            if not self.solver.show[1]:
+                if self.solver.show[0]:
+                    cell.updated = False
+            else:
+                self.draw_image(
+                        self.maze_win,
+                        pos,
+                        self.images.get("path"))
         if not self.maze.is_generate and \
                 (cell.row, cell.col) == self.maze.wall_destroyer:
             self.draw_image(
@@ -453,3 +461,5 @@ class App:
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell, update_all)
+        if self.solver.show[0]:
+            self.solver.show = (False, self.solver.show[1])

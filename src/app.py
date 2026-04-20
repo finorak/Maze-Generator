@@ -9,7 +9,6 @@ from .setting import (
     HEIGHT,
     HELP_HEIGHT,
     HELP_WIDTH,
-    HELP_TEXT,
     WALL_COLORS,
     WIDTH,
     TITLE,
@@ -129,7 +128,7 @@ class App:
         if self.help_win is not None:
             return None
 
-        self.help_win = self.mlx.mlx_new_window(self.ptr, WIDTH, HEIGHT, TITLE)
+        self.help_win = self.mlx.mlx_new_window(self.ptr, HELP_WIDTH, HELP_HEIGHT, TITLE)
         self.draw_image(self.help_win, (0, 0), self.images.get("help"))
         self.mlx.mlx_key_hook(self.help_win, self.on_key_help, None)
         self.mlx.mlx_hook(self.help_win, 33, 0, self.on_close_help, None)

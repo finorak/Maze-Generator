@@ -61,4 +61,6 @@ IMAGES = {
 
 
 def get_path(BASE_DIR: str, file_name: str) -> str:
-    return os.path.normpath(os.path.join(BASE_DIR, "..", "assets", "vfx", file_name))
+    return os.path.normpath(
+            os.path.join(BASE_DIR, "..", "assets", "vfx", file_name)
+            )

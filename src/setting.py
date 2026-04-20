@@ -1,4 +1,4 @@
-from .utils import rgb
+from src.utils import rgb
 import os
 
 
@@ -34,24 +34,6 @@ BASE_CONFIG = {
     "output_file": "maze.txt",
     "perfext": "true",
 }
-
-HELP_TEXT = [
-    "Help / Controls",
-    "",
-    "Space : open the maze screen",
-    "Left click  : redefine the entry after generate",
-    "Right click : redefine the exit after generate",
-    "w     : write maze to a file"
-    "g     : generate the maze",
-    "s     : solve with A* (shortest path) or hidden path",
-    "d     : solve with DFS or hidden path",
-    "c     : rotate theme",
-    "r     : reset the maze",
-    "h     : open this help window",
-    "f     : To show/hide the 42 blocks",
-    "p     : To switch between perfect/non-perfect maze",
-    "q/Esc : quit the application",
-]
 
 IMAGES = {
     "home": "assets/home.png",

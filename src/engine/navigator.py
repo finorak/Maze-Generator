@@ -1,5 +1,4 @@
 from typing import Any
-
 from src.setting import EAST, NORTH, SOUTH, WEST
 
 
@@ -10,7 +9,12 @@ class PlayerNavigator:
         self.x, self.y = self.parent.entry_pos
         self.keyboard = [65363, 65364, 65361, 65362]
 
-    def move(self, key: Any, _param: Any) -> None:
+    def move(self, key: int, _param: Any) -> None:
+        if (
+                self.parent.thread_running()
+                or self.parent.solver.found_path
+        ):
+            return None
         if key != ord("j") and key not in self.keyboard:
             return None
         if key == ord("j"):

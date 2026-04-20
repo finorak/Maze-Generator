@@ -71,6 +71,9 @@ def get_configuration(
     try:
         with open(file_name, mode="r", encoding="utf-8") as file:
             lines = file.readlines()
+            if not lines:
+                print("No config given")
+                return {}
             for line in lines:
                 if line.startswith("#"):
                     continue

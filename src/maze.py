@@ -157,7 +157,7 @@ class Maze:
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
         perfect = not self.perfect
         self.generate_maze(start_pos)
-        self.break_wall(int(perfect) * 17 / 100)
+        self.break_wall(int(perfect) * 16 / 100)
         """
         COLORING ENTRY AND END POINT
         """

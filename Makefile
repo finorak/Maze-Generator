@@ -10,14 +10,11 @@ install: $(VENV)
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 
-list:
-	$(PIP) list
-
 $(VENV):
 	python3 -m venv $(VENV)
 
 run:
-	$(PYTHON) $(NAME)
+	$(PYTHON) $(NAME) config.txt
 
 debug:
 	$(PYTHON) -m pdb $(NAME)
@@ -27,9 +24,6 @@ flake:
 
 lint: flake
 	$(MYPY) --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .
-
-lint-strict: flake
-	$(MYPY) --strict  --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs --explicit-package-bases .
 
 clean:
 	find . -name "*.pyc" -exec rm -rf {} +

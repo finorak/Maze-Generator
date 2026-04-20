@@ -230,10 +230,11 @@ class App:
                 self.troll_sound.play()
                 return None
             self.activate_mouse = False
+            path: list[tuple[int, int]] = reversed(self.solver.path)
             put_maze_into_file(
                     self.config.get('output_file'),
                     self.maze.data,
-                    self.solver.path,
+                    path,
                     self.entry_pos,
                     self.end_pos)
         elif key == ord('h'):
@@ -345,7 +346,7 @@ class App:
         """
         Setting the position of entry and exit
         """
-        if self.navigator.can_move:
+        if self.navigator.can_move or self.solver.found_path:
             return None
         if button != 1 and button != 3:
             print("Button not reconized")

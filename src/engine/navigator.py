@@ -10,7 +10,10 @@ class PlayerNavigator:
         self.keyboard = [65363, 65364, 65361, 65362]
 
     def move(self, key: int, _param: Any) -> None:
-        if self.parent.thread_running():
+        if (
+                self.parent.thread_running()
+                or self.parent.solver.found_path
+        ):
             return None
         if key != ord("j") and key not in self.keyboard:
             return None

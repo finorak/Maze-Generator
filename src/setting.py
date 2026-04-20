@@ -7,7 +7,7 @@ WALL_COLORS = [
     rgb(38, 41, 196),
     rgb(200, 50, 255),
     rgb(255, 120, 0),
-    rgb(255, 200, 50)
+    rgb(255, 200, 50),
 ]
 
 WIDTH = 800
@@ -27,15 +27,16 @@ HELP_HEIGHT = 660
 CELL_SIZE = 40
 
 BASE_CONFIG = {
-        'width': 16,
-        'height': 16,
-        'entry': (0, 0),
-        'exit': (15, 15),
-        'output_file': 'maze.txt',
-        'perfext': 'true'
-        }
+    "width": 16,
+    "height": 16,
+    "entry": (0, 0),
+    "exit": (15, 15),
+    "output_file": "maze.txt",
+    "perfext": "true",
+}
 
 HELP_TEXT = [
+<<<<<<< HEAD
         "Help / Controls",
         "",
         "Space : open the maze screen",
@@ -50,6 +51,23 @@ HELP_TEXT = [
         "p     : To switch between perfect/non-perfect maze",
         "q/Esc : quit the application",
     ]
+=======
+    "Help / Controls",
+    "",
+    "Space : open the maze screen",
+    "g     : generate the maze",
+    "s     : solve with A* (shortest path)",
+    "d     : solve with DFS",
+    "c     : save the maze",
+    "r     : reset the maze",
+    "h     : open this help window",
+    "u     : Change the wall color",
+    "e     : Place entry pos and exit pos",
+    "f     : To show/hide the 42 blocks",
+    "p     : To switch between perfect/non-perfect maze",
+    "q/Esc : quit the application",
+]
+>>>>>>> 6861d39f2e381f0c163ac35422e50c33aa8f738d
 
 IMAGES = {
     "home": "assets/home.png",
@@ -76,7 +94,4 @@ IMAGES = {
 
 
 def get_path(BASE_DIR: str, file_name: str) -> str:
-    return os.path.normpath(os.path.join(
-                    BASE_DIR, "..",
-                    "assets", "vfx",
-                    file_name))
+    return os.path.normpath(os.path.join(BASE_DIR, "..", "assets", "vfx", file_name))

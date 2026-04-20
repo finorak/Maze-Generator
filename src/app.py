@@ -204,6 +204,8 @@ class App:
             self.solver.data = self.maze.data
             self.activate_mouse = False
         elif key == ord("s"):
+            if self.solver.found_path:
+                self.solver.show = (True, not self.solver.show[1])
             if self.maze.is_generate:
                 self.activate_mouse = False
                 self.solver.start_solve(
@@ -215,6 +217,8 @@ class App:
                 self.troll_sound.play()
                 print("maze not generate")
         elif key == ord("d"):
+            if self.solver.found_path:
+                self.solver.show = (True, not self.solver.show[1])
             if self.maze.is_generate:
                 self.playing = True
                 self.activate_mouse = False
@@ -357,6 +361,9 @@ class App:
         if self.thread_running():
             print("Solver running can't modify maze")
             return
+        if self.solver.found_path:
+            print("you can move the entry or exit")
+            return
         row = (x // CELL_SIZE)
         col = (y // CELL_SIZE)
         if button == 1:
@@ -390,12 +397,6 @@ class App:
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
 
-    def draw_backgroud(self) -> None:
-        self.mlx.mlx_put_image_to_window(
-            self.ptr, self.maze_win, self.bg.img,
-            0, 0
-        )
-
     def draw_image(self, win: Any, pos: tuple[int, int], img: Any) -> None:
         self.mlx.mlx_put_image_to_window(
             self.ptr,
@@ -407,6 +408,7 @@ class App:
     def draw_cell(self, cell: Cell, update_all: bool = False) -> None:
         pos = (cell.row * cell.size, cell.col * cell.size)
         if not cell.updated or update_all:
+            print(f"update cell {(cell.col, cell.row)}")
             addr = self.mlx.mlx_get_data_addr(cell.image.img)
             cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
             bpp = cell.image.bpp // 8
@@ -423,19 +425,25 @@ class App:
             )
         if self.maze.is_generate and (cell.row, cell.col) == self.entry_pos:
             self.draw_image(
-                self.maze_win, (pos[0] + 3, pos[1] + 3),
+                self.maze_win, (pos[0] + 3, pos[1] + 5),
                 self.images.get("entry")
             )
         if self.maze.is_generate and (cell.row, cell.col) == self.end_pos:
             self.draw_image(
-                self.maze_win, (pos[0] + 12, pos[1] + 5),
+                self.maze_win, (pos[0] + 8, pos[1] + 5),
                 self.images.get("exit")
             )
-        if self.maze.is_generate and (cell.row, cell.col) in self.solver.path:
-            self.draw_image(
-                    self.maze_win,
-                    pos,
-                    self.images.get("path"))
+        if self.maze.is_generate and \
+            (cell.row, cell.col) in self.solver.path and \
+            (cell.row, cell.col) != self.end_pos:
+            if not self.solver.show[1]:
+                if self.solver.show[0]:
+                    cell.updated = False
+            else:
+                self.draw_image(
+                        self.maze_win,
+                        pos,
+                        self.images.get("path"))
         if not self.maze.is_generate and \
                 (cell.row, cell.col) == self.maze.wall_destroyer:
             self.draw_image(
@@ -448,3 +456,5 @@ class App:
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell, update_all)
+        if self.solver.show[0]:
+            self.solver.show = (False, self.solver.show[1])

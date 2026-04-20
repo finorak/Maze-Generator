@@ -107,28 +107,13 @@ class App:
             self.mlx.mlx_destroy_window(self.ptr, self.help_win)
             self.help_win = None
 
-    def draw_help_win(self) -> None:
-        if self.help_win is None:
-            return None
-
-        y = 20
-        for index, text in enumerate(HELP_TEXT):
-            color = 0xFFFFFFFF if index == 0 else 0xFFD0D0D0
-            self.mlx.mlx_string_put(
-                self.ptr,
-                self.help_win,
-                20,
-                y,
-                color,
-                text,
-            )
-            y += 22
-
     def open_help_window(self) -> None:
         if self.help_win is not None:
             return None
 
-        self.help_win = self.mlx.mlx_new_window(self.ptr, HELP_WIDTH, HELP_HEIGHT, TITLE)
+        self.help_win = self.mlx.mlx_new_window(
+                self.ptr, HELP_WIDTH, HELP_HEIGHT, TITLE
+                )
         self.draw_image(self.help_win, (0, 0), self.images.get("help"))
         self.mlx.mlx_key_hook(self.help_win, self.on_key_help, None)
         self.mlx.mlx_hook(self.help_win, 33, 0, self.on_close_help, None)
@@ -228,7 +213,7 @@ class App:
                 self.troll_sound.play()
                 return None
             self.activate_mouse = False
-            path: list[tuple[int, int]] = reversed(self.solver.path)
+            path: Any = reversed(self.solver.path)
             put_maze_into_file(
                     self.config.get('output_file'),
                     self.maze.data,
@@ -353,6 +338,7 @@ class App:
             print("maze not generate")
             return
         if self.thread_running():
+            self.troll_sound.play()
             print("Solver running can't modify maze")
             return
         if self.solver.found_path:
@@ -427,9 +413,11 @@ class App:
                 self.maze_win, (pos[0] + 8, pos[1] + 5),
                 self.images.get("exit")
             )
-        if self.maze.is_generate and \
-            (cell.row, cell.col) in self.solver.path and \
-            (cell.row, cell.col) != self.end_pos:
+        if (
+                self.maze.is_generate and
+                (cell.row, cell.col) in self.solver.path
+                and (cell.row, cell.col) != self.end_pos
+        ):
             if not self.solver.show[1]:
                 if self.solver.show[0]:
                     cell.updated = False

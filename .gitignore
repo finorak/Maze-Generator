@@ -8,3 +8,5 @@ maze.txt
 convert_img.py
 output_validator.py
 config.txt
+dist/
+*.eng-info

@@ -1,13 +1,4 @@
-from .setting import (WIDTH, HEIGHT, TITLE, NORTH, EAST,
-                      SOUTH, WEST)
-from .utils import rgb, rgba
-from .cell import Cell
-from .utils import get_configuration, get_config, config_utils
-from .image import Image
+from .maze import Maze
+from .engine.solver import Solver
 
-__all__ = ["WIDTH", "HEIGHT", "TITLE", "Cell",
-           "NORTH", "EAST", "SOUTH", "WEST",
-           "WALL_THICK",
-           "get_configuration", "Image", "rgb", "rgba",
-           "get_config", "config_utils"
-           ]
+__all__ = ["Maze", "Solver"]

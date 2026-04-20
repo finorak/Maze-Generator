@@ -39,14 +39,15 @@ HELP_TEXT = [
     "Help / Controls",
     "",
     "Space : open the maze screen",
+    "Left click  : redefine the entry after generate",
+    "Right click : redefine the exit after generate",
+    "w     : write maze to a file"
     "g     : generate the maze",
-    "s     : solve with A* (shortest path)",
-    "d     : solve with DFS",
-    "c     : save the maze",
+    "s     : solve with A* (shortest path) or hidden path",
+    "d     : solve with DFS or hidden path",
+    "c     : rotate theme",
     "r     : reset the maze",
     "h     : open this help window",
-    "u     : Change the wall color",
-    "e     : Place entry pos and exit pos",
     "f     : To show/hide the 42 blocks",
     "p     : To switch between perfect/non-perfect maze",
     "q/Esc : quit the application",
@@ -54,6 +55,7 @@ HELP_TEXT = [
 
 IMAGES = {
     "home": "assets/home.png",
+    "help": "assets/help.png",
     "entry": "assets/path/entry.png",
     "exit": "assets/path/exit.png",
     "path": "assets/path/path.png",

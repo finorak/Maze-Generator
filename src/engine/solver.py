@@ -1,4 +1,4 @@
-from ..cell import Cell
+from src.maze.cell import Cell
 from typing import Any, Callable
 from src.setting import (
     NORTH,

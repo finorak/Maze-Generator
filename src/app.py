@@ -1,11 +1,11 @@
 from time import time
 
 from src.engine.navigator import PlayerNavigator
-from .maze import Maze
+from src.maze.maze import Maze
 from mlx import Mlx
 import pygame
 from typing import Any
-from .setting import (
+from src.setting import (
     HEIGHT,
     HELP_HEIGHT,
     HELP_WIDTH,
@@ -17,11 +17,11 @@ from .setting import (
     IMAGES,
     get_path,
 )
-from .cell import Cell
-from .engine.solver import Solver
+from src.maze.cell import Cell
+from src.engine.solver import Solver
 from src.utils.maze_utils import put_maze_into_file
 import os
-from .image import Image
+from src.maze.image import Image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

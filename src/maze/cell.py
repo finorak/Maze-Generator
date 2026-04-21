@@ -4,7 +4,7 @@ Module containing the cell class
 
 from typing import Any
 from .image import Image
-from .setting import (
+from ..setting import (
         NORTH, SOUTH, WEST,
         EAST, WALL_COLORS, CELL_SIZE,
         )

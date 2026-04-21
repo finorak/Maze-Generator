@@ -1,4 +1,4 @@
-from .maze import Maze
-from .engine.solver import Solver
+from src.maze.maze import Maze
+from src.engine.solver import Solver
 
 __all__ = ["Maze", "Solver"]

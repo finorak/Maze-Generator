@@ -1,4 +1,5 @@
 mypy
+wheel
 flake8
 pygame-ce
 ./wheels/mlx-2.2-py3-none-any.whl

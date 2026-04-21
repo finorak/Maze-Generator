@@ -2,7 +2,7 @@ from threading import Thread
 import random
 from time import sleep
 from typing import Any
-from src.setting import (
+from ..setting import (
     DISPLAY_INTERVAL,
 )
 from .cell import Cell

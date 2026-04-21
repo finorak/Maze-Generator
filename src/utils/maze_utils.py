@@ -1,5 +1,5 @@
 from typing import Any
-from src.cell import Cell
+from src.maze.cell import Cell
 
 
 def put_maze_into_file(file_name: str,

@@ -10,10 +10,7 @@ class PlayerNavigator:
         self.keyboard = [65363, 65364, 65361, 65362]
 
     def move(self, key: int, _param: Any) -> None:
-        if (
-                self.parent.thread_running()
-                or self.parent.solver.found_path
-        ):
+        if self.parent.thread_running() or self.parent.solver.found_path:
             return None
         if key != ord("j") and key not in self.keyboard:
             return None
@@ -39,11 +36,11 @@ class PlayerNavigator:
                 self.y += 1
         if (self.x, self.y) == self.parent.end_pos:
             self.parent.end_reached.play()
+            self.parent.entry_pos = self.parent.config.get("entry")
+            self.parent.reinitialise()
         self.parent.entry_pos = (self.x, self.y)
 
-    def is_valid(self, x: int, y: int,
-                 x_upper: int, y_upper: int,
-                 wall: int) -> bool:
+    def is_valid(self, x: int, y: int, x_upper: int, y_upper: int, wall: int) -> bool:
         if self.parent.maze.data[x][y].wall & wall:
             return False
         if self.parent.maze.data[x_upper][y_upper].is_42_cell:

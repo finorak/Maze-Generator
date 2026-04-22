@@ -1,3 +1,9 @@
+"""Maze solving algorithms.
+
+Provides a simple DFS and BFS-like solver used to find a path from
+entry to exit and animate the result.
+"""
+
 from src.maze.cell import Cell
 from typing import Any, Callable
 from src.setting import (
@@ -15,6 +21,7 @@ from time import sleep
 
 
 class Solver:
+    """Solve a maze grid and expose control for animated solving."""
     def __init__(
         self,
         data: list[list[Cell]],
@@ -46,6 +53,16 @@ class Solver:
         func: Callable,
         curr_pos: tuple[int, int] = (0, 0),
     ) -> bool:
+        """Recursive DFS solver used for animated search.
+
+        Args:
+            get_color: Callable that returns the current wall color.
+            func: Function to call to update maze color state.
+            curr_pos: Starting coordinate for this invocation.
+
+        Returns:
+            True if a path to `self.exit` was found.
+        """
         if self.found_path:
             return False
 
@@ -92,6 +109,10 @@ class Solver:
     def find_directions(
         self, cell: Cell
     ) -> list[tuple[tuple[int, int], int, int]]:
+        """Return available neighbor coordinates from a cell.
+
+        Skips visited or logo cells.
+        """
         directions: list[tuple[tuple[int, int], int, int]] = []
         if cell.is_42_cell:
             return []
@@ -128,6 +149,13 @@ class Solver:
         func: Callable[[int, str], None],
         animate: bool = True,
     ) -> None:
+        """Iteratively search for a path and mark the discovered route.
+
+        Args:
+            get_color: Callable that returns the current wall color.
+            func: Function to call to update maze color state.
+            animate: Whether to sleep between steps for animation.
+        """
         if self.found_path:
             return None
         all_path: list[tuple[int, int]] = []
@@ -161,6 +189,12 @@ class Solver:
         self.found_path = True
 
     def start_solve(self, target: Any, args: Any) -> None:
+        """Start the given solving function in a background thread.
+
+        Args:
+            target: Callable to run in background.
+            args: Arguments tuple to pass to the target.
+        """
         if (
             self.solver_threading is not None and
             self.solver_threading.is_alive()

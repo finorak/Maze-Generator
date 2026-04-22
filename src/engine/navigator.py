@@ -1,8 +1,14 @@
+"""Player navigation helpers to move a marker through the maze.
+
+Handles keyboard input and validates moves against maze walls.
+"""
+
 from typing import Any
 from src.setting import EAST, NORTH, SOUTH, WEST
 
 
 class PlayerNavigator:
+    """Track and apply player movement within a maze instance."""
     def __init__(self, parent: Any) -> None:
         self.parent = parent
         self.can_move = False
@@ -10,6 +16,7 @@ class PlayerNavigator:
         self.keyboard = [65363, 65364, 65361, 65362]
 
     def move(self, key: int, _param: Any) -> None:
+        """Process a key event and move the player if valid."""
         if (
                 self.parent.thread_running()
                 or self.parent.solver.found_path
@@ -44,6 +51,7 @@ class PlayerNavigator:
     def is_valid(self, x: int, y: int,
                  x_upper: int, y_upper: int,
                  wall: int) -> bool:
+        """Return True if movement through `wall` from (x,y) is permitted."""
         if self.parent.maze.data[x][y].wall & wall:
             return False
         if self.parent.maze.data[x_upper][y_upper].is_42_cell:

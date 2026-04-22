@@ -1,7 +1,14 @@
+"""Lightweight image container used by maze cells.
+
+This module defines a simple `Image` holder that stores image
+handles and raw buffer metadata for integration with the mlx layer.
+"""
+
 from typing import Any
 
 
 class Image:
+    """Container for image handles and pixel buffer metadata."""
     def __init__(self) -> None:
         self.img: Any = None
         self.width = 0

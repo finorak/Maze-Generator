@@ -1,3 +1,9 @@
+"""Utilities to export maze data to a simple text format.
+
+This module contains helpers to write the maze wall map, entry/exit
+coordinates and the computed path to a file.
+"""
+
 from typing import Any
 from src.maze.cell import Cell
 
@@ -7,10 +13,16 @@ def put_maze_into_file(file_name: str,
                        path: list[tuple[int, int]],
                        entry_pos: tuple[int, int],
                        end_pos: tuple[int, int]) -> None:
+    """Write maze data and path to a text file.
+
+    The output contains a grid of wall masks, blank line, entry and
+    exit coordinates and a compact path encoding using NSEW letters.
+    """
 
     def writing_path(
             output_file: Any,
             path: list[tuple[int, int]]) -> None:
+        """Write the path as a sequence of direction letters."""
         for (x, y) in path:
             cell = data[x][y]
             if cell.parent[1] == y + 1:

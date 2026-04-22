@@ -1,9 +1,23 @@
+"""Helpers for printing and validating configuration dictionaries.
+
+This module provides a small helper to pretty-print text and a
+validation routine for configuration dictionaries used by the
+application.
+"""
+
 from typing import Any
 
 
 def custom_print(text: Any,
                  delimiter: str = "\n",
                  timer: float = 0.08) -> None:
+    """Print text in a controlled manner (placeholder for animated output).
+
+    Args:
+        text: Text to print (iterable like string supported).
+        delimiter: Trailing delimiter to use when finished.
+        timer: Unused delay placeholder.
+    """
     text_len = len(text)
     for i in range(text_len):
         print(text[i], flush=False, end="" if i < text_len - 1 else delimiter)
@@ -12,6 +26,15 @@ def custom_print(text: Any,
 
 def get_config(config: dict[str, Any],
                start: bool = True) -> bool:
+    """Validate and print configuration entries, returning error flag.
+
+    Args:
+        config: Configuration dictionary to validate.
+        start: If True, prints a header message.
+
+    Returns:
+        True when any validation error is found, otherwise False.
+    """
     if start:
         custom_print("GETTING CONFIG FILE...")
     error = False

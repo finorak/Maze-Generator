@@ -1,3 +1,10 @@
+"""
+Maze Generator Application
+
+This module contains the main App class that handles the maze generation,
+solving, and user interaction using the mlx library for GUI.
+"""
+
 from time import time
 
 from src.engine.navigator import PlayerNavigator
@@ -27,7 +34,19 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class App:
+    """
+    Main application class for the maze generator.
+
+    Handles initialization, maze creation, solving, and GUI events.
+    """
+
     def __init__(self, config: dict[str, Any]) -> None:
+        """
+        Initialize the App with the given configuration.
+
+        Args:
+            config (dict): Configuration dictionary containing maze parameters.
+        """
         pygame.init()
         self.mlx = Mlx()
         self.ptr = self.mlx.mlx_init()
@@ -36,6 +55,12 @@ class App:
         self.navigator = PlayerNavigator(self)
 
     def init_attribute(self, config: Any) -> None:
+        """
+        Initialize the application attributes from the config.
+
+        Args:
+            config (Any): Configuration object.
+        """
         self.main_win: Any = None
         self.maze_win: Any = None
         self.error_win: Any = None
@@ -64,6 +89,9 @@ class App:
         self.load_sound_effect()
 
     def load_sound_effect(self) -> None:
+        """
+        Load sound effects for the application.
+        """
         self.playing = False
         self.game_start = pygame.mixer.Sound(
                 get_path(BASE_DIR, "game_start.mp3")
@@ -80,6 +108,9 @@ class App:
         self.game_start.play()
 
     def init_image(self) -> None:
+        """
+        Initialize images for maze cells if not already done.
+        """
         if not self.maze.data:
             return None
         if self.maze.data[0][0].image.img is not None:
@@ -92,6 +123,9 @@ class App:
                     )
 
     def get_image(self) -> None:
+        """
+        Load and store images from the assets.
+        """
         for key, value in IMAGES.items():
             path = os.path.normpath(
                 os.path.join(BASE_DIR, "..", *(value.split('/')))
@@ -100,14 +134,23 @@ class App:
             self.images.update({key: img})
 
     def on_close(self, _param: Any) -> None:
+        """
+        Handle window close event.
+        """
         self.mlx.mlx_loop_exit(self.ptr)
 
     def on_close_help(self, _param: Any) -> None:
+        """
+        Handle help window close event.
+        """
         if self.help_win is not None:
             self.mlx.mlx_destroy_window(self.ptr, self.help_win)
             self.help_win = None
 
     def open_help_window(self) -> None:
+        """
+        Open the help window.
+        """
         if self.help_win is not None:
             return None
 
@@ -119,10 +162,20 @@ class App:
         self.mlx.mlx_hook(self.help_win, 33, 0, self.on_close_help, None)
 
     def on_key_help(self, key: Any, _param: Any) -> None:
+        """
+        Handle key events in the help window.
+
+        Args:
+            key (Any): The key pressed.
+            _param (Any): Unused parameter.
+        """
         if key in (65307, ord("q")):
             self.mlx.mlx_loop_exit(self.ptr)
 
     def update(self, _param: Any) -> None:
+        """
+        Update the maze display periodically.
+        """
         if self.start:
             now = time()
             if now - self.last_draw >= DISPLAY_INTERVAL:
@@ -130,6 +183,9 @@ class App:
                 self.last_draw = now
 
     def run(self) -> None:
+        """
+        Run the main application loop.
+        """
         self.run_main()
         self.mlx.mlx_loop_hook(self.ptr, self.update, None)
         self.mlx.mlx_loop(self.ptr)
@@ -145,6 +201,13 @@ class App:
 
     # ----------------------main win---------------------------#
     def on_key_main(self, key: Any, _param: Any) -> None:
+        """
+        Handle key events in the main window.
+
+        Args:
+            key (Any): The key pressed.
+            _param (Any): Unused parameter.
+        """
         if key in (65307, ord("q")):
             self.mlx.mlx_loop_exit(self.ptr)
             pygame.mixer.music.stop()
@@ -155,15 +218,31 @@ class App:
             self.open_help_window()
 
     def get_wall_color(self) -> int:
+        """
+        Get the current wall color.
+
+        Returns:
+            int: The wall color value.
+        """
         return self.wall_color
 
     def run_main(self) -> None:
+        """
+        Run the main window.
+        """
         self.main_win = self.mlx.mlx_new_window(self.ptr, WIDTH, HEIGHT, TITLE)
         self.draw_image(self.main_win, (0, 0), self.images.get("home"))
         self.mlx.mlx_key_hook(self.main_win, self.on_key_main, None)
         self.mlx.mlx_hook(self.main_win, 33, 0, self.on_close, None)
 
     def on_key_maze(self, key: Any, _param: Any) -> None:
+        """
+        Handle key events in the maze window.
+
+        Args:
+            key (Any): The key pressed.
+            _param (Any): Unused parameter.
+        """
         a_star = self.solver.solve
         dfs = self.solver.dfs_solver
         if key in (65307, ord("q")):
@@ -271,6 +350,9 @@ class App:
                     perfect=self.perfect)
 
     def set_pos(self) -> None:
+        """
+        Set the positions for entry, exit, and navigator.
+        """
         self.maze.entry_pos = self.entry_pos
         self.maze.end_pos = self.end_pos
         self.solver.entry = self.entry_pos
@@ -279,6 +361,12 @@ class App:
         self.navigator.y = self.entry_pos[1]
 
     def thread_running(self) -> bool:
+        """
+        Check if the solver thread is running.
+
+        Returns:
+            bool: True if the thread is alive, False otherwise.
+        """
         return (
             self.solver.solver_threading is not None
             and self.solver.solver_threading.is_alive()
@@ -287,6 +375,13 @@ class App:
     def reinitialise(self,
                      show_logo: bool | None = True,
                      perfect: bool = True) -> None:
+        """
+        Reinitialize the maze with new parameters.
+
+        Args:
+            show_logo (bool | None): Whether to show logo.
+            perfect (bool): Whether the maze is perfect.
+        """
         if not self.maze.is_generate and not self.solver.found_path:
             return None
         if self.maze.show_logo:
@@ -310,6 +405,9 @@ class App:
         self.solver.remove_color = True
 
     def switch_to_maze(self) -> None:
+        """
+        Switch to the maze window.
+        """
         if self.main_win is not None:
             self.mlx.mlx_destroy_window(self.ptr, self.main_win)
 
@@ -327,7 +425,13 @@ class App:
 
     def mouse_handler(self, button: Any, x: int, y: int, _param: Any) -> None:
         """
-        Setting the position of entry and exit
+        Handle mouse events to set entry and exit positions.
+
+        Args:
+            button (Any): The mouse button pressed.
+            x (int): X coordinate.
+            y (int): Y coordinate.
+            _param (Any): Unused parameter.
         """
         if self.navigator.can_move or self.solver.found_path:
             return None
@@ -372,12 +476,24 @@ class App:
             self.solver.exit = (row, col)
 
     def event_handler(self) -> None:
+        """
+        Register event hooks for the maze window.
+
+        This wires keyboard, mouse and generic hooks to their handlers.
+        """
         self.mlx.mlx_hook(self.maze_win, 2, 1, self.navigator.move, None)
         self.mlx.mlx_mouse_hook(self.maze_win, self.mouse_handler, None)
         self.mlx.mlx_key_hook(self.maze_win, self.on_key_maze, None)
         self.mlx.mlx_hook(self.maze_win, 33, 0, self.on_close, None)
 
     def draw_image(self, win: Any, pos: tuple[int, int], img: Any) -> None:
+        """Put an image into a window at the given position.
+
+        Args:
+            win: Window handle.
+            pos: (x, y) position tuple.
+            img: Image handle to draw.
+        """
         self.mlx.mlx_put_image_to_window(
             self.ptr,
             win,
@@ -386,9 +502,13 @@ class App:
         )
 
     def draw_cell(self, cell: Cell, update_all: bool = False) -> None:
-        pos = (cell.row * cell.size, cell.col * cell.size)
+        """Render a single `Cell` into its image buffer and window.
+
+        If `update_all` is True, the cell will be redrawn regardless of
+        its `updated` flag.
+        """
+        pos: tuple[int, int] = (cell.row * cell.size, cell.col * cell.size)
         if not cell.updated or update_all:
-            print(f"update cell {(cell.col, cell.row)}")
             addr = self.mlx.mlx_get_data_addr(cell.image.img)
             cell.image.data, cell.image.bpp, cell.image.sl, _ = addr
             bpp = cell.image.bpp // 8
@@ -435,6 +555,11 @@ class App:
             cell.updated = False
 
     def draw_maze(self, update_all: bool = False) -> None:
+        """Draw the entire maze by delegating to `draw_cell` for each cell.
+
+        Args:
+            update_all: If True, force redraw of all cells.
+        """
         for row in self.maze.data:
             for cell in row:
                 self.draw_cell(cell, update_all)

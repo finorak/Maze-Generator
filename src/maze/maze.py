@@ -1,14 +1,26 @@
+"""Maze data structure and generation utilities.
+
+Provides the `Maze` class used to build and manipulate grid cells,
+generate the maze and optionally break walls to make non-perfect mazes.
+"""
+
 from threading import Thread
 import random
 from time import sleep
 from typing import Any
-from src.setting import (
+from ..setting import (
     DISPLAY_INTERVAL,
 )
 from .cell import Cell
 
 
 class Maze:
+    """Represents a grid of `Cell` objects and maze generation logic.
+
+    Attributes:
+        entry_pos: Entry coordinate tuple.
+        end_pos: Exit coordinate tuple.
+    """
     def __init__(self, entry_pos: tuple[int, int],
                  end_pos: tuple[int, int],
                  cols: int, rows: int,
@@ -27,6 +39,11 @@ class Maze:
         self.wall_destroyer: None | tuple[int, int] = None
 
     def init_data(self) -> None:
+        """Initialize or reset the maze grid and related metadata.
+
+        Creates `Cell` instances if needed and resets cell flags for a
+        fresh generation run.
+        """
         if len(self.data) == 0:
             self.data = [
                 [
@@ -75,6 +92,12 @@ class Maze:
         self.generation_thread = None
 
     def change_color(self, color: int, condition: str = "all") -> None:
+        """Change cell colors depending on the provided condition.
+
+        Args:
+            color: Color value to apply.
+            condition: One of "all", "solve", or "generate".
+        """
         for row in self.data:
             for cell in row:
                 c: bool = True
@@ -90,6 +113,11 @@ class Maze:
                     cell.color = color
 
     def get_block(self) -> None:
+        """Populate the default 42-shaped block positions.
+
+        This helper builds the coordinates used for the optional 42 logo
+        area inside the maze.
+        """
         def get_four(x: int, y: int) -> None:
             for i in range(3):
                 self.block.append((x, y + i))
@@ -108,12 +136,21 @@ class Maze:
         get_two(self.rows // 2 + 1, self.cols // 2 - 2)
 
     def make_42_block(self, show_logo: bool = True) -> None:
+        """Mark or unmark cells belonging to the 42 block.
+
+        Args:
+            show_logo: Whether the cells should be treated as a 42 cell.
+        """
         for x, y in self.block:
             self.data[x][y].is_42_cell = show_logo
 
     def find_neighbor_closed(
         self, cell_coord: tuple[int, int]
     ) -> list[tuple[str, str, int, int]]:
+        """Return list of neighboring closed cells for a given coordinate.
+
+        Returns tuples describing wall directions and neighbor coords.
+        """
         neighbors: list[tuple[str, str, int, int]] = []
         x, y = cell_coord
         if (
@@ -144,6 +181,11 @@ class Maze:
         return neighbors
 
     def start_generate(self, start_pos: tuple[int, int] = (0, 0)) -> None:
+        """Start maze generation in a background thread.
+
+        Args:
+            start_pos: Starting cell coordinate for generation.
+        """
         if self.generation_thread is not None \
                 and self.generation_thread.is_alive():
             print("generate in progress...")
@@ -155,16 +197,19 @@ class Maze:
         self.generation_thread.start()
 
     def generete(self, start_pos: tuple[int, int] = (0, 0)) -> None:
+        """Generate the maze and optionally break walls afterwards.
+
+        This is the target of the generation thread and orchestrates
+        the recursive carving and post-processing steps.
+        """
         perfect = not self.perfect
         self.generate_maze(start_pos)
         self.break_wall(int(perfect) * 16 / 100)
-        """
-        COLORING ENTRY AND END POINT
-        """
         self.is_generate = True
         self.wall_destroyer = None
 
     def generate_maze(self, start_pos: tuple[int, int]) -> None:
+        """Recursive depth-first carving starting from start_pos."""
         self.wall_destroyer = start_pos
         start_x, start_y = start_pos
         cell = self.data[start_x][start_y]
@@ -183,6 +228,11 @@ class Maze:
             self.generate_maze((new_x, new_y))
 
     def break_wall(self, probability: float = 0.17) -> None:
+        """Randomly break walls across the maze according to probability.
+
+        Args:
+            probability: Chance to break a wall at each cell.
+        """
         if probability == 0:
             return None
         walls = [("e", "w"), ("w", "e"), ("n", "s"), ("s", "n")]

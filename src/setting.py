@@ -1,3 +1,9 @@
+"""Application settings and constants.
+
+This module exposes configuration constants used across the
+maze generator and helper functions for resolving asset paths.
+"""
+
 from src.utils import rgb
 import os
 
@@ -61,6 +67,15 @@ IMAGES = {
 
 
 def get_path(BASE_DIR: str, file_name: str) -> str:
+    """Return normalized path to an asset in the `assets/vfx` folder.
+
+    Args:
+        BASE_DIR: Base directory of the calling module.
+        file_name: Filename inside the `vfx` assets folder.
+
+    Returns:
+        Normalized filesystem path to the asset.
+    """
     return os.path.normpath(
             os.path.join(BASE_DIR, "..", "assets", "vfx", file_name)
             )

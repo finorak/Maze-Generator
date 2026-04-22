@@ -19,7 +19,7 @@ if __name__ == "__main__":
         config = get_configuration(
                 sys.argv[1]
                 )
-        if not config:
+        if not config or config is None:
             sys.exit(1)
         app = App(config)
         app.run()

@@ -1,4 +1,4 @@
-_This project has been created as part of the 42 curriculum by finorak, trakotos, finorako._
+_This project has been created as part of the 42 curriculum by trakotos, finorako._
 
 # A-Maze-ing
 
@@ -173,9 +173,8 @@ The roles were distributed according to the git history and the implemented modu
 
 | Member   | Main contribution                                                                     |
 | -------- | ------------------------------------------------------------------------------------- |
-| finorak  | Core maze model, generation logic, configuration handling, documentation              |
+| finorako | Core maze model, generation logic, configuration handling, documentation              |
 | trakotos | Application integration, navigation, solving flow, window behavior, final refactoring |
-| finorako | Project structure, configuration validation, documentation cleanup, code readability  |
 
 ### Planning and evolution
 

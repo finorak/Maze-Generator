@@ -68,7 +68,7 @@ def parse_config(config: dict[str, Any]
 
 def get_configuration(
         file_name: str
-        ) -> dict[str, Any]:
+        ) -> dict[str, Any] | None:
     """
     Getting the configuration file using dict
     """
@@ -101,5 +101,6 @@ def get_configuration(
             get_config(BASE_CONFIG)
             return BASE_CONFIG
         return config
-    except Exception:
-        raise Exception("Config file not provided")
+    except Exception as e:
+        print(e)
+        return None

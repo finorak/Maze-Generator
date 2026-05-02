@@ -95,11 +95,13 @@ def get_configuration(
                     value = (x, y)
                 config.update({key.strip().lower(): value})
         config = parse_config(config)
-        if not config_is_valid(config):
+        if not config_is_valid(config) or "output_file" not in config:
             print("\nCONFIG ERROR !!!")
             custom_print("SWITCHING TO BASE_CONFIG")
             get_config(BASE_CONFIG)
             return BASE_CONFIG
+        if "output_file" in config and not config['output_file']:
+            config["output_file"] = "maze.txt"
         return config
     except Exception as e:
         print(e)

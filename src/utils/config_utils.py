@@ -64,5 +64,9 @@ def get_config(config: dict[str, Any],
                     value[0] >= width or value[1] >= height):
                 checker = "[ERROR]"
                 error = True
+        if key.lower() == "output_file" and not value:
+            checker = "[ERROR]"
         custom_print(f"{value} {checker}")
+        if key.lower() == "output_file" and not value:
+            print("reversing to maze.txt")
     return error

@@ -243,7 +243,7 @@ class App:
             key (Any): The key pressed.
             _param (Any): Unused parameter.
         """
-        a_star = self.solver.solve
+        a_star = self.solver.bfs_solver
         dfs = self.solver.dfs_solver
         if key in (65307, ord("q")):
             self.mlx.mlx_loop_exit(self.ptr)

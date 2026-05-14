@@ -143,7 +143,7 @@ class Solver:
             directions.append(((x, y), x - 1, y))
         return directions
 
-    def solve(
+    def bfs_solver(
         self,
         get_color: Callable,
         func: Callable[[int, str], None],

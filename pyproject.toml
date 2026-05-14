@@ -6,10 +6,8 @@ build-backend = "setuptools.build_meta"
 name = "maze_gen"
 version = "0.1.0"
 dependencies = [
-    "requests",
-    "numpy"
 ]
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["maze_gen*", "src*"]
+where = ["src"]
+include = ["src*"]

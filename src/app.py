@@ -8,7 +8,6 @@ solving, and user interaction using the mlx library for GUI.
 from time import time
 
 from src.engine.navigator import PlayerNavigator
-from src.maze.maze import Maze
 from mlx import Mlx
 import pygame
 from typing import Any
@@ -24,11 +23,12 @@ from src.setting import (
     IMAGES,
     get_path,
 )
-from src.maze.cell import Cell
-from src.engine.solver import Solver
-from src.utils.maze_utils import put_maze_into_file
+# from src.maze.maze import Maze
+# from src.maze.cell import Cell
+# from src.engine.solver import Solver
+# from src.maze.image import Image
+from maze_zen import Maze, Cell, Solver, Image, put_maze_into_file
 import os
-from src.maze.image import Image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

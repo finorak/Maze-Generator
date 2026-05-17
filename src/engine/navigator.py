@@ -4,6 +4,7 @@ Handles keyboard input and validates moves against maze walls.
 """
 
 from typing import Any
+
 from src.setting import EAST, NORTH, SOUTH, WEST
 
 

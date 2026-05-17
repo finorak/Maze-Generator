@@ -5,7 +5,7 @@ coordinates and the computed path to a file.
 """
 
 from typing import Any
-from src.maze.cell import Cell
+from maze.cell import Cell
 
 
 def put_maze_into_file(file_name: str,

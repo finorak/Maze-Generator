@@ -173,7 +173,7 @@ The roles were distributed according to the git history and the implemented modu
 
 | Member   | Main contribution                                                                     |
 | -------- | ------------------------------------------------------------------------------------- |
-| finorako | Core maze model, generation logic, configuration handling, documentation              |
+| finorako | Core maze model, generation logic, configuration handling, documentation, the mazegenerator whl module|
 | trakotos | Application integration, navigation, solving flow, window behavior, final refactoring |
 
 ### Planning and evolution

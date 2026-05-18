@@ -23,6 +23,16 @@ class MazeGenerator:
                  end_pos: tuple[int, int],
                  cols: int, rows: int,
                  perfect: bool = True, animate: bool = True) -> None:
+        """Initialize a maze generator with dimensions and entry points.
+
+        Args:
+            entry_pos: Entry coordinate in the maze.
+            end_pos: Exit coordinate in the maze.
+            cols: Number of columns.
+            rows: Number of rows.
+            perfect: Whether generation should keep the maze perfect.
+            animate: Whether generation is intended to be animated.
+        """
         self.entry_pos = entry_pos
         self.end_pos = end_pos
         self.perfect = perfect
@@ -118,12 +128,14 @@ class MazeGenerator:
         area inside the maze.
         """
         def get_four(x: int, y: int) -> None:
+            """Append coordinates forming the '4' segment of the logo."""
             for i in range(3):
                 self.block.append((x, y + i))
                 self.block.append((x + 2, y + 2 + i))
             self.block.append((x + 1, y + 2))
 
         def get_two(x: int, y: int) -> None:
+            """Append coordinates forming the '2' segment of the logo."""
             for i in range(3):
                 self.block.append((x + i, y))
                 self.block.append((x + i, y + 2))

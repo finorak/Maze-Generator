@@ -11,6 +11,11 @@ from src.setting import EAST, NORTH, SOUTH, WEST
 class PlayerNavigator:
     """Track and apply player movement within a maze instance."""
     def __init__(self, parent: Any) -> None:
+        """Initialize navigator state from the parent application.
+
+        Args:
+            parent: Main application instance owning maze state.
+        """
         self.parent = parent
         self.can_move = False
         self.x, self.y = self.parent.entry_pos

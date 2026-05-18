@@ -10,6 +10,7 @@ from typing import Any
 class Image:
     """Container for image handles and pixel buffer metadata."""
     def __init__(self) -> None:
+        """Initialize empty image handles and mlx buffer metadata."""
         self.img: Any = None
         self.width = 0
         self.height = 0

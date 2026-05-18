@@ -29,6 +29,13 @@ class Solver:
         entry_pos: tuple[int, int],
         end_pos: tuple[int, int],
     ) -> None:
+        """Initialize solver state for a maze and endpoints.
+
+        Args:
+            data: 2D grid of maze cells.
+            entry_pos: Entry coordinate where solving starts.
+            end_pos: Exit coordinate to reach.
+        """
         self._data = data
         self.entry = entry_pos
         self.exit = end_pos
@@ -41,10 +48,16 @@ class Solver:
 
     @property
     def data(self) -> list[list[Cell]]:
+        """Return the current maze cell grid."""
         return self._data
 
     @data.setter
     def data(self, data: list[list[Cell]]) -> None:
+        """Replace the maze grid and reset generation marker.
+
+        Args:
+            data: New 2D grid of maze cells.
+        """
         self.is_generate = False
         self._data = data
 
@@ -68,6 +81,7 @@ class Solver:
             return False
 
         def solve_maze(curr_pos: tuple[int, int]) -> bool:
+            """Perform recursive DFS from `curr_pos` until exit is found."""
             if self.found_path:
                 return True
             if curr_pos == self.exit:

@@ -22,6 +22,13 @@ class Cell:
         col: int,
         settings: Any,
     ) -> None:
+        """Initialize a cell with default maze and rendering attributes.
+
+        Args:
+            row: Row index in the maze grid.
+            col: Column index in the maze grid.
+            settings: Settings module/object exposing constants.
+        """
         self.init_attribute(row, col,
                             settings.CELL_SIZE,
                             settings.WALL_COLORS[0],

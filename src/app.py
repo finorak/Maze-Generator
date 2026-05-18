@@ -17,9 +17,6 @@ from maze.image import Image
 from maze.maze import MazeGenerator
 from src import setting
 from src.engine.navigator import PlayerNavigator
-from mlx import Mlx
-import pygame
-from typing import Any
 from src.setting import (
     CELL_SIZE,
     DISPLAY_INTERVAL,
@@ -34,10 +31,8 @@ from src.setting import (
 )
 # from src.maze.maze import Maze
 # from src.maze.cell import Cell
-# from src.engine.solver import Solver
+from src.engine.solver import Solver
 # from src.maze.image import Image
-from maze_zen import Maze, Cell, Solver, Image, put_maze_into_file
-import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 

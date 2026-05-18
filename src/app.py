@@ -17,6 +17,8 @@ from maze.image import Image
 from maze.maze import MazeGenerator
 from src import setting
 from src.engine.navigator import PlayerNavigator
+from src.engine.solver import Solver
+from src.utils.maze_utils import put_maze_into_file
 from src.setting import (
     CELL_SIZE,
     DISPLAY_INTERVAL,
@@ -29,10 +31,6 @@ from src.setting import (
     WIDTH,
     get_path,
 )
-# from src.maze.maze import Maze
-# from src.maze.cell import Cell
-from src.engine.solver import Solver
-# from src.maze.image import Image
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -77,9 +75,10 @@ class App:
         self.perfect: bool = self.config.get('perfect')
         if self.perfect is None:
             self.perfect = True
-        self.maze: MazeGenerator = MazeGenerator(self.entry_pos,
-                               self.end_pos, self.rows,
-                               self.cols, self.perfect)
+        self.maze: MazeGenerator = MazeGenerator(
+                self.entry_pos,
+                self.end_pos, self.rows,
+                self.cols, self.perfect)
         self.maze.init_data(setting)
         self.solver: Solver = Solver(
             self.maze.data, self.entry_pos, self.end_pos

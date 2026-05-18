@@ -4,9 +4,9 @@ This module exposes configuration constants used across the
 maze generator and helper functions for resolving asset paths.
 """
 
-from src.utils import rgb
 import os
 
+from src.utils import rgb
 
 WALL_COLORS = [
     rgb(0, 255, 255),

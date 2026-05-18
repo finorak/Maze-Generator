@@ -5,6 +5,7 @@ coordinates and the computed path to a file.
 """
 
 from typing import Any
+
 from maze.cell import Cell
 
 

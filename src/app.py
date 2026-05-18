@@ -5,22 +5,31 @@ This module contains the main App class that handles the maze generation,
 solving, and user interaction using the mlx library for GUI.
 """
 
+import os
 from time import time
+from typing import Any
 
+import pygame
+from mlx import Mlx
+
+from maze.cell import Cell
+from maze.image import Image
+from maze.maze import MazeGenerator
+from src import setting
 from src.engine.navigator import PlayerNavigator
 from mlx import Mlx
 import pygame
 from typing import Any
 from src.setting import (
+    CELL_SIZE,
+    DISPLAY_INTERVAL,
     HEIGHT,
     HELP_HEIGHT,
     HELP_WIDTH,
+    IMAGES,
+    TITLE,
     WALL_COLORS,
     WIDTH,
-    TITLE,
-    DISPLAY_INTERVAL,
-    CELL_SIZE,
-    IMAGES,
     get_path,
 )
 # from src.maze.maze import Maze
@@ -73,10 +82,10 @@ class App:
         self.perfect: bool = self.config.get('perfect')
         if self.perfect is None:
             self.perfect = True
-        self.maze: Maze = Maze(self.entry_pos,
+        self.maze: MazeGenerator = MazeGenerator(self.entry_pos,
                                self.end_pos, self.rows,
                                self.cols, self.perfect)
-        self.maze.init_data()
+        self.maze.init_data(setting)
         self.solver: Solver = Solver(
             self.maze.data, self.entry_pos, self.end_pos
         )
@@ -396,7 +405,7 @@ class App:
         self.navigator.can_move = False
         self.maze.perfect = perfect
         self.maze.show_logo = show_logo
-        self.maze.init_data()
+        self.maze.init_data(setting)
         self.maze.change_color(self.get_wall_color(), "all")
         self.solver.is_generate = False
         self.solver.found_path = False

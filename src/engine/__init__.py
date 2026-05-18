@@ -1,5 +1,4 @@
-from .solver import Solver
 from .navigator import PlayerNavigator
+from .solver import Solver
 
-
-__all__ = ["Solver", "PlayerNavigator"]
+__all__ = ["PlayerNavigator", "Solver"]

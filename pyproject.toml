@@ -1,13 +1,15 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "maze_gen"
-version = "0.1.0"
-dependencies = [
+name = "mazegen"
+author = [
+  { name="finorako", email="finorako@student.42antananrivo.mg" }
 ]
+version = "0.1.0"
+description = "Maze generation package"
+requires-python = ">=3.10"
 
-[tool.setuptools.packages.find]
-where = ["src"]
-include = ["src*"]
+[tool.setuptools]
+packages = ["maze"]

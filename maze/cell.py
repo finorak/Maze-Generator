@@ -5,11 +5,8 @@ and a small image buffer used for drawing.
 """
 
 from typing import Any
+
 from .image import Image
-from ..setting import (
-        NORTH, SOUTH, WEST,
-        EAST, WALL_COLORS, CELL_SIZE,
-        )
 
 
 class Cell:
@@ -23,16 +20,19 @@ class Cell:
         self,
         row: int,
         col: int,
-        size: int = CELL_SIZE,
-        color: int = WALL_COLORS[0],
+        settings: Any,
     ) -> None:
-        self.init_attribute(row, col, size, color)
+        self.init_attribute(row, col,
+                            settings.CELL_SIZE,
+                            settings.WALL_COLORS[0],
+                            settings)
 
     def init_attribute(self,
                        row: int,
                        col: int,
                        size: int,
-                       color: int) -> None:
+                       color: int,
+                       settings: Any) -> None:
         """Attribute initiatiolasation for 'Cell'
 
         Args:
@@ -52,6 +52,7 @@ class Cell:
         self.image: Any = Image()
         self.parent: tuple[int, int] | Any = None
         self.updated: bool = False
+        self.settings = settings
 
     @property
     def color(self) -> int:
@@ -95,15 +96,15 @@ class Cell:
         if self.is_42_cell:
             return None
         if wall in ("north", "n"):
-            if self.wall & NORTH:
-                self.wall -= NORTH
+            if self.wall & self.settings.NORTH:
+                self.wall -= self.settings.NORTH
         if wall in ("west", "w"):
-            if self.wall & WEST:
-                self.wall -= WEST
+            if self.wall & self.settings.WEST:
+                self.wall -= self.settings.WEST
         if wall in ("south", "s"):
-            if self.wall & SOUTH:
-                self.wall -= SOUTH
+            if self.wall & self.settings.SOUTH:
+                self.wall -= self.settings.SOUTH
         if wall in ("east", "e"):
-            if self.wall & EAST:
-                self.wall -= EAST
+            if self.wall & self.settings.EAST:
+                self.wall -= self.settings.EAST
         self.updated = False

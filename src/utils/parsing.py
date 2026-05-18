@@ -3,8 +3,9 @@ Utils module
 This module contains the basique utils function we need
 might use class later on
 """
-from typing import Union, Any
-from src.utils.config_utils import get_config, custom_print
+from typing import Any, Union
+
+from src.utils.config_utils import custom_print, get_config
 
 
 def config_is_valid(config: dict[str, Any]

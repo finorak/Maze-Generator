@@ -4,17 +4,15 @@ Provides the `Maze` class used to build and manipulate grid cells,
 generate the maze and optionally break walls to make non-perfect mazes.
 """
 
-from threading import Thread
 import random
+from threading import Thread
 from time import sleep
 from typing import Any
-from ..setting import (
-    DISPLAY_INTERVAL,
-)
+
 from .cell import Cell
 
 
-class Maze:
+class MazeGenerator:
     """Represents a grid of `Cell` objects and maze generation logic.
 
     Attributes:
@@ -38,7 +36,7 @@ class Maze:
         self.generation_thread: Thread | Any = None
         self.wall_destroyer: None | tuple[int, int] = None
 
-    def init_data(self) -> None:
+    def init_data(self, settings: Any) -> None:
         """Initialize or reset the maze grid and related metadata.
 
         Creates `Cell` instances if needed and resets cell flags for a
@@ -50,6 +48,7 @@ class Maze:
                     Cell(
                         row=i,
                         col=j,
+                        settings=settings
                     )
                     for j in range(self.cols)
                 ]
@@ -208,7 +207,8 @@ class Maze:
         self.is_generate = True
         self.wall_destroyer = None
 
-    def generate_maze(self, start_pos: tuple[int, int]) -> None:
+    def generate_maze(self, start_pos: tuple[int, int],
+                      display_interval: float = 0.05) -> None:
         """Recursive depth-first carving starting from start_pos."""
         self.wall_destroyer = start_pos
         start_x, start_y = start_pos
@@ -224,10 +224,11 @@ class Maze:
                 continue
             cell.remove_wall(wall1)
             self.data[new_x][new_y].remove_wall(wall2)
-            sleep(DISPLAY_INTERVAL)
+            sleep(display_interval)
             self.generate_maze((new_x, new_y))
 
-    def break_wall(self, probability: float = 0.17) -> None:
+    def break_wall(self, probability: float = 0.17,
+                   display_interval: float = 0.05) -> None:
         """Randomly break walls across the maze according to probability.
 
         Args:
@@ -281,4 +282,4 @@ class Maze:
                         self.data[x][y].wall_closed = False
                         self.data[x + 1][y].remove_wall(wall2)
                         self.data[x + 1][y].wall_closed = False
-                    sleep(DISPLAY_INTERVAL)
+                    sleep(display_interval)

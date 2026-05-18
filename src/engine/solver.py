@@ -4,20 +4,21 @@ Provides a simple DFS and BFS-like solver used to find a path from
 entry to exit and animate the result.
 """
 
-from src.maze.cell import Cell
-from typing import Any, Callable
-from src.setting import (
-    NORTH,
-    SOUTH,
-    WEST,
-    EAST,
-    DISPLAY_INTERVAL,
-    PATH_FOUND_COLOR,
-)
 from collections import deque
-from src.utils.color_genertor import rgb
 from threading import Thread
 from time import sleep
+from typing import Any, Callable
+
+from maze.cell import Cell
+from src.setting import (
+    DISPLAY_INTERVAL,
+    EAST,
+    NORTH,
+    PATH_FOUND_COLOR,
+    SOUTH,
+    WEST,
+)
+from src.utils.color_genertor import rgb
 
 
 class Solver:

@@ -296,12 +296,15 @@ class App:
                 return None
             self.activate_mouse = False
             path: Any = reversed(self.solver.path)
-            put_maze_into_file(
+            try:
+                put_maze_into_file(
                     self.config.get('output_file'),
                     self.maze.data,
                     path,
                     self.entry_pos,
                     self.end_pos)
+            except Exception as e:
+                print(e)
         elif key == ord('h'):
             self.open_help_window()
         elif key == ord('c'):
